@@ -6,17 +6,17 @@ let carrito = [];
 let indiceCotizacionActiva = null; 
 
 window.onload = async () => {
-    document.getElementById('productos-grid').innerHTML = "<p style='text-align:center; margin-top:50px;'>Cargando inventario...</p>";
+    document.getElementById('productos-grid').innerHTML = "<p style='text-align:center; width:100%; margin-top:30px; color:#64748b;'>Cargando inventario...</p>";
     try {
         const respuesta = await fetch(SCRIPT_URL);
         const data = await respuesta.json();
         productosGlobal = data.productos;
-        clientesGlobal = data.clientes.reverse(); // Muestra los clientes más recientes primero
+        clientesGlobal = data.clientes.reverse(); 
         cargarCategorias();
         renderProductos(productosGlobal);
         renderClientes(clientesGlobal);
     } catch (error) {
-        document.getElementById('productos-grid').innerHTML = "<p>Error de conexión.</p>";
+        document.getElementById('productos-grid').innerHTML = "<p style='text-align:center; width:100%; color:#ef4444;'>Error de conexión.</p>";
     }
 };
 
@@ -27,7 +27,6 @@ function switchTab(tab) {
     document.getElementById(`tab-${tab}`).classList.add('active');
 }
 
-// Contraseña modificada a 199311
 function toggleAdmin() {
     const pass = prompt("Ingrese clave de administrador:");
     if (pass === "199311") document.body.classList.toggle("show-admin");
@@ -38,12 +37,10 @@ function abrirCarrito() { document.getElementById('modal-carrito').style.display
 function cerrarCarrito() { document.getElementById('modal-carrito').style.display = 'none'; }
 function cerrarDetalle() { document.getElementById('modal-detalle').style.display = 'none'; }
 
-// ---- FORMATO DE FECHA ----
 function formatearFecha(fechaStr) {
     if(!fechaStr) return "Sin fecha";
     const opciones = { year: 'numeric', month: 'long', day: 'numeric' };
     let fecha = new Date(fechaStr);
-    // Para evitar problemas de zona horaria, ajustamos
     fecha.setMinutes(fecha.getMinutes() + fecha.getTimezoneOffset());
     return fecha.toLocaleDateString('es-HN', opciones);
 }
@@ -71,7 +68,9 @@ function renderProductos(productos) {
         grid.innerHTML += `
             <div class="card">
                 <div class="cat-tag">${prod.categoria || 'Genérico'}</div>
-                <img src="${prod.foto || 'https://via.placeholder.com/150'}" onerror="this.src='https://via.placeholder.com/150'">
+                <div class="img-container">
+                    <img src="${prod.foto || 'https://via.placeholder.com/150'}" onerror="this.src='https://via.placeholder.com/150'">
+                </div>
                 <h3>${prod.nombre}</h3>
                 <div class="oferta">Lps. ${precioBase.toFixed(2)}</div>
                 ${tablaDescuentos}
@@ -113,6 +112,21 @@ function agregarAlCarrito(codigoProd) {
     setTimeout(() => fab.style.transform = 'scale(1)', 200);
 }
 
+// ==== AQUÍ ESTÁN LOS BOTONES DE SUMA Y RESTA ====
+function sumarCantidad(index) {
+    carrito[index].cantidad++;
+    actualizarCarrito();
+}
+
+function restarCantidad(index) {
+    if (carrito[index].cantidad > 1) {
+        carrito[index].cantidad--;
+        actualizarCarrito();
+    } else {
+        quitarDelCarrito(index);
+    }
+}
+
 function quitarDelCarrito(index) {
     carrito.splice(index, 1);
     actualizarCarrito();
@@ -124,7 +138,7 @@ function actualizarCarrito() {
     let subtotalAcumulado = 0, cantidadTotal = 0;
     
     if (carrito.length === 0) {
-        contenedor.innerHTML = `<div style="text-align:center; color:#9ca3af; padding: 20px;"><i class="fa-solid fa-basket-shopping" style="font-size:40px; margin-bottom:10px;"></i><p>Carrito vacío</p></div>`;
+        contenedor.innerHTML = `<div style="text-align:center; color:#cbd5e1; padding: 30px 0;"><i class="fa-solid fa-cart-arrow-down" style="font-size:45px; margin-bottom:10px;"></i><p>Carrito vacío</p></div>`;
     }
     
     carrito.forEach((item, index) => {
@@ -139,17 +153,29 @@ function actualizarCarrito() {
         
         contenedor.innerHTML += `
             <div class="item-carrito">
-                <div class="item-info">
-                    <h4>${item.nombre}</h4>
-                    <p>Lps. ${precioAplicado.toFixed(2)} c/u</p>
-                    <span>Cant: ${item.cantidad} | Subtotal: Lps. ${subtotalItem.toFixed(2)}</span>
+                <div class="item-info-header">
+                    <div>
+                        <h4>${item.nombre}</h4>
+                        <p>Lps. ${precioAplicado.toFixed(2)} c/u</p>
+                    </div>
+                    <div style="text-align:right; font-weight:bold; color:var(--text-dark);">
+                        Lps. ${subtotalItem.toFixed(2)}
+                    </div>
                 </div>
-                <button class="btn-remove" onclick="quitarDelCarrito(${index})"><i class="fa-solid fa-trash"></i></button>
+                <div class="item-controles">
+                    <div class="qty-box">
+                        <button type="button" class="btn-qty" onclick="restarCantidad(${index})"><i class="fa-solid fa-minus"></i></button>
+                        <span style="font-weight:700; width:20px; text-align:center;">${item.cantidad}</span>
+                        <button type="button" class="btn-qty" onclick="sumarCantidad(${index})"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                    <button type="button" class="btn-remove" onclick="quitarDelCarrito(${index})"><i class="fa-solid fa-trash"></i></button>
+                </div>
             </div>
         `;
     });
     
     let granTotal = subtotalAcumulado > 0 ? Math.ceil(subtotalAcumulado) + 1 : 0;
+    
     document.getElementById('contador-carrito').innerText = cantidadTotal;
     document.getElementById('subtotal-display').innerText = subtotalAcumulado.toFixed(2);
     document.getElementById('gran-total').innerText = granTotal.toFixed(2);
@@ -173,27 +199,39 @@ async function guardarCotizacion(e) {
 
     try {
         await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(cotizacion) });
-        alert("¡Guardado!");
-        location.reload(); // Recarga limpia
+        alert("¡Guardado exitosamente!");
+        location.reload(); 
     } catch (error) {
-        alert("Error de conexión.");
+        alert("Error de conexión al guardar.");
     }
 }
 
-// ---- TABLA CLIENTES ----
 function renderClientes(clientes) {
     const tbody = document.getElementById('lista-clientes');
     tbody.innerHTML = "";
+    
+    const styleMobile = document.createElement('style');
+    styleMobile.innerHTML = `
+        @media (max-width: 600px) {
+            #tabla-clientes thead { display: none; }
+            #tabla-clientes, #tabla-clientes tbody, #tabla-clientes tr, #tabla-clientes td { display: block; width: 100%; }
+            #tabla-clientes tr { margin-bottom: 15px; background: white; border-radius: 16px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); border: 1px solid #f1f5f9; cursor: pointer;}
+            #tabla-clientes td { border-bottom: none; padding: 6px 0; display: flex; justify-content: space-between; align-items: center;}
+            #tabla-clientes td::before { content: attr(data-label); font-weight: 700; color: #64748b; font-size: 0.75rem; text-transform: uppercase; }
+            #tabla-clientes td:last-child { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #e2e8f0; justify-content: center;}
+        }
+    `;
+    document.head.appendChild(styleMobile);
+
     clientes.forEach((c, index) => {
         let fecha = formatearFecha(c.fechaEntrega);
-        // data-label sirve para el diseño de celular
         tbody.innerHTML += `
-            <tr onclick="abrirDetalle(${index})">
-                <td data-label="Tienda / Cliente"><strong>${c.tienda}</strong><br><span style="font-size:0.8rem; color:#6b7280;">${c.cliente}</span></td>
-                <td data-label="Contacto"><a href="tel:${c.telefono}" style="color:var(--accent);">${c.telefono}</a><br><span style="font-size:0.8rem;">${c.lugar}</span></td>
-                <td data-label="Entrega">${fecha}</td>
-                <td data-label="Total" style="color:var(--success); font-weight:800;">Lps. ${c.total}</td>
-                <td data-label="Acción"><button class="btn-secundario" style="padding: 8px; width:auto; border-radius:10px;"><i class="fa-solid fa-eye"></i></button></td>
+            <tr onclick="abrirDetalle(${index})" style="cursor:pointer; border-bottom: 1px solid #f1f5f9; transition:0.2s;">
+                <td data-label="Tienda / Cliente" style="padding:15px;"><strong>${c.tienda}</strong><br><span style="font-size:0.8rem; color:var(--text-muted);">${c.cliente}</span></td>
+                <td data-label="Contacto" style="padding:15px;"><span style="color:var(--accent); font-weight:600;">${c.telefono}</span><br><span style="font-size:0.8rem;">${c.lugar}</span></td>
+                <td data-label="Entrega" style="padding:15px; font-size:0.9rem;">${fecha}</td>
+                <td data-label="Total" style="color:var(--success); font-weight:800; padding:15px;">Lps. ${c.total}</td>
+                <td data-label="Acción" style="padding:15px;"><button class="btn-secundario" style="padding: 10px; width:40px; height:40px; border-radius:10px;"><i class="fa-solid fa-eye"></i></button></td>
             </tr>
         `;
     });
@@ -205,7 +243,6 @@ function filtrarClientes() {
     renderClientes(filtrados);
 }
 
-// ---- DETALLE DE CLIENTE / EDITAR / FACTURA ----
 function abrirDetalle(index) {
     indiceCotizacionActiva = index;
     const c = clientesGlobal[index];
@@ -217,7 +254,7 @@ function abrirDetalle(index) {
         <strong>Teléfono:</strong> ${c.telefono} <br>
         <strong>Dirección:</strong> ${c.lugar} <br>
         <strong>Entrega:</strong> ${formatearFecha(c.fechaEntrega)} <br>
-        <strong style="font-size:1.2rem; color:var(--success); display:block; margin-top:10px;">Total Cotizado: Lps. ${c.total}</strong>
+        <strong style="font-size:1.2rem; color:var(--success); display:block; margin-top:10px;">Total Orden: Lps. ${c.total}</strong>
     `;
 
     let htmlItems = "";
@@ -225,14 +262,14 @@ function abrirDetalle(index) {
         try {
             const arrCarrito = JSON.parse(c.carrito);
             arrCarrito.forEach(item => {
-                htmlItems += `<div style="border-bottom: 1px solid #e5e7eb; padding: 8px 0; display:flex; justify-content:space-between;">
+                htmlItems += `<div style="border-bottom: 1px solid #f1f5f9; padding: 10px 0; display:flex; justify-content:space-between; font-size:0.9rem;">
                     <span><b>${item.cantidad}x</b> ${item.nombre}</span>
                 </div>`;
             });
         } catch(e) { htmlItems = "Error leyendo productos."; }
     }
     
-    document.getElementById('detalle-items').innerHTML = htmlItems || "<p>Sin detalles guardados.</p>";
+    document.getElementById('detalle-items').innerHTML = htmlItems || "<p style='color:#64748b;'>Sin detalles guardados.</p>";
     modal.style.display = 'flex';
 }
 
@@ -244,7 +281,6 @@ function editarCotizacion() {
         document.getElementById('c-tienda').value = c.tienda;
         document.getElementById('c-tel').value = c.telefono;
         document.getElementById('c-lugar').value = c.lugar;
-        // Solo para setear la fecha en el input
         let dateObj = new Date(c.fechaEntrega);
         document.getElementById('c-fecha-entrega').value = dateObj.toISOString().split('T')[0];
         
@@ -257,50 +293,35 @@ function editarCotizacion() {
 function generarFactura() {
     const c = clientesGlobal[indiceCotizacionActiva];
     const nOrden = Math.floor(Math.random() * 90000) + 10000;
-    
     let htmlItems = "";
-    let arrCarrito = JSON.parse(c.carrito || "[]");
-    arrCarrito.forEach(item => {
-        htmlItems += `<tr><td style="padding:10px; border-bottom:1px solid #eee;">${item.cantidad}</td>
-        <td style="padding:10px; border-bottom:1px solid #eee;">${item.nombre}</td></tr>`;
+    
+    JSON.parse(c.carrito || "[]").forEach(item => {
+        htmlItems += `<tr><td style="padding:12px; border-bottom:1px solid #e5e7eb;">${item.cantidad}</td>
+        <td style="padding:12px; border-bottom:1px solid #e5e7eb;">${item.nombre}</td></tr>`;
     });
 
     const ventana = window.open('', '_blank');
     ventana.document.write(`
-        <html><head><title>Factura - E&G</title>
+        <html><head><title>Cotización - E&G</title>
         <style>
-            body { font-family: 'Helvetica', sans-serif; padding: 40px; color: #333; max-width: 800px; margin: 0 auto;}
-            .header { text-align: center; border-bottom: 2px solid #1e1b4b; padding-bottom: 20px; margin-bottom: 30px;}
-            .header h1 { margin: 0; color: #1e1b4b; font-size: 28px;}
-            .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;}
-            table { width: 100%; border-collapse: collapse; margin-bottom: 30px;}
-            th { background: #f3f4f6; padding: 12px; text-align: left; color: #1f2937;}
-            .total { text-align: right; font-size: 24px; font-weight: bold; color: #10b981;}
-            .footer { text-align: center; font-size: 12px; color: #6b7280; margin-top: 50px;}
+            body { font-family: 'Helvetica', sans-serif; padding: 40px; color: #1f2937; max-width: 800px; margin: 0 auto;}
+            .header { text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 20px; margin-bottom: 30px;}
+            .header h1 { margin: 0; color: #0f172a; font-size: 26px;}
+            .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; font-size:14px; line-height:1.6;}
+            table { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size:14px;}
+            th { background: #f8fafc; padding: 12px; text-align: left; color: #475569; border-bottom:2px solid #e2e8f0;}
+            .total { text-align: right; font-size: 22px; font-weight: bold; color: #10b981; padding-top:20px; border-top:2px solid #e2e8f0;}
+            .footer { text-align: center; font-size: 12px; color: #64748b; margin-top: 50px;}
         </style>
         </head><body>
-            <div class="header">
-                <h1>DISTRIBUCIONES E&G</h1>
-                <p>Comayagua, Honduras</p>
-            </div>
+            <div class="header"><h1>DISTRIBUCIONES E&G</h1><p>Comayagua, Honduras</p></div>
             <div class="info-grid">
-                <div>
-                    <b>Cliente:</b> ${c.cliente}<br>
-                    <b>Tienda:</b> ${c.tienda}<br>
-                    <b>Teléfono:</b> ${c.telefono}
-                </div>
-                <div style="text-align: right;">
-                    <b>Factura N°:</b> EG-${nOrden}<br>
-                    <b>Fecha de Entrega:</b> ${formatearFecha(c.fechaEntrega)}<br>
-                    <b>Lugar:</b> ${c.lugar}
-                </div>
+                <div><b>Cliente:</b> ${c.cliente}<br><b>Tienda:</b> ${c.tienda}<br><b>Teléfono:</b> ${c.telefono}</div>
+                <div style="text-align: right;"><b>N° Cotización:</b> EG-${nOrden}<br><b>Fecha Solicitada:</b> ${formatearFecha(c.fechaEntrega)}<br><b>Lugar:</b> ${c.lugar}</div>
             </div>
-            <table>
-                <thead><tr><th>Cant.</th><th>Descripción del Producto</th></tr></thead>
-                <tbody>${htmlItems}</tbody>
-            </table>
-            <div class="total">Total a Pagar: Lps. ${c.total}</div>
-            <div class="footer">¡Gracias por su compra!<br>Este documento sirve como comprobante de cotización / orden de entrega.</div>
+            <table><thead><tr><th>Cant.</th><th>Descripción del Producto</th></tr></thead><tbody>${htmlItems}</tbody></table>
+            <div class="total">Total a Cobrar: Lps. ${c.total}</div>
+            <div class="footer">¡Gracias por su preferencia!<br>Documento generado para control y validación de entrega.</div>
             <script>window.print();</script>
         </body></html>
     `);
