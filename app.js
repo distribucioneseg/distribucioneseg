@@ -1,4 +1,4 @@
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyznruZNbVCp9ZD3V5FmGjFIG5Czmz4D9RBnOjMZvEf-oXNcwPHw1VGx1wrA2dT2QjcMA/exec'; // <--- No olvides poner tu URL real aquí
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzBujsnS0HoJvTnQpf7eUst-eSNFhd4L3fQEbamYIqfaWc_FjT3kJE53dWHMxkr-B84vw/exec'; // <--- No olvides poner tu URL real aquí
 
 let productosGlobal = [];
 let clientesGlobal = [];
@@ -157,7 +157,7 @@ function renderProductos(productos) {
                 imagenFinal = "https://img.icons8.com/color/150/box--v1.png"; 
             }
         }
-        
+
         grid.innerHTML += `
             <div class="card">
                 <div class="cat-tag">${prod.categoria || 'Genérico'}</div>
