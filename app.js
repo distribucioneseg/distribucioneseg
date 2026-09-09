@@ -92,29 +92,72 @@ function renderProductos(productos) {
         // Calcula Ganancia: Precio al Público - Costo Más Bajo
         let gananciaAutomatica = (precioBase > 0 && costoBajo > 0) ? (precioBase - costoBajo) : 0;
 
-        // ==== ASIGNACIÓN DE IMAGEN AUTOMÁTICA POR CATEGORÍA ====
+// ==== ASIGNACIÓN DE IMAGEN AUTOMÁTICA POR CATEGORÍA SÚPER VITAMINADA ====
         let imagenFinal = prod.foto;
         if (!imagenFinal || imagenFinal.trim() === "" || imagenFinal.includes('dummyimage')) {
-            let cat = (prod.categoria || "").toUpperCase();
-            if (cat.includes("LACTEO") || cat.includes("LÁCTEO")) {
-                imagenFinal = "https://cdn-icons-png.flaticon.com/512/3745/3745330.png"; // Queso
-            } else if (cat.includes("EMBUTIDO")) {
-                imagenFinal = "https://cdn-icons-png.flaticon.com/512/3143/3143644.png"; // Salchicha
-            } else if (cat.includes("LIMPIEZA") || cat.includes("JABON") || cat.includes("JABÓN")) {
-                imagenFinal = "https://cdn-icons-png.flaticon.com/512/2921/2921822.png"; // Detergente
-            } else if (cat.includes("PAPEL") || cat.includes("HIGIENE")) {
-                imagenFinal = "https://cdn-icons-png.flaticon.com/512/2594/2594197.png"; // Papel Higienico
-            } else if (cat.includes("SNACK") || cat.includes("CHURRO")) {
-                imagenFinal = "https://cdn-icons-png.flaticon.com/512/2515/2515234.png"; // Bolsa Chips
-            } else if (cat.includes("BEBIDA") || cat.includes("REFRESCO")) {
-                imagenFinal = "https://cdn-icons-png.flaticon.com/512/2935/2935293.png"; // Soda
-            } else if (cat.includes("ABARROTE") || cat.includes("GRANO")) {
-                imagenFinal = "https://cdn-icons-png.flaticon.com/512/861/861055.png"; // Saco Grano
+            // Pasamos a mayúsculas y quitamos acentos para que no falle si escribes "Lácteo" o "Lacteo"
+            let cat = (prod.categoria || "").toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            
+            // --- 🛒 SECCIÓN PULPERÍA Y SUPERMERCADO ---
+            if (cat.includes("LACTEO") || cat.includes("QUESO") || cat.includes("MANTEQUILLA")) {
+                imagenFinal = "https://img.icons8.com/color/150/cheese.png"; 
+            } else if (cat.includes("EMBUTIDO") || cat.includes("CHORIZO") || cat.includes("SALCHICHA")) {
+                imagenFinal = "https://img.icons8.com/color/150/salami.png"; 
+            } else if (cat.includes("CARNE") || cat.includes("POLLO") || cat.includes("CERDO")) {
+                imagenFinal = "https://img.icons8.com/color/150/beef.png"; 
+            } else if (cat.includes("PAN") || cat.includes("REPOSTERIA") || cat.includes("GALLETA")) {
+                imagenFinal = "https://img.icons8.com/color/150/bread.png"; 
+            } else if (cat.includes("SNACK") || cat.includes("CHURRO") || cat.includes("BOCADILLO")) {
+                imagenFinal = "https://img.icons8.com/color/150/potato-chips.png"; 
+            } else if (cat.includes("DULCE") || cat.includes("CONFITE") || cat.includes("CHOCOLATE")) {
+                imagenFinal = "https://img.icons8.com/color/150/candy.png"; 
+            } else if (cat.includes("FRUTA") || cat.includes("VERDURA") || cat.includes("VEGETAL")) {
+                imagenFinal = "https://img.icons8.com/color/150/group-of-fruits.png"; 
+            } else if (cat.includes("BEBIDA") || cat.includes("REFRESCO") || cat.includes("JUGO")) {
+                imagenFinal = "https://img.icons8.com/color/150/soda-can.png"; 
+            } else if (cat.includes("CERVEZA") || cat.includes("LICOR") || cat.includes("ALCOHOL")) {
+                imagenFinal = "https://img.icons8.com/color/150/beer.png"; 
+            } else if (cat.includes("CAFE") || cat.includes("TE")) {
+                imagenFinal = "https://img.icons8.com/color/150/coffee-beans.png"; 
+            } else if (cat.includes("ENLATADO") || cat.includes("CONSERVA")) {
+                imagenFinal = "https://img.icons8.com/color/150/canned-food.png"; 
+            } else if (cat.includes("SALSA") || cat.includes("CONDIMENTO") || cat.includes("ESPECIA")) {
+                imagenFinal = "https://img.icons8.com/color/150/ketchup.png"; 
+            } else if (cat.includes("LIMPIEZA") || cat.includes("DETERGENTE")) {
+                imagenFinal = "https://img.icons8.com/color/150/cleaning-products.png"; 
+            } else if (cat.includes("HIGIENE") || cat.includes("JABON") || cat.includes("SHAMPOO")) {
+                imagenFinal = "https://img.icons8.com/color/150/soap.png"; 
+            } else if (cat.includes("PAPEL") || cat.includes("SERVILLETA")) {
+                imagenFinal = "https://img.icons8.com/color/150/toilet-paper.png"; 
+            } else if (cat.includes("DESECHABLE") || cat.includes("PLASTICO")) {
+                imagenFinal = "https://img.icons8.com/color/150/paper-cup.png"; 
+            } else if (cat.includes("MEDICINA") || cat.includes("FARMACIA") || cat.includes("PASTILLA")) {
+                imagenFinal = "https://img.icons8.com/color/150/pill.png"; 
+            } else if (cat.includes("MASCOTA") || cat.includes("PERRO") || cat.includes("GATO")) {
+                imagenFinal = "https://img.icons8.com/color/150/dog-bowl.png"; 
+            } else if (cat.includes("ABARROTE") || cat.includes("GRANO") || cat.includes("CEREAL")) {
+                imagenFinal = "https://img.icons8.com/color/150/ingredients.png"; 
+
+            // --- 🎮 SECCIÓN TECNOLOGÍA Y GAMING ---
+            } else if (cat.includes("GAMER") || cat.includes("JUEGO") || cat.includes("DEDAL") || cat.includes("GATILLO")) {
+                imagenFinal = "https://img.icons8.com/color/150/controller.png"; 
+            } else if (cat.includes("AUDIO") || cat.includes("AUDIFONO") || cat.includes("BOCINA")) {
+                imagenFinal = "https://img.icons8.com/color/150/headphones.png"; 
+            } else if (cat.includes("CELULAR") || cat.includes("SMARTPHONE") || cat.includes("TELEFONO")) {
+                imagenFinal = "https://img.icons8.com/color/150/iphone.png"; 
+            } else if (cat.includes("COMPUTADORA") || cat.includes("LAPTOP") || cat.includes("PC")) {
+                imagenFinal = "https://img.icons8.com/color/150/laptop.png"; 
+            } else if (cat.includes("ALMACENAMIENTO") || cat.includes("USB") || cat.includes("MEMORIA") || cat.includes("MICROSD")) {
+                imagenFinal = "https://img.icons8.com/color/150/usb-memory-stick.png"; 
+            } else if (cat.includes("CABLE") || cat.includes("CARGADOR") || cat.includes("ACCESORIO")) {
+                imagenFinal = "https://img.icons8.com/color/150/usb-plug.png"; 
+            
+            // --- 📦 POR DEFECTO ---
             } else {
-                imagenFinal = "https://cdn-icons-png.flaticon.com/512/1174/1174366.png"; // Caja generica
+                imagenFinal = "https://img.icons8.com/color/150/box--v1.png"; 
             }
         }
-
+        
         grid.innerHTML += `
             <div class="card">
                 <div class="cat-tag">${prod.categoria || 'Genérico'}</div>
