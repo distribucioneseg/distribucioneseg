@@ -81,11 +81,74 @@ body.show-admin #btn-admin { background: #fbbf24; color: var(--primary); }
 #form-cotizacion input:focus { border-color: var(--accent); background: white; }
 .btn-primario { background: var(--success); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 700; font-size: 1rem; width: 100%; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 5px; }
 
-/* Panel Admin y Otros */
-.admin-panel { display: none; background: #fef3c7; border: 1px solid #fde68a; padding: 12px; margin-top: 12px; border-radius: 12px; font-size: 0.75rem; color: #b45309; text-align: left; line-height: 1.4; }
-body.show-admin .admin-panel { display: block; }
-.detalle-info-caja { background: white; padding: 15px; border-radius: 16px; margin-bottom: 15px; line-height: 1.6; border: 1px solid #f1f5f9; }
-.btn-secundario { background: #eef2ff; color: var(--accent); border: none; padding: 15px; border-radius: 12px; font-weight: 700; font-size: 1rem; width: 100%; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; }
+/* ==== NUEVO DISEÑO DEL PANEL ADMIN ==== */
+.admin-panel { 
+    display: none; 
+    background: #f8fafc; 
+    border: 1px solid #e2e8f0; 
+    margin-top: 15px; 
+    border-radius: 12px; 
+    overflow: hidden; 
+    text-align: left; 
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+body.show-admin .admin-panel { 
+    display: block; 
+    animation: fadeIn 0.3s ease; 
+}
+@keyframes fadeIn { 
+    from { opacity: 0; transform: translateY(-5px); } 
+    to { opacity: 1; transform: translateY(0); } 
+}
+
+.admin-header { 
+    background: #1e293b; 
+    color: white; 
+    padding: 8px 12px; 
+    font-size: 0.75rem; 
+    font-weight: 700; 
+    text-transform: uppercase; 
+    letter-spacing: 0.5px; 
+    display: flex; 
+    align-items: center; 
+    gap: 6px; 
+}
+
+.admin-stats { 
+    display: flex; 
+    border-bottom: 1px solid #e2e8f0; 
+    background: white;
+}
+.stat-box { 
+    flex: 1; 
+    padding: 10px 12px; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 2px; 
+}
+.stat-box:first-child { border-right: 1px solid #e2e8f0; }
+.stat-box span { font-size: 0.65rem; color: #64748b; text-transform: uppercase; font-weight: 800; }
+.stat-box.profit b { color: #10b981; font-size: 1rem; }
+.stat-box.cost b { color: #3b82f6; font-size: 0.95rem; }
+
+.admin-providers { 
+    padding: 10px 12px; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 8px; 
+    background: #f8fafc; 
+}
+.prov-row { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    font-size: 0.8rem; 
+    padding-bottom: 6px; 
+    border-bottom: 1px dashed #cbd5e1; 
+}
+.prov-row:last-child { border-bottom: none; padding-bottom: 0; }
+.prov-name { color: #475569; font-weight: 600; }
+.prov-price { color: #0f172a; font-weight: 800; }
 
 /* Responsive ajustes móviles */
 @media (max-width: 480px) {
