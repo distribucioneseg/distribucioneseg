@@ -5,6 +5,14 @@ let clientesGlobal = [];
 let carrito = [];
 let indiceCotizacionActiva = null; 
 
+// ==== 1. FUNCIÓN INFALIBLE PARA LAS COMAS ====
+function formatoMoneda(valor) {
+    let num = parseFloat(valor);
+    if (isNaN(num)) return "0.00";
+    // Forzamos los 2 decimales y agregamos la coma a los miles matemáticamente
+    return num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 window.onload = async () => {
     document.getElementById('productos-grid').innerHTML = "<p style='text-align:center; width:100%; margin-top:30px; color:#64748b;'>Cargando inventario...</p>";
     try {
@@ -55,15 +63,15 @@ function renderProductos(productos) {
         
         if (prod.precio5 || prod.precio6 || prod.precio12) {
             tablaDescuentos = `<div class="tabla-descuentos">
-                ${prod.precio5 ? `<div class="tag-desc">5+ Unids: <b>Lps. ${prod.precio5}</b></div>` : ''}
-                ${prod.precio6 ? `<div class="tag-desc">Media Doc: <b>Lps. ${prod.precio6}</b></div>` : ''}
-                ${prod.precio12 ? `<div class="tag-desc">Docena: <b>Lps. ${prod.precio12}</b></div>` : ''}
+                ${prod.precio5 ? `<div class="tag-desc">5+ Unids: <b>Lps. ${formatoMoneda(prod.precio5)}</b></div>` : ''}
+                ${prod.precio6 ? `<div class="tag-desc">Media Doc: <b>Lps. ${formatoMoneda(prod.precio6)}</b></div>` : ''}
+                ${prod.precio12 ? `<div class="tag-desc">Docena: <b>Lps. ${formatoMoneda(prod.precio12)}</b></div>` : ''}
             </div>`;
         }
 
         let proveedoresHTML = "";
-        if(prod.l1) proveedoresHTML += `• ${prod.l1}: Lps. ${prod.p1}<br>`;
-        if(prod.l2) proveedoresHTML += `• ${prod.l2}: Lps. ${prod.p2}<br>`;
+        if(prod.l1) proveedoresHTML += `• ${prod.l1}: Lps. ${formatoMoneda(prod.p1)}<br>`;
+        if(prod.l2) proveedoresHTML += `• ${prod.l2}: Lps. ${formatoMoneda(prod.p2)}<br>`;
 
         grid.innerHTML += `
             <div class="card">
@@ -71,15 +79,16 @@ function renderProductos(productos) {
                 <div class="img-container">
                     <img src="${prod.foto || 'https://via.placeholder.com/150'}" onerror="this.src='https://via.placeholder.com/150'">
                 </div>
+                <span class="marca-text">${prod.marca || 'Genérico'}</span>
                 <h3>${prod.nombre}</h3>
-                <div class="oferta">Lps. ${precioBase.toFixed(2)}</div>
+                <div class="oferta">Lps. ${formatoMoneda(precioBase)}</div>
                 ${tablaDescuentos}
                 <button class="btn-add" onclick="agregarAlCarrito('${prod.codigo}')">
                     <i class="fa-solid fa-cart-plus"></i> Agregar
                 </button>
                 <div class="admin-panel">
-                    <strong>Ganancia: Lps. ${prod.ganancia || 0}</strong>
-                    Mejor Costo: Lps. ${prod.costoBajo || 0}<br>
+                    <strong>Ganancia: Lps. ${formatoMoneda(prod.ganancia || 0)}</strong>
+                    Mejor Costo: Lps. ${formatoMoneda(prod.costoBajo || 0)}<br>
                     ${proveedoresHTML}
                 </div>
             </div>
@@ -100,6 +109,36 @@ function filtrarProductos() {
     renderProductos(filtrados);
 }
 
+// ==== 2. FILTRO DE CLIENTES REPARADO Y EXACTO ====
+function filtrarClientes() {
+    const texto = document.getElementById('search-client').value.toLowerCase();
+    const mesSeleccionado = document.getElementById('mes-filter').value; // Retorna "YYYY-MM"
+    
+    const filtrados = clientesGlobal.filter(c => {
+        const coincideTexto = (c.cliente || "").toLowerCase().includes(texto) || (c.tienda || "").toLowerCase().includes(texto);
+        
+        let coincideMes = true;
+        if (mesSeleccionado) {
+            if (c.fechaEntrega) {
+                let fechaObj = new Date(c.fechaEntrega);
+                fechaObj.setMinutes(fechaObj.getMinutes() + fechaObj.getTimezoneOffset());
+                
+                let yyyy = fechaObj.getFullYear();
+                let mm = String(fechaObj.getMonth() + 1).padStart(2, '0');
+                let fechaRegistro = `${yyyy}-${mm}`;
+                
+                coincideMes = (fechaRegistro === mesSeleccionado);
+            } else {
+                coincideMes = false; // Si seleccionaste un mes, pero este cliente no tiene fecha, lo ocultamos.
+            }
+        }
+        
+        return coincideTexto && coincideMes;
+    });
+    
+    renderClientes(filtrados);
+}
+
 function agregarAlCarrito(codigoProd) {
     const prod = productosGlobal.find(p => p.codigo === codigoProd);
     const item = carrito.find(i => i.codigo === codigoProd);
@@ -112,7 +151,6 @@ function agregarAlCarrito(codigoProd) {
     setTimeout(() => fab.style.transform = 'scale(1)', 200);
 }
 
-// ==== AQUÍ ESTÁN LOS BOTONES DE SUMA Y RESTA ====
 function sumarCantidad(index) {
     carrito[index].cantidad++;
     actualizarCarrito();
@@ -156,10 +194,10 @@ function actualizarCarrito() {
                 <div class="item-info-header">
                     <div>
                         <h4>${item.nombre}</h4>
-                        <p>Lps. ${precioAplicado.toFixed(2)} c/u</p>
+                        <p>Lps. ${formatoMoneda(precioAplicado)} c/u</p>
                     </div>
                     <div style="text-align:right; font-weight:bold; color:var(--text-dark);">
-                        Lps. ${subtotalItem.toFixed(2)}
+                        Lps. ${formatoMoneda(subtotalItem)}
                     </div>
                 </div>
                 <div class="item-controles">
@@ -177,8 +215,8 @@ function actualizarCarrito() {
     let granTotal = subtotalAcumulado > 0 ? Math.ceil(subtotalAcumulado) + 1 : 0;
     
     document.getElementById('contador-carrito').innerText = cantidadTotal;
-    document.getElementById('subtotal-display').innerText = subtotalAcumulado.toFixed(2);
-    document.getElementById('gran-total').innerText = granTotal.toFixed(2);
+    document.getElementById('subtotal-display').innerText = formatoMoneda(subtotalAcumulado);
+    document.getElementById('gran-total').innerText = formatoMoneda(granTotal);
 }
 
 async function guardarCotizacion(e) {
@@ -187,13 +225,16 @@ async function guardarCotizacion(e) {
     const btn = document.getElementById('btn-guardar');
     btn.innerHTML = "Guardando..."; btn.disabled = true;
 
+    // Quitamos las comas para guardarlo limpio en Excel
+    const totalCrudo = document.getElementById('gran-total').innerText.replace(/,/g, '');
+
     const cotizacion = {
         cliente: document.getElementById('c-nombre').value,
         tienda: document.getElementById('c-tienda').value,
         telefono: document.getElementById('c-tel').value,
         lugar: document.getElementById('c-lugar').value,
         fechaEntrega: document.getElementById('c-fecha-entrega').value,
-        total: document.getElementById('gran-total').innerText,
+        total: totalCrudo,
         carrito: carrito
     };
 
@@ -210,37 +251,19 @@ function renderClientes(clientes) {
     const tbody = document.getElementById('lista-clientes');
     tbody.innerHTML = "";
     
-    const styleMobile = document.createElement('style');
-    styleMobile.innerHTML = `
-        @media (max-width: 600px) {
-            #tabla-clientes thead { display: none; }
-            #tabla-clientes, #tabla-clientes tbody, #tabla-clientes tr, #tabla-clientes td { display: block; width: 100%; }
-            #tabla-clientes tr { margin-bottom: 15px; background: white; border-radius: 16px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); border: 1px solid #f1f5f9; cursor: pointer;}
-            #tabla-clientes td { border-bottom: none; padding: 6px 0; display: flex; justify-content: space-between; align-items: center;}
-            #tabla-clientes td::before { content: attr(data-label); font-weight: 700; color: #64748b; font-size: 0.75rem; text-transform: uppercase; }
-            #tabla-clientes td:last-child { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #e2e8f0; justify-content: center;}
-        }
-    `;
-    document.head.appendChild(styleMobile);
-
     clientes.forEach((c, index) => {
         let fecha = formatearFecha(c.fechaEntrega);
+        // Aquí insertamos el total formateado con comas
         tbody.innerHTML += `
             <tr onclick="abrirDetalle(${index})" style="cursor:pointer; border-bottom: 1px solid #f1f5f9; transition:0.2s;">
                 <td data-label="Tienda / Cliente" style="padding:15px;"><strong>${c.tienda}</strong><br><span style="font-size:0.8rem; color:var(--text-muted);">${c.cliente}</span></td>
                 <td data-label="Contacto" style="padding:15px;"><span style="color:var(--accent); font-weight:600;">${c.telefono}</span><br><span style="font-size:0.8rem;">${c.lugar}</span></td>
                 <td data-label="Entrega" style="padding:15px; font-size:0.9rem;">${fecha}</td>
-                <td data-label="Total" style="color:var(--success); font-weight:800; padding:15px;">Lps. ${c.total}</td>
+                <td data-label="Total" style="color:var(--success); font-weight:800; padding:15px;">Lps. ${formatoMoneda(c.total)}</td>
                 <td data-label="Acción" style="padding:15px;"><button class="btn-secundario" style="padding: 10px; width:40px; height:40px; border-radius:10px;"><i class="fa-solid fa-eye"></i></button></td>
             </tr>
         `;
     });
-}
-
-function filtrarClientes() {
-    const texto = document.getElementById('search-client').value.toLowerCase();
-    const filtrados = clientesGlobal.filter(c => (c.cliente || "").toLowerCase().includes(texto) || (c.tienda || "").toLowerCase().includes(texto));
-    renderClientes(filtrados);
 }
 
 function abrirDetalle(index) {
@@ -254,7 +277,7 @@ function abrirDetalle(index) {
         <strong>Teléfono:</strong> ${c.telefono} <br>
         <strong>Dirección:</strong> ${c.lugar} <br>
         <strong>Entrega:</strong> ${formatearFecha(c.fechaEntrega)} <br>
-        <strong style="font-size:1.2rem; color:var(--success); display:block; margin-top:10px;">Total Orden: Lps. ${c.total}</strong>
+        <strong style="font-size:1.2rem; color:var(--success); display:block; margin-top:10px;">Total Orden: Lps. ${formatoMoneda(c.total)}</strong>
     `;
 
     let htmlItems = "";
@@ -281,8 +304,11 @@ function editarCotizacion() {
         document.getElementById('c-tienda').value = c.tienda;
         document.getElementById('c-tel').value = c.telefono;
         document.getElementById('c-lugar').value = c.lugar;
-        let dateObj = new Date(c.fechaEntrega);
-        document.getElementById('c-fecha-entrega').value = dateObj.toISOString().split('T')[0];
+        
+        if (c.fechaEntrega) {
+            let dateObj = new Date(c.fechaEntrega);
+            document.getElementById('c-fecha-entrega').value = dateObj.toISOString().split('T')[0];
+        }
         
         cerrarDetalle();
         actualizarCarrito();
@@ -296,54 +322,54 @@ function generarFactura() {
     let htmlItems = "";
     
     JSON.parse(c.carrito || "[]").forEach(item => {
-        htmlItems += `<tr><td style="padding:12px; border-bottom:1px solid #e5e7eb;">${item.cantidad}</td>
-        <td style="padding:12px; border-bottom:1px solid #e5e7eb;">${item.nombre}</td></tr>`;
+        htmlItems += `<tr>
+            <td style="padding:12px; border-bottom:1px solid #e5e7eb; text-align:center;">${item.cantidad}</td>
+            <td style="padding:12px; border-bottom:1px solid #e5e7eb;">${item.nombre}</td>
+        </tr>`;
     });
 
     const ventana = window.open('', '_blank');
     ventana.document.write(`
-        <html><head><title>Cotización - E&G</title>
+        <html><head><title>Factura - E&G</title>
         <style>
             body { font-family: 'Helvetica', sans-serif; padding: 40px; color: #1f2937; max-width: 800px; margin: 0 auto;}
             .header { text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 20px; margin-bottom: 30px;}
             .header h1 { margin: 0; color: #0f172a; font-size: 26px;}
             .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; font-size:14px; line-height:1.6;}
-            table { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size:14px;}
+            table { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size:14px; page-break-inside: auto;}
+            tr { page-break-inside: avoid; page-break-after: auto; }
+            thead { display: table-header-group; }
             th { background: #f8fafc; padding: 12px; text-align: left; color: #475569; border-bottom:2px solid #e2e8f0;}
-            .total { text-align: right; font-size: 22px; font-weight: bold; color: #10b981; padding-top:20px; border-top:2px solid #e2e8f0;}
-            .footer { text-align: center; font-size: 12px; color: #64748b; margin-top: 50px;}
+            .total { text-align: right; font-size: 22px; font-weight: bold; color: #10b981; padding-top:20px; border-top:2px solid #e2e8f0; page-break-inside: avoid;}
+            .footer { text-align: center; font-size: 12px; color: #64748b; margin-top: 50px; page-break-inside: avoid;}
+            @media print { body { -webkit-print-color-adjust: exact; padding: 0;} }
         </style>
         </head><body>
             <div class="header"><h1>DISTRIBUCIONES E&G</h1><p>Comayagua, Honduras</p></div>
             <div class="info-grid">
                 <div><b>Cliente:</b> ${c.cliente}<br><b>Tienda:</b> ${c.tienda}<br><b>Teléfono:</b> ${c.telefono}</div>
-                <div style="text-align: right;"><b>N° Cotización:</b> EG-${nOrden}<br><b>Fecha Solicitada:</b> ${formatearFecha(c.fechaEntrega)}<br><b>Lugar:</b> ${c.lugar}</div>
+                <div style="text-align: right;"><b>N° Orden:</b> EG-${nOrden}<br><b>Fecha:</b> ${formatearFecha(c.fechaEntrega)}<br><b>Lugar:</b> ${c.lugar}</div>
             </div>
-            <table><thead><tr><th>Cant.</th><th>Descripción del Producto</th></tr></thead><tbody>${htmlItems}</tbody></table>
-            <div class="total">Total a Cobrar: Lps. ${c.total}</div>
-            <div class="footer">¡Gracias por su preferencia!<br>Documento generado para control y validación de entrega.</div>
+            <table>
+                <thead><tr><th style="width: 15%; text-align:center;">Cant.</th><th>Descripción del Producto</th></tr></thead>
+                <tbody>${htmlItems}</tbody>
+            </table>
+            <div class="total">Total a Cobrar: Lps. ${formatoMoneda(c.total)}</div>
+            <div class="footer">¡Gracias por su preferencia!<br>Documento generado para control y validación de entrega.<br><br><b>Generado por: Renee Coello</b></div>
             <script>window.print();</script>
         </body></html>
     `);
     ventana.document.close();
 }
 
-// ==== ENVIAR POR WHATSAPP ====
 function enviarWhatsApp() {
     const c = clientesGlobal[indiceCotizacionActiva];
     if (!c) return;
 
-    // 1. Limpiamos el número de teléfono (quitamos espacios o guiones si los hay)
     let telefono = c.telefono.replace(/\D/g, '');
+    if (telefono.length === 8) telefono = '504' + telefono;
+    else if (!telefono.startsWith('504')) telefono = '504' + telefono;
 
-    // 2. Validamos el código de Honduras (+504)
-    if (telefono.length === 8) {
-        telefono = '504' + telefono; // Si solo puso 8 números, le agregamos el 504
-    } else if (!telefono.startsWith('504')) {
-        telefono = '504' + telefono; // Por precaución
-    }
-
-    // 3. Construimos el mensaje de forma elegante
     let mensaje = `*¡Hola ${c.cliente}!* 👋\n`;
     mensaje += `Aquí tienes el resumen de tu pedido de *DISTRIBUCIONES E&G*:\n\n`;
     mensaje += `🏢 *Tienda:* ${c.tienda}\n`;
@@ -354,16 +380,13 @@ function enviarWhatsApp() {
     if (c.carrito) {
         try {
             const arrCarrito = JSON.parse(c.carrito);
-            arrCarrito.forEach(item => {
-                mensaje += `▪️ ${item.cantidad}x ${item.nombre}\n`;
-            });
+            arrCarrito.forEach(item => { mensaje += `▪️ ${item.cantidad}x ${item.nombre}\n`; });
         } catch(e) {}
     }
 
     mensaje += `\n💰 *Total a Pagar:* Lps. ${formatoMoneda(c.total)}\n\n`;
     mensaje += `¡Gracias por tu preferencia!`;
 
-    // 4. Abrimos WhatsApp con el texto codificado
     const url = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
     window.open(url, '_blank');
 }
