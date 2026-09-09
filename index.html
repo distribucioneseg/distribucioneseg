@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DISTRIBUCIONES E&G</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=5">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
@@ -20,28 +20,31 @@
         </div>
     </header>
 
-    <div class="controls-container">
-        <div class="search-box">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="search-prod" placeholder="Buscar producto..." onkeyup="filtrarProductos()">
-        </div>
-        <select id="cat-filter" onchange="filtrarProductos()">
-            <option value="Todas">Todas las categorías</option>
-        </select>
-    </div>
-
     <!-- Pestaña Tienda -->
     <div id="view-tienda" class="view-section active">
+        <!-- Controles exclusivos de la tienda -->
+        <div class="controls-container">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="search-prod" placeholder="Buscar producto..." onkeyup="filtrarProductos()">
+            </div>
+            <select id="cat-filter" onchange="filtrarProductos()">
+                <option value="Todas">Todas las categorías</option>
+            </select>
+        </div>
         <main><section id="productos-grid" class="grid"></section></main>
     </div>
 
     <!-- Pestaña Clientes -->
     <div id="view-clientes" class="view-section">
-        <div class="controls-container" style="margin-top: 0;">
+        <!-- Controles exclusivos de los clientes -->
+        <div class="controls-container">
             <div class="search-box">
                 <i class="fa-solid fa-user-magnifying-glass"></i>
                 <input type="text" id="search-client" placeholder="Buscar por cliente o tienda..." onkeyup="filtrarClientes()">
             </div>
+            <!-- Nuevo Filtro por Mes y Año -->
+            <input type="month" id="mes-filter" class="mes-filter-input" onchange="filtrarClientes()" title="Filtrar por Mes y Año">
         </div>
         <div class="table-container">
             <table id="tabla-clientes">
@@ -88,7 +91,7 @@
                         <input type="date" id="c-fecha-entrega" required>
                     </div>
                     <button type="submit" id="btn-guardar" class="btn-primario">
-                        <i class="fa-solid fa-floppy-disk"></i> Guardar Cotización
+                        <i class="fa-solid fa-floppy-disk"></i> Guardar Orden
                     </button>
                 </form>
             </div>
@@ -99,7 +102,7 @@
     <div id="modal-detalle" class="modal-oculto">
         <div class="modal-contenido">
             <div class="modal-header">
-                <h2>Detalle de Cotización</h2>
+                <h2>Detalle de Orden</h2>
                 <button class="btn-cerrar" onclick="cerrarDetalle()"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-body">
@@ -118,6 +121,6 @@
         </div>
     </div>
 
-    <script src="app.js?v=3"></script>
+    <script src="app.js?v=5"></script>
 </body>
 </html>
