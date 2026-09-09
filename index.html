@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DISTRIBUCIONES E&G</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Iconos reparados (Usando FontAwesome CDN por estabilidad) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
@@ -14,8 +14,8 @@
             <h1>DISTRIBUCIONES E&G</h1>
         </div>
         <div class="tabs">
-            <button onclick="switchTab('tienda')" class="active" id="tab-tienda">Tienda</button>
-            <button onclick="switchTab('clientes')" id="tab-clientes">Clientes</button>
+            <button onclick="switchTab('tienda')" class="active" id="tab-tienda"><i class="fa-solid fa-shop"></i> Tienda</button>
+            <button onclick="switchTab('clientes')" id="tab-clientes"><i class="fa-solid fa-users"></i> Clientes</button>
             <button onclick="toggleAdmin()" id="btn-admin"><i class="fa-solid fa-user-shield"></i></button>
         </div>
     </header>
@@ -30,12 +30,12 @@
         </select>
     </div>
 
+    <!-- Pestaña Tienda -->
     <div id="view-tienda" class="view-section active">
-        <main>
-            <section id="productos-grid" class="grid"></section>
-        </main>
+        <main><section id="productos-grid" class="grid"></section></main>
     </div>
 
+    <!-- Pestaña Clientes -->
     <div id="view-clientes" class="view-section">
         <div class="controls-container" style="margin-top: 0;">
             <div class="search-box">
@@ -47,11 +47,11 @@
             <table id="tabla-clientes">
                 <thead>
                     <tr>
-                        <th>Tienda</th>
-                        <th>Cliente</th>
-                        <th>Teléfono</th>
-                        <th>Lugar</th>
+                        <th>Tienda / Cliente</th>
+                        <th>Contacto</th>
+                        <th>Entrega</th>
                         <th>Total</th>
+                        <th>Acción</th>
                     </tr>
                 </thead>
                 <tbody id="lista-clientes"></tbody>
@@ -59,35 +59,26 @@
         </div>
     </div>
 
-    <!-- BOTÓN FLOTANTE DEL CARRITO -->
     <button id="btn-flotante-carrito" onclick="abrirCarrito()">
         <i class="fa-solid fa-cart-shopping"></i>
         <span id="contador-carrito">0</span>
     </button>
 
-    <!-- VENTANA EMERGENTE (MODAL) DE COTIZACIÓN -->
+    <!-- Modal del Carrito -->
     <div id="modal-carrito" class="modal-oculto">
         <div class="modal-contenido">
             <div class="modal-header">
-                <h2>Resumen de Cotización</h2>
+                <h2>Resumen de Orden</h2>
                 <button class="btn-cerrar" onclick="cerrarCarrito()"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            
             <div class="modal-body">
-                <div id="carrito-items">
-                    <div class="empty-state">
-                        <i class="fa-solid fa-cart-arrow-down" style="font-size: 48px; color: #ccc;"></i>
-                        <p>No has agregado productos</p>
-                    </div>
-                </div>
-                
+                <div id="carrito-items"></div>
                 <div class="totales-caja">
                     <div class="subtotal-row">Subtotal: <span>Lps. <span id="subtotal-display">0.00</span></span></div>
-                    <div class="total-row">Total a Cobrar: <span>Lps. <span id="gran-total">0.00</span></span></div>
+                    <div class="total-row">Total: <span>Lps. <span id="gran-total">0.00</span></span></div>
                 </div>
-
                 <form id="form-cotizacion" onsubmit="guardarCotizacion(event)">
-                    <h3 class="form-title">Datos de Entrega</h3>
+                    <h3 class="form-title">Datos del Cliente</h3>
                     <input type="text" id="c-nombre" placeholder="Nombre del Cliente" required>
                     <input type="text" id="c-tienda" placeholder="Nombre de la Tienda" required>
                     <input type="tel" id="c-tel" placeholder="Número de Teléfono" required>
@@ -96,7 +87,7 @@
                         <label>Día de entrega:</label>
                         <input type="date" id="c-fecha-entrega" required>
                     </div>
-                    <button type="submit" id="btn-guardar" class="btn-verde">
+                    <button type="submit" id="btn-guardar" class="btn-primario">
                         <i class="fa-solid fa-floppy-disk"></i> Guardar Cotización
                     </button>
                 </form>
@@ -104,7 +95,29 @@
         </div>
     </div>
 
-    <!-- Forzamos al navegador a no usar caché añadiendo un parámetro falso al script -->
-    <script src="app.js?v=2"></script>
+    <!-- Modal Detalle Cotización / Factura -->
+    <div id="modal-detalle" class="modal-oculto">
+        <div class="modal-contenido">
+            <div class="modal-header">
+                <h2>Detalle de Cotización</h2>
+                <button class="btn-cerrar" onclick="cerrarDetalle()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div id="detalle-info" class="detalle-info-caja"></div>
+                <h3>Productos Solicitados</h3>
+                <div id="detalle-items" class="detalle-items-caja"></div>
+                <div class="botones-accion-detalle">
+                    <button onclick="editarCotizacion()" class="btn-secundario">
+                        <i class="fa-solid fa-pen-to-square"></i> Modificar Orden
+                    </button>
+                    <button onclick="generarFactura()" class="btn-primario">
+                        <i class="fa-solid fa-file-invoice"></i> Crear Factura
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js?v=3"></script>
 </body>
 </html>
