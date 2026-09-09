@@ -69,9 +69,19 @@ function renderProductos(productos) {
             </div>`;
         }
 
+        // --- NUEVA LÓGICA ORDENADA DE PROVEEDORES ---
         let proveedoresHTML = "";
-        if(prod.l1) proveedoresHTML += `• ${prod.l1}: Lps. ${formatoMoneda(prod.p1)}<br>`;
-        if(prod.l2) proveedoresHTML += `• ${prod.l2}: Lps. ${formatoMoneda(prod.p2)}<br>`;
+        for (let i = 1; i <= 6; i++) {
+            let lugar = prod['l'+i];
+            let precio = prod['p'+i];
+            if (lugar && lugar.toString().trim() !== "") {
+                proveedoresHTML += `
+                <div class="prov-row">
+                    <span class="prov-name">${lugar}</span> 
+                    <span class="prov-price">Lps. ${formatoMoneda(precio)}</span>
+                </div>`;
+            }
+        }
 
         grid.innerHTML += `
             <div class="card">
@@ -86,10 +96,23 @@ function renderProductos(productos) {
                 <button class="btn-add" onclick="agregarAlCarrito('${prod.codigo}')">
                     <i class="fa-solid fa-cart-plus"></i> Agregar
                 </button>
+                
+                <!-- ==== NUEVO PANEL ADMIN ESTILIZADO ==== -->
                 <div class="admin-panel">
-                    <strong>Ganancia: Lps. ${formatoMoneda(prod.ganancia || 0)}</strong>
-                    Mejor Costo: Lps. ${formatoMoneda(prod.costoBajo || 0)}<br>
-                    ${proveedoresHTML}
+                    <div class="admin-header"><i class="fa-solid fa-user-lock"></i> Info Interna</div>
+                    
+                    <div class="admin-stats">
+                        <div class="stat-box profit">
+                            <span>Ganancia</span>
+                            <b>Lps. ${formatoMoneda(prod.ganancia || 0)}</b>
+                        </div>
+                        <div class="stat-box cost">
+                            <span>Mejor Costo</span>
+                            <b>Lps. ${formatoMoneda(prod.costoBajo || 0)}</b>
+                        </div>
+                    </div>
+                    
+                    ${proveedoresHTML ? `<div class="admin-providers">${proveedoresHTML}</div>` : ''}
                 </div>
             </div>
         `;
