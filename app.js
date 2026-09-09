@@ -58,7 +58,7 @@ function renderProductos(productos) {
     grid.innerHTML = "";
     
     productos.forEach((prod, index) => {
-        let precioBase = prod.precioUnitario || 0;
+        let precioBase = parseFloat(prod.precioUnitario) || 0;
         let tablaDescuentos = "";
         
         if (prod.precio5 || prod.precio6 || prod.precio12) {
@@ -69,11 +69,13 @@ function renderProductos(productos) {
             </div>`;
         }
 
-        // --- NUEVA LÓGICA ORDENADA DE PROVEEDORES ---
+        // ==== CÁLCULO DE COSTO Y GANANCIA AUTOMÁTICO ====
         let proveedoresHTML = "";
+        let preciosProveedores = [];
+        
         for (let i = 1; i <= 6; i++) {
             let lugar = prod['l'+i];
-            let precio = prod['p'+i];
+            let precio = parseFloat(prod['p'+i]);
             if (lugar && lugar.toString().trim() !== "") {
                 proveedoresHTML += `
                 <div class="prov-row">
@@ -81,15 +83,45 @@ function renderProductos(productos) {
                     <span class="prov-price">Lps. ${formatoMoneda(precio)}</span>
                 </div>`;
             }
+            if (!isNaN(precio) && precio > 0) preciosProveedores.push(precio);
+        }
+
+        // Si hay precios de proveedor, saca el más bajo. Si no, usa el que escribiste en Excel (o 0)
+        let costoBajo = preciosProveedores.length > 0 ? Math.min(...preciosProveedores) : (parseFloat(prod.costoBajo) || 0);
+        
+        // Calcula Ganancia: Precio al Público - Costo Más Bajo
+        let gananciaAutomatica = (precioBase > 0 && costoBajo > 0) ? (precioBase - costoBajo) : 0;
+
+        // ==== ASIGNACIÓN DE IMAGEN AUTOMÁTICA POR CATEGORÍA ====
+        let imagenFinal = prod.foto;
+        if (!imagenFinal || imagenFinal.trim() === "" || imagenFinal.includes('dummyimage')) {
+            let cat = (prod.categoria || "").toUpperCase();
+            if (cat.includes("LACTEO") || cat.includes("LÁCTEO")) {
+                imagenFinal = "https://cdn-icons-png.flaticon.com/512/3745/3745330.png"; // Queso
+            } else if (cat.includes("EMBUTIDO")) {
+                imagenFinal = "https://cdn-icons-png.flaticon.com/512/3143/3143644.png"; // Salchicha
+            } else if (cat.includes("LIMPIEZA") || cat.includes("JABON") || cat.includes("JABÓN")) {
+                imagenFinal = "https://cdn-icons-png.flaticon.com/512/2921/2921822.png"; // Detergente
+            } else if (cat.includes("PAPEL") || cat.includes("HIGIENE")) {
+                imagenFinal = "https://cdn-icons-png.flaticon.com/512/2594/2594197.png"; // Papel Higienico
+            } else if (cat.includes("SNACK") || cat.includes("CHURRO")) {
+                imagenFinal = "https://cdn-icons-png.flaticon.com/512/2515/2515234.png"; // Bolsa Chips
+            } else if (cat.includes("BEBIDA") || cat.includes("REFRESCO")) {
+                imagenFinal = "https://cdn-icons-png.flaticon.com/512/2935/2935293.png"; // Soda
+            } else if (cat.includes("ABARROTE") || cat.includes("GRANO")) {
+                imagenFinal = "https://cdn-icons-png.flaticon.com/512/861/861055.png"; // Saco Grano
+            } else {
+                imagenFinal = "https://cdn-icons-png.flaticon.com/512/1174/1174366.png"; // Caja generica
+            }
         }
 
         grid.innerHTML += `
             <div class="card">
                 <div class="cat-tag">${prod.categoria || 'Genérico'}</div>
                 <div class="img-container">
-                    <img src="${prod.foto || 'https://via.placeholder.com/150'}" onerror="this.src='https://via.placeholder.com/150'">
+                    <img src="${imagenFinal}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1174/1174366.png'">
                 </div>
-                <span class="marca-text">${prod.marca || 'Genérico'}</span>
+                <span class="marca-text">${prod.marca || 'S/M'}</span>
                 <h3>${prod.nombre}</h3>
                 <div class="oferta">Lps. ${formatoMoneda(precioBase)}</div>
                 ${tablaDescuentos}
@@ -97,21 +129,18 @@ function renderProductos(productos) {
                     <i class="fa-solid fa-cart-plus"></i> Agregar
                 </button>
                 
-                <!-- ==== NUEVO PANEL ADMIN ESTILIZADO ==== -->
                 <div class="admin-panel">
                     <div class="admin-header"><i class="fa-solid fa-user-lock"></i> Info Interna</div>
-                    
                     <div class="admin-stats">
                         <div class="stat-box profit">
                             <span>Ganancia</span>
-                            <b>Lps. ${formatoMoneda(prod.ganancia || 0)}</b>
+                            <b>Lps. ${formatoMoneda(gananciaAutomatica)}</b>
                         </div>
                         <div class="stat-box cost">
                             <span>Mejor Costo</span>
-                            <b>Lps. ${formatoMoneda(prod.costoBajo || 0)}</b>
+                            <b>Lps. ${formatoMoneda(costoBajo)}</b>
                         </div>
                     </div>
-                    
                     ${proveedoresHTML ? `<div class="admin-providers">${proveedoresHTML}</div>` : ''}
                 </div>
             </div>
