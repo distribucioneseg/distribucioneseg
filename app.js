@@ -345,7 +345,6 @@ function generarFactura() {
     let htmlItems = "";
     
     JSON.parse(c.carrito || "[]").forEach(item => {
-        // 1. Calculamos el precio unitario aplicando descuentos por volumen si aplica
         let precioAplicado = item.prodCompleto && item.prodCompleto.precioUnitario ? item.prodCompleto.precioUnitario : 0;
         if (item.prodCompleto) {
             if (item.cantidad >= 12 && item.prodCompleto.precio12 > 0) precioAplicado = item.prodCompleto.precio12;
@@ -353,15 +352,13 @@ function generarFactura() {
             else if (item.cantidad >= 5 && item.prodCompleto.precio5 > 0) precioAplicado = item.prodCompleto.precio5;
         }
         
-        // 2. Calculamos el subtotal por producto
         const subtotalItem = precioAplicado * item.cantidad;
 
-        // 3. Generamos las 4 columnas de la tabla
         htmlItems += `<tr>
             <td style="padding:12px; border-bottom:1px solid #e5e7eb; text-align:center;">${item.cantidad}</td>
             <td style="padding:12px; border-bottom:1px solid #e5e7eb;">${item.nombre}</td>
-            <td style="padding:12px; border-bottom:1px solid #e5e7eb; text-align:right;">Lps. ${formatoMoneda(precioAplicado)}</td>
-            <td style="padding:12px; border-bottom:1px solid #e5e7eb; text-align:right; font-weight:bold;">Lps. ${formatoMoneda(subtotalItem)}</td>
+            <td style="padding:12px; border-bottom:1px solid #e5e7eb; text-align:right; white-space:nowrap;">Lps. ${formatoMoneda(precioAplicado)}</td>
+            <td style="padding:12px; border-bottom:1px solid #e5e7eb; text-align:right; font-weight:bold; white-space:nowrap;">Lps. ${formatoMoneda(subtotalItem)}</td>
         </tr>`;
     });
 
@@ -377,6 +374,8 @@ function generarFactura() {
             tr { page-break-inside: avoid; page-break-after: auto; }
             thead { display: table-header-group; }
             th { background: #f8fafc; padding: 12px; text-align: left; color: #475569; border-bottom:2px solid #e2e8f0;}
+            /* Agregamos white-space:nowrap a las columnas de dinero para que no se partan */
+            th.dinero { text-align: right; white-space: nowrap; }
             .total { text-align: right; font-size: 22px; font-weight: bold; color: #10b981; padding-top:20px; border-top:2px solid #e2e8f0; page-break-inside: avoid;}
             .footer { text-align: center; font-size: 12px; color: #64748b; margin-top: 50px; page-break-inside: avoid;}
             @media print { body { -webkit-print-color-adjust: exact; padding: 0;} }
@@ -392,8 +391,8 @@ function generarFactura() {
                     <tr>
                         <th style="width: 10%; text-align:center;">Cant.</th>
                         <th>Descripción del Producto</th>
-                        <th style="width: 22%; text-align:right;">Precio Unit.</th>
-                        <th style="width: 22%; text-align:right;">Total</th>
+                        <th class="dinero" style="width: 25%;">Precio Unit.</th>
+                        <th class="dinero" style="width: 25%;">Total</th>
                     </tr>
                 </thead>
                 <tbody>${htmlItems}</tbody>

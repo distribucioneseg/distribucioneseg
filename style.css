@@ -162,10 +162,24 @@ body.show-admin .admin-panel {
     .btn-add { padding: 10px; font-size: 0.85rem; }
 }
 
+/* Corrección para que los botones entren en pantallas pequeñas */
+.botones-accion-detalle { 
+    display: flex; 
+    flex-wrap: wrap; 
+    gap: 8px; 
+    margin-top: 15px;
+}
+.botones-accion-detalle button {
+    flex: 1; /* Esto hace que se dividan el espacio en partes iguales */
+    min-width: 30%; /* Evita que se hagan demasiado pequeños */
+    font-size: 0.85rem; /* Letra un poco más pequeña en celulares */
+    padding: 12px;
+}
+
 @media (min-width: 768px) {
     .modal-oculto { align-items: center; }
-    .modal-contenido { height: 85vh; border-radius: 24px; }
-    .botones-accion-detalle { display: flex; gap: 10px; }
+    .modal-contenido { height: 85vh; border-radius: 30px; }
+    .botones-accion-detalle button { font-size: 1rem; padding: 16px; }
 }
 
 /* --- Botón de WhatsApp --- */
