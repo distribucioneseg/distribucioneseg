@@ -5,11 +5,14 @@ let clientesGlobal = [];
 let carrito = [];
 let indiceCotizacionActiva = null; 
 
-// ==== 1. FUNCIÓN INFALIBLE PARA LAS COMAS ====
+// Variables para la cámara
+let imgBase64Data = "";
+let imgMimeType = "";
+let imgName = "";
+
 function formatoMoneda(valor) {
     let num = parseFloat(valor);
     if (isNaN(num)) return "0.00";
-    // Forzamos los 2 decimales y agregamos la coma a los miles matemáticamente
     return num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
@@ -37,13 +40,24 @@ function switchTab(tab) {
 
 function toggleAdmin() {
     const pass = prompt("Ingrese clave de administrador:");
-    if (pass === "199311") document.body.classList.toggle("show-admin");
-    else if (pass !== null) alert("Clave incorrecta.");
+    if (pass === "199311") {
+        document.body.classList.toggle("show-admin");
+        // Muestra el botón secreto de Nuevo Producto
+        document.getElementById('btn-add-producto-nuevo').style.display = document.body.classList.contains("show-admin") ? "block" : "none";
+    } else if (pass !== null) alert("Clave incorrecta.");
 }
 
+// ==== APERTURA DE MODALES ====
 function abrirCarrito() { document.getElementById('modal-carrito').style.display = 'flex'; }
 function cerrarCarrito() { document.getElementById('modal-carrito').style.display = 'none'; }
 function cerrarDetalle() { document.getElementById('modal-detalle').style.display = 'none'; }
+function abrirModalProducto() { document.getElementById('modal-producto').style.display = 'flex'; }
+function cerrarModalProducto() { 
+    document.getElementById('modal-producto').style.display = 'none'; 
+    document.getElementById('form-producto').reset();
+    document.getElementById('foto-estado').style.display = 'none';
+    imgBase64Data = "";
+}
 
 function formatearFecha(fechaStr) {
     if(!fechaStr) return "Sin fecha";
@@ -69,120 +83,69 @@ function renderProductos(productos) {
             </div>`;
         }
 
-        // ==== CÁLCULO DE COSTO Y GANANCIA AUTOMÁTICO ====
         let proveedoresHTML = "";
         let preciosProveedores = [];
-        
         for (let i = 1; i <= 6; i++) {
             let lugar = prod['l'+i];
             let precio = parseFloat(prod['p'+i]);
             if (lugar && lugar.toString().trim() !== "") {
-                proveedoresHTML += `
-                <div class="prov-row">
-                    <span class="prov-name">${lugar}</span> 
-                    <span class="prov-price">Lps. ${formatoMoneda(precio)}</span>
-                </div>`;
+                proveedoresHTML += `<div class="prov-row"><span class="prov-name">${lugar}</span><span class="prov-price">Lps. ${formatoMoneda(precio)}</span></div>`;
             }
             if (!isNaN(precio) && precio > 0) preciosProveedores.push(precio);
         }
 
-        // Si hay precios de proveedor, saca el más bajo. Si no, usa el que escribiste en Excel (o 0)
         let costoBajo = preciosProveedores.length > 0 ? Math.min(...preciosProveedores) : (parseFloat(prod.costoBajo) || 0);
-        
-        // Calcula Ganancia: Precio al Público - Costo Más Bajo
         let gananciaAutomatica = (precioBase > 0 && costoBajo > 0) ? (precioBase - costoBajo) : 0;
 
-// ==== ASIGNACIÓN DE IMAGEN AUTOMÁTICA POR CATEGORÍA SÚPER VITAMINADA ====
         let imagenFinal = prod.foto;
         if (!imagenFinal || imagenFinal.trim() === "" || imagenFinal.includes('dummyimage')) {
-            // Pasamos a mayúsculas y quitamos acentos para que no falle si escribes "Lácteo" o "Lacteo"
             let cat = (prod.categoria || "").toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
             
-            // --- 🛒 SECCIÓN PULPERÍA Y SUPERMERCADO ---
-            if (cat.includes("LACTEO") || cat.includes("QUESO") || cat.includes("MANTEQUILLA")) {
-                imagenFinal = "https://img.icons8.com/color/150/cheese.png"; 
-            } else if (cat.includes("EMBUTIDO") || cat.includes("CHORIZO") || cat.includes("SALCHICHA")) {
-                imagenFinal = "https://img.icons8.com/color/150/salami.png"; 
-            } else if (cat.includes("CARNE") || cat.includes("POLLO") || cat.includes("CERDO")) {
-                imagenFinal = "https://img.icons8.com/color/150/beef.png"; 
-            } else if (cat.includes("PAN") || cat.includes("REPOSTERIA") || cat.includes("GALLETA")) {
-                imagenFinal = "https://img.icons8.com/color/150/bread.png"; 
-            } else if (cat.includes("SNACK") || cat.includes("CHURRO") || cat.includes("BOCADILLO")) {
-                imagenFinal = "https://img.icons8.com/color/150/potato-chips.png"; 
-            } else if (cat.includes("DULCE") || cat.includes("CONFITE") || cat.includes("CHOCOLATE")) {
-                imagenFinal = "https://img.icons8.com/color/150/candy.png"; 
-            } else if (cat.includes("FRUTA") || cat.includes("VERDURA") || cat.includes("VEGETAL")) {
-                imagenFinal = "https://img.icons8.com/color/150/group-of-fruits.png"; 
-            } else if (cat.includes("BEBIDA") || cat.includes("REFRESCO") || cat.includes("JUGO")) {
-                imagenFinal = "https://img.icons8.com/color/150/soda-can.png"; 
-            } else if (cat.includes("CERVEZA") || cat.includes("LICOR") || cat.includes("ALCOHOL")) {
-                imagenFinal = "https://img.icons8.com/color/150/beer.png"; 
-            } else if (cat.includes("CAFE") || cat.includes("TE")) {
-                imagenFinal = "https://img.icons8.com/color/150/coffee-beans.png"; 
-            } else if (cat.includes("ENLATADO") || cat.includes("CONSERVA")) {
-                imagenFinal = "https://img.icons8.com/color/150/canned-food.png"; 
-            } else if (cat.includes("SALSA") || cat.includes("CONDIMENTO") || cat.includes("ESPECIA")) {
-                imagenFinal = "https://img.icons8.com/color/150/ketchup.png"; 
-            } else if (cat.includes("LIMPIEZA") || cat.includes("DETERGENTE")) {
-                imagenFinal = "https://img.icons8.com/color/150/cleaning-products.png"; 
-            } else if (cat.includes("HIGIENE") || cat.includes("JABON") || cat.includes("SHAMPOO")) {
-                imagenFinal = "https://img.icons8.com/color/150/soap.png"; 
-            } else if (cat.includes("PAPEL") || cat.includes("SERVILLETA")) {
-                imagenFinal = "https://img.icons8.com/color/150/toilet-paper.png"; 
-            } else if (cat.includes("DESECHABLE") || cat.includes("PLASTICO")) {
-                imagenFinal = "https://img.icons8.com/color/150/paper-cup.png"; 
-            } else if (cat.includes("MEDICINA") || cat.includes("FARMACIA") || cat.includes("PASTILLA")) {
-                imagenFinal = "https://img.icons8.com/color/150/pill.png"; 
-            } else if (cat.includes("MASCOTA") || cat.includes("PERRO") || cat.includes("GATO")) {
-                imagenFinal = "https://img.icons8.com/color/150/dog-bowl.png"; 
-            } else if (cat.includes("ABARROTE") || cat.includes("GRANO") || cat.includes("CEREAL")) {
-                imagenFinal = "https://img.icons8.com/color/150/ingredients.png"; 
-
-            // --- 🎮 SECCIÓN TECNOLOGÍA Y GAMING ---
-            } else if (cat.includes("GAMER") || cat.includes("JUEGO") || cat.includes("DEDAL") || cat.includes("GATILLO")) {
-                imagenFinal = "https://img.icons8.com/color/150/controller.png"; 
-            } else if (cat.includes("AUDIO") || cat.includes("AUDIFONO") || cat.includes("BOCINA")) {
-                imagenFinal = "https://img.icons8.com/color/150/headphones.png"; 
-            } else if (cat.includes("CELULAR") || cat.includes("SMARTPHONE") || cat.includes("TELEFONO")) {
-                imagenFinal = "https://img.icons8.com/color/150/iphone.png"; 
-            } else if (cat.includes("COMPUTADORA") || cat.includes("LAPTOP") || cat.includes("PC")) {
-                imagenFinal = "https://img.icons8.com/color/150/laptop.png"; 
-            } else if (cat.includes("ALMACENAMIENTO") || cat.includes("USB") || cat.includes("MEMORIA") || cat.includes("MICROSD")) {
-                imagenFinal = "https://img.icons8.com/color/150/usb-memory-stick.png"; 
-            } else if (cat.includes("CABLE") || cat.includes("CARGADOR") || cat.includes("ACCESORIO")) {
-                imagenFinal = "https://img.icons8.com/color/150/usb-plug.png"; 
-            
-            // --- 📦 POR DEFECTO ---
-            } else {
-                imagenFinal = "https://img.icons8.com/color/150/box--v1.png"; 
-            }
+            if (cat.includes("LACTEO") || cat.includes("QUESO") || cat.includes("MANTEQUILLA")) imagenFinal = "https://img.icons8.com/color/150/cheese.png"; 
+            else if (cat.includes("EMBUTIDO") || cat.includes("CHORIZO") || cat.includes("SALCHICHA")) imagenFinal = "https://img.icons8.com/color/150/salami.png"; 
+            else if (cat.includes("CARNE") || cat.includes("POLLO") || cat.includes("CERDO")) imagenFinal = "https://img.icons8.com/color/150/beef.png"; 
+            else if (cat.includes("PAN") || cat.includes("REPOSTERIA") || cat.includes("GALLETA")) imagenFinal = "https://img.icons8.com/color/150/bread.png"; 
+            else if (cat.includes("SNACK") || cat.includes("CHURRO") || cat.includes("BOCADILLO")) imagenFinal = "https://img.icons8.com/color/150/potato-chips.png"; 
+            else if (cat.includes("DULCE") || cat.includes("CONFITE") || cat.includes("CHOCOLATE")) imagenFinal = "https://img.icons8.com/color/150/candy.png"; 
+            else if (cat.includes("FRUTA") || cat.includes("VERDURA") || cat.includes("VEGETAL")) imagenFinal = "https://img.icons8.com/color/150/group-of-fruits.png"; 
+            else if (cat.includes("BEBIDA") || cat.includes("REFRESCO") || cat.includes("JUGO")) imagenFinal = "https://img.icons8.com/color/150/soda-can.png"; 
+            else if (cat.includes("CERVEZA") || cat.includes("LICOR") || cat.includes("ALCOHOL")) imagenFinal = "https://img.icons8.com/color/150/beer.png"; 
+            else if (cat.includes("CAFE") || cat.includes("TE")) imagenFinal = "https://img.icons8.com/color/150/coffee-beans.png"; 
+            else if (cat.includes("ENLATADO") || cat.includes("CONSERVA")) imagenFinal = "https://img.icons8.com/color/150/canned-food.png"; 
+            else if (cat.includes("SALSA") || cat.includes("CONDIMENTO") || cat.includes("ESPECIA")) imagenFinal = "https://img.icons8.com/color/150/ketchup.png"; 
+            else if (cat.includes("LIMPIEZA") || cat.includes("DETERGENTE")) imagenFinal = "https://img.icons8.com/color/150/cleaning-products.png"; 
+            else if (cat.includes("HIGIENE") || cat.includes("JABON") || cat.includes("SHAMPOO")) imagenFinal = "https://img.icons8.com/color/150/soap.png"; 
+            else if (cat.includes("PAPEL") || cat.includes("SERVILLETA")) imagenFinal = "https://img.icons8.com/color/150/toilet-paper.png"; 
+            else if (cat.includes("DESECHABLE") || cat.includes("PLASTICO")) imagenFinal = "https://img.icons8.com/color/150/paper-cup.png"; 
+            else if (cat.includes("MEDICINA") || cat.includes("FARMACIA") || cat.includes("PASTILLA")) imagenFinal = "https://img.icons8.com/color/150/pill.png"; 
+            else if (cat.includes("MASCOTA") || cat.includes("PERRO") || cat.includes("GATO")) imagenFinal = "https://img.icons8.com/color/150/dog-bowl.png"; 
+            else if (cat.includes("ABARROTE") || cat.includes("GRANO") || cat.includes("CEREAL")) imagenFinal = "https://img.icons8.com/color/150/ingredients.png"; 
+            else if (cat.includes("GAMER") || cat.includes("JUEGO") || cat.includes("DEDAL") || cat.includes("GATILLO")) imagenFinal = "https://img.icons8.com/color/150/controller.png"; 
+            else if (cat.includes("AUDIO") || cat.includes("AUDIFONO") || cat.includes("BOCINA")) imagenFinal = "https://img.icons8.com/color/150/headphones.png"; 
+            else if (cat.includes("CELULAR") || cat.includes("SMARTPHONE") || cat.includes("TELEFONO")) imagenFinal = "https://img.icons8.com/color/150/iphone.png"; 
+            else if (cat.includes("COMPUTADORA") || cat.includes("LAPTOP") || cat.includes("PC")) imagenFinal = "https://img.icons8.com/color/150/laptop.png"; 
+            else if (cat.includes("ALMACENAMIENTO") || cat.includes("USB") || cat.includes("MEMORIA") || cat.includes("MICROSD")) imagenFinal = "https://img.icons8.com/color/150/usb-memory-stick.png"; 
+            else if (cat.includes("CABLE") || cat.includes("CARGADOR") || cat.includes("ACCESORIO")) imagenFinal = "https://img.icons8.com/color/150/usb-plug.png"; 
+            else imagenFinal = "https://img.icons8.com/color/150/box--v1.png"; 
         }
 
         grid.innerHTML += `
             <div class="card">
                 <div class="cat-tag">${prod.categoria || 'Genérico'}</div>
                 <div class="img-container">
-                    <img src="${imagenFinal}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1174/1174366.png'">
+                    <img src="${imagenFinal}" onerror="this.src='https://img.icons8.com/color/150/box--v1.png'">
                 </div>
                 <span class="marca-text">${prod.marca || 'S/M'}</span>
                 <h3>${prod.nombre}</h3>
                 <div class="oferta">Lps. ${formatoMoneda(precioBase)}</div>
                 ${tablaDescuentos}
-                <button class="btn-add" onclick="agregarAlCarrito('${prod.codigo}')">
-                    <i class="fa-solid fa-cart-plus"></i> Agregar
-                </button>
+                <button class="btn-add" onclick="agregarAlCarrito('${prod.codigo}')"><i class="fa-solid fa-cart-plus"></i> Agregar</button>
                 
                 <div class="admin-panel">
                     <div class="admin-header"><i class="fa-solid fa-user-lock"></i> Info Interna</div>
                     <div class="admin-stats">
-                        <div class="stat-box profit">
-                            <span>Ganancia</span>
-                            <b>Lps. ${formatoMoneda(gananciaAutomatica)}</b>
-                        </div>
-                        <div class="stat-box cost">
-                            <span>Mejor Costo</span>
-                            <b>Lps. ${formatoMoneda(costoBajo)}</b>
-                        </div>
+                        <div class="stat-box profit"><span>Ganancia</span><b>Lps. ${formatoMoneda(gananciaAutomatica)}</b></div>
+                        <div class="stat-box cost"><span>Mejor Costo</span><b>Lps. ${formatoMoneda(costoBajo)}</b></div>
                     </div>
                     ${proveedoresHTML ? `<div class="admin-providers">${proveedoresHTML}</div>` : ''}
                 </div>
@@ -204,33 +167,24 @@ function filtrarProductos() {
     renderProductos(filtrados);
 }
 
-// ==== 2. FILTRO DE CLIENTES REPARADO Y EXACTO ====
 function filtrarClientes() {
     const texto = document.getElementById('search-client').value.toLowerCase();
-    const mesSeleccionado = document.getElementById('mes-filter').value; // Retorna "YYYY-MM"
+    const mesSeleccionado = document.getElementById('mes-filter').value; 
     
     const filtrados = clientesGlobal.filter(c => {
         const coincideTexto = (c.cliente || "").toLowerCase().includes(texto) || (c.tienda || "").toLowerCase().includes(texto);
-        
         let coincideMes = true;
         if (mesSeleccionado) {
             if (c.fechaEntrega) {
                 let fechaObj = new Date(c.fechaEntrega);
                 fechaObj.setMinutes(fechaObj.getMinutes() + fechaObj.getTimezoneOffset());
-                
                 let yyyy = fechaObj.getFullYear();
                 let mm = String(fechaObj.getMonth() + 1).padStart(2, '0');
-                let fechaRegistro = `${yyyy}-${mm}`;
-                
-                coincideMes = (fechaRegistro === mesSeleccionado);
-            } else {
-                coincideMes = false; // Si seleccionaste un mes, pero este cliente no tiene fecha, lo ocultamos.
-            }
+                coincideMes = (`${yyyy}-${mm}` === mesSeleccionado);
+            } else { coincideMes = false; }
         }
-        
         return coincideTexto && coincideMes;
     });
-    
     renderClientes(filtrados);
 }
 
@@ -240,39 +194,21 @@ function agregarAlCarrito(codigoProd) {
     if (item) item.cantidad++;
     else carrito.push({ codigo: prod.codigo, nombre: prod.nombre, prodCompleto: prod, cantidad: 1 });
     actualizarCarrito();
-    
     const fab = document.getElementById('btn-flotante-carrito');
     fab.style.transform = 'scale(1.15)';
     setTimeout(() => fab.style.transform = 'scale(1)', 200);
 }
 
-function sumarCantidad(index) {
-    carrito[index].cantidad++;
-    actualizarCarrito();
-}
-
-function restarCantidad(index) {
-    if (carrito[index].cantidad > 1) {
-        carrito[index].cantidad--;
-        actualizarCarrito();
-    } else {
-        quitarDelCarrito(index);
-    }
-}
-
-function quitarDelCarrito(index) {
-    carrito.splice(index, 1);
-    actualizarCarrito();
-}
+function sumarCantidad(index) { carrito[index].cantidad++; actualizarCarrito(); }
+function restarCantidad(index) { if (carrito[index].cantidad > 1) { carrito[index].cantidad--; actualizarCarrito(); } else { quitarDelCarrito(index); } }
+function quitarDelCarrito(index) { carrito.splice(index, 1); actualizarCarrito(); }
 
 function actualizarCarrito() {
     const contenedor = document.getElementById('carrito-items');
     contenedor.innerHTML = "";
     let subtotalAcumulado = 0, cantidadTotal = 0;
     
-    if (carrito.length === 0) {
-        contenedor.innerHTML = `<div style="text-align:center; color:#cbd5e1; padding: 30px 0;"><i class="fa-solid fa-cart-arrow-down" style="font-size:45px; margin-bottom:10px;"></i><p>Carrito vacío</p></div>`;
-    }
+    if (carrito.length === 0) contenedor.innerHTML = `<div style="text-align:center; color:#cbd5e1; padding: 30px 0;"><i class="fa-solid fa-cart-arrow-down" style="font-size:45px; margin-bottom:10px;"></i><p>Carrito vacío</p></div>`;
     
     carrito.forEach((item, index) => {
         let precioAplicado = item.prodCompleto.precioUnitario || 0;
@@ -286,32 +222,65 @@ function actualizarCarrito() {
         
         contenedor.innerHTML += `
             <div class="item-carrito">
-                <div class="item-info-header">
-                    <div>
-                        <h4>${item.nombre}</h4>
-                        <p>Lps. ${formatoMoneda(precioAplicado)} c/u</p>
-                    </div>
-                    <div style="text-align:right; font-weight:bold; color:var(--text-dark);">
-                        Lps. ${formatoMoneda(subtotalItem)}
-                    </div>
-                </div>
+                <div class="item-info-header"><div><h4>${item.nombre}</h4><p>Lps. ${formatoMoneda(precioAplicado)} c/u</p></div><div style="text-align:right; font-weight:bold; color:var(--text-dark);">Lps. ${formatoMoneda(subtotalItem)}</div></div>
                 <div class="item-controles">
-                    <div class="qty-box">
-                        <button type="button" class="btn-qty" onclick="restarCantidad(${index})"><i class="fa-solid fa-minus"></i></button>
-                        <span style="font-weight:700; width:20px; text-align:center;">${item.cantidad}</span>
-                        <button type="button" class="btn-qty" onclick="sumarCantidad(${index})"><i class="fa-solid fa-plus"></i></button>
-                    </div>
+                    <div class="qty-box"><button type="button" class="btn-qty" onclick="restarCantidad(${index})"><i class="fa-solid fa-minus"></i></button><span style="font-weight:700; width:20px; text-align:center;">${item.cantidad}</span><button type="button" class="btn-qty" onclick="sumarCantidad(${index})"><i class="fa-solid fa-plus"></i></button></div>
                     <button type="button" class="btn-remove" onclick="quitarDelCarrito(${index})"><i class="fa-solid fa-trash"></i></button>
                 </div>
-            </div>
-        `;
+            </div>`;
     });
     
     let granTotal = subtotalAcumulado > 0 ? Math.ceil(subtotalAcumulado) + 1 : 0;
-    
     document.getElementById('contador-carrito').innerText = cantidadTotal;
     document.getElementById('subtotal-display').innerText = formatoMoneda(subtotalAcumulado);
     document.getElementById('gran-total').innerText = formatoMoneda(granTotal);
+}
+
+// ==== LÓGICA DE AGREGAR PRODUCTO DESDE CÁMARA ====
+function procesarImagen(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    imgName = file.name;
+    imgMimeType = file.type;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        imgBase64Data = e.target.result.split(',')[1];
+        document.getElementById('foto-estado').style.display = 'block'; // Muestra que la foto se cargó
+    };
+    reader.readAsDataURL(file);
+}
+
+async function guardarProductoNuevo(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btn-guardar-prod');
+    btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Subiendo..."; 
+    btn.disabled = true;
+
+    const nuevoProd = {
+        accion: "agregar_producto",
+        codigo: document.getElementById('p-codigo').value,
+        marca: document.getElementById('p-marca').value,
+        nombre: document.getElementById('p-nombre').value,
+        categoria: document.getElementById('p-categoria').value,
+        stock: document.getElementById('p-stock').value,
+        costo: document.getElementById('p-costo').value,
+        precio: document.getElementById('p-precio').value,
+        imagenBase64: imgBase64Data,
+        mimeType: imgMimeType,
+        nombreArchivo: imgName
+    };
+
+    try {
+        await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(nuevoProd) });
+        alert("¡Producto guardado exitosamente!");
+        location.reload(); 
+    } catch (error) {
+        alert("Error al subir el producto.");
+        btn.innerHTML = "<i class='fa-solid fa-cloud-arrow-up'></i> Guardar en Inventario"; 
+        btn.disabled = false;
+    }
 }
 
 async function guardarCotizacion(e) {
@@ -319,11 +288,10 @@ async function guardarCotizacion(e) {
     if (carrito.length === 0) return alert("Agrega productos primero.");
     const btn = document.getElementById('btn-guardar');
     btn.innerHTML = "Guardando..."; btn.disabled = true;
-
-    // Quitamos las comas para guardarlo limpio en Excel
     const totalCrudo = document.getElementById('gran-total').innerText.replace(/,/g, '');
 
     const cotizacion = {
+        accion: "guardar_cotizacion", // Ahora especificamos qué hace este formulario
         cliente: document.getElementById('c-nombre').value,
         tienda: document.getElementById('c-tienda').value,
         telefono: document.getElementById('c-tel').value,
@@ -337,18 +305,14 @@ async function guardarCotizacion(e) {
         await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(cotizacion) });
         alert("¡Guardado exitosamente!");
         location.reload(); 
-    } catch (error) {
-        alert("Error de conexión al guardar.");
-    }
+    } catch (error) { alert("Error de conexión al guardar."); }
 }
 
 function renderClientes(clientes) {
     const tbody = document.getElementById('lista-clientes');
     tbody.innerHTML = "";
-    
     clientes.forEach((c, index) => {
         let fecha = formatearFecha(c.fechaEntrega);
-        // Aquí insertamos el total formateado con comas
         tbody.innerHTML += `
             <tr onclick="abrirDetalle(${index})" style="cursor:pointer; border-bottom: 1px solid #f1f5f9; transition:0.2s;">
                 <td data-label="Tienda / Cliente" style="padding:15px;"><strong>${c.tienda}</strong><br><span style="font-size:0.8rem; color:var(--text-muted);">${c.cliente}</span></td>
@@ -356,8 +320,7 @@ function renderClientes(clientes) {
                 <td data-label="Entrega" style="padding:15px; font-size:0.9rem;">${fecha}</td>
                 <td data-label="Total" style="color:var(--success); font-weight:800; padding:15px;">Lps. ${formatoMoneda(c.total)}</td>
                 <td data-label="Acción" style="padding:15px;"><button class="btn-secundario" style="padding: 10px; width:40px; height:40px; border-radius:10px;"><i class="fa-solid fa-eye"></i></button></td>
-            </tr>
-        `;
+            </tr>`;
     });
 }
 
@@ -367,24 +330,15 @@ function abrirDetalle(index) {
     const modal = document.getElementById('modal-detalle');
     
     document.getElementById('detalle-info').innerHTML = `
-        <strong>Cliente:</strong> ${c.cliente} <br>
-        <strong>Tienda:</strong> ${c.tienda} <br>
-        <strong>Teléfono:</strong> ${c.telefono} <br>
-        <strong>Dirección:</strong> ${c.lugar} <br>
-        <strong>Entrega:</strong> ${formatearFecha(c.fechaEntrega)} <br>
-        <strong style="font-size:1.2rem; color:var(--success); display:block; margin-top:10px;">Total Orden: Lps. ${formatoMoneda(c.total)}</strong>
-    `;
+        <strong>Cliente:</strong> ${c.cliente} <br><strong>Tienda:</strong> ${c.tienda} <br><strong>Teléfono:</strong> ${c.telefono} <br>
+        <strong>Dirección:</strong> ${c.lugar} <br><strong>Entrega:</strong> ${formatearFecha(c.fechaEntrega)} <br>
+        <strong style="font-size:1.2rem; color:var(--success); display:block; margin-top:10px;">Total Orden: Lps. ${formatoMoneda(c.total)}</strong>`;
 
     let htmlItems = "";
     if (c.carrito) {
         try {
-            const arrCarrito = JSON.parse(c.carrito);
-            arrCarrito.forEach(item => {
-                htmlItems += `<div style="border-bottom: 1px solid #f1f5f9; padding: 10px 0; display:flex; justify-content:space-between; font-size:0.9rem;">
-                    <span><b>${item.cantidad}x</b> ${item.nombre}</span>
-                </div>`;
-            });
-        } catch(e) { htmlItems = "Error leyendo productos."; }
+            JSON.parse(c.carrito).forEach(item => { htmlItems += `<div style="border-bottom: 1px solid #f1f5f9; padding: 10px 0; display:flex; justify-content:space-between; font-size:0.9rem;"><span><b>${item.cantidad}x</b> ${item.nombre}</span></div>`; });
+        } catch(e) {}
     }
     
     document.getElementById('detalle-items').innerHTML = htmlItems || "<p style='color:#64748b;'>Sin detalles guardados.</p>";
@@ -399,15 +353,9 @@ function editarCotizacion() {
         document.getElementById('c-tienda').value = c.tienda;
         document.getElementById('c-tel').value = c.telefono;
         document.getElementById('c-lugar').value = c.lugar;
+        if (c.fechaEntrega) document.getElementById('c-fecha-entrega').value = new Date(c.fechaEntrega).toISOString().split('T')[0];
         
-        if (c.fechaEntrega) {
-            let dateObj = new Date(c.fechaEntrega);
-            document.getElementById('c-fecha-entrega').value = dateObj.toISOString().split('T')[0];
-        }
-        
-        cerrarDetalle();
-        actualizarCarrito();
-        abrirCarrito();
+        cerrarDetalle(); actualizarCarrito(); abrirCarrito();
     }
 }
 
@@ -423,7 +371,6 @@ function generarFactura() {
             else if (item.cantidad >= 6 && item.prodCompleto.precio6 > 0) precioAplicado = item.prodCompleto.precio6;
             else if (item.cantidad >= 5 && item.prodCompleto.precio5 > 0) precioAplicado = item.prodCompleto.precio5;
         }
-        
         const subtotalItem = precioAplicado * item.cantidad;
 
         htmlItems += `<tr>
@@ -446,7 +393,6 @@ function generarFactura() {
             tr { page-break-inside: avoid; page-break-after: auto; }
             thead { display: table-header-group; }
             th { background: #f8fafc; padding: 12px; text-align: left; color: #475569; border-bottom:2px solid #e2e8f0;}
-            /* Agregamos white-space:nowrap a las columnas de dinero para que no se partan */
             th.dinero { text-align: right; white-space: nowrap; }
             .total { text-align: right; font-size: 22px; font-weight: bold; color: #10b981; padding-top:20px; border-top:2px solid #e2e8f0; page-break-inside: avoid;}
             .footer { text-align: center; font-size: 12px; color: #64748b; margin-top: 50px; page-break-inside: avoid;}
@@ -458,17 +404,7 @@ function generarFactura() {
                 <div><b>Cliente:</b> ${c.cliente}<br><b>Tienda:</b> ${c.tienda}<br><b>Teléfono:</b> ${c.telefono}</div>
                 <div style="text-align: right;"><b>N° Orden:</b> EG-${nOrden}<br><b>Fecha:</b> ${formatearFecha(c.fechaEntrega)}<br><b>Lugar:</b> ${c.lugar}</div>
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 10%; text-align:center;">Cant.</th>
-                        <th>Descripción del Producto</th>
-                        <th class="dinero" style="width: 25%;">Precio Unit.</th>
-                        <th class="dinero" style="width: 25%;">Total</th>
-                    </tr>
-                </thead>
-                <tbody>${htmlItems}</tbody>
-            </table>
+            <table><thead><tr><th style="width: 10%; text-align:center;">Cant.</th><th>Descripción del Producto</th><th class="dinero" style="width: 25%;">Precio Unit.</th><th class="dinero" style="width: 25%;">Total</th></tr></thead><tbody>${htmlItems}</tbody></table>
             <div class="total">Total a Cobrar: Lps. ${formatoMoneda(c.total)}</div>
             <div class="footer">¡Gracias por su preferencia!<br>Documento generado para control y validación de entrega.<br><br><b>Generado por: Renee Coello</b></div>
             <script>window.print();</script>
@@ -480,35 +416,13 @@ function generarFactura() {
 function enviarWhatsApp() {
     const c = clientesGlobal[indiceCotizacionActiva];
     if (!c) return;
-
-    // 1. Convertimos el teléfono a texto explícitamente para evitar el error de Google Sheets
     let telefono = String(c.telefono).replace(/\D/g, '');
-    
-    // 2. Validamos el código de Honduras (+504)
     if (telefono.length === 8) telefono = '504' + telefono;
     else if (!telefono.startsWith('504')) telefono = '504' + telefono;
 
-    // 3. Construimos el mensaje
-    let mensaje = `*¡Hola ${c.cliente}!* 👋\n`;
-    mensaje += `Aquí tienes el resumen de tu pedido de *DISTRIBUCIONES E&G*:\n\n`;
-    mensaje += `🏢 *Tienda:* ${c.tienda}\n`;
-    mensaje += `📅 *Fecha de Entrega:* ${formatearFecha(c.fechaEntrega)}\n`;
-    mensaje += `📍 *Lugar:* ${c.lugar}\n\n`;
-    mensaje += `*🛒 Detalle del pedido:*\n`;
+    let mensaje = `*¡Hola ${c.cliente}!* 👋\nAquí tienes el resumen de tu pedido de *DISTRIBUCIONES E&G*:\n\n🏢 *Tienda:* ${c.tienda}\n📅 *Fecha de Entrega:* ${formatearFecha(c.fechaEntrega)}\n📍 *Lugar:* ${c.lugar}\n\n*🛒 Detalle del pedido:*\n`;
+    if (c.carrito) { try { JSON.parse(c.carrito).forEach(item => { mensaje += `▪️ ${item.cantidad}x ${item.nombre}\n`; }); } catch(e) {} }
+    mensaje += `\n💰 *Total a Pagar:* Lps. ${formatoMoneda(c.total)}\n\n¡Gracias por tu preferencia!`;
 
-    if (c.carrito) {
-        try {
-            const arrCarrito = JSON.parse(c.carrito);
-            arrCarrito.forEach(item => { 
-                mensaje += `▪️ ${item.cantidad}x ${item.nombre}\n`; 
-            });
-        } catch(e) {}
-    }
-
-    mensaje += `\n💰 *Total a Pagar:* Lps. ${formatoMoneda(c.total)}\n\n`;
-    mensaje += `¡Gracias por tu preferencia!`;
-
-    // 4. Usamos la API universal de WhatsApp que no falla en celulares
-    const url = `https://api.whatsapp.com/send?phone=${telefono}&text=${encodeURIComponent(mensaje)}`;
-    window.open(url, '_blank');
+    window.open(`https://api.whatsapp.com/send?phone=${telefono}&text=${encodeURIComponent(mensaje)}`, '_blank');
 }

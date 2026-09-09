@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DISTRIBUCIONES E&G</title>
-    <link rel="stylesheet" href="style.css?v=15">
+    <link rel="stylesheet" href="style.css?v=20">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
@@ -20,9 +20,7 @@
         </div>
     </header>
 
-    <!-- Pestaña Tienda -->
     <div id="view-tienda" class="view-section active">
-        <!-- Controles exclusivos de la tienda -->
         <div class="controls-container">
             <div class="search-box">
                 <i class="fa-solid fa-magnifying-glass"></i>
@@ -31,49 +29,34 @@
             <select id="cat-filter" onchange="filtrarProductos()">
                 <option value="Todas">Todas las categorías</option>
             </select>
+            <!-- BOTÓN SECRETO PARA AGREGAR PRODUCTO (Solo sale cuando pones tu clave) -->
+            <button id="btn-add-producto-nuevo" onclick="abrirModalProducto()" style="display:none; background:var(--success); color:white; border:none; padding:12px; border-radius:12px; font-weight:700; cursor:pointer;"><i class="fa-solid fa-plus"></i> Nuevo</button>
         </div>
         <main><section id="productos-grid" class="grid"></section></main>
     </div>
 
-    <!-- Pestaña Clientes -->
     <div id="view-clientes" class="view-section">
-        <!-- Controles exclusivos de los clientes -->
         <div class="controls-container">
             <div class="search-box">
                 <i class="fa-solid fa-user-magnifying-glass"></i>
-                <input type="text" id="search-client" placeholder="Buscar por cliente o tienda..." onkeyup="filtrarClientes()">
+                <input type="text" id="search-client" placeholder="Buscar por cliente..." onkeyup="filtrarClientes()">
             </div>
-            <!-- Nuevo Filtro por Mes y Año -->
             <input type="month" id="mes-filter" class="mes-filter-input" onchange="filtrarClientes()" title="Filtrar por Mes y Año">
         </div>
         <div class="table-container">
             <table id="tabla-clientes">
-                <thead>
-                    <tr>
-                        <th>Tienda / Cliente</th>
-                        <th>Contacto</th>
-                        <th>Entrega</th>
-                        <th>Total</th>
-                        <th>Acción</th>
-                    </tr>
-                </thead>
+                <thead><tr><th>Tienda / Cliente</th><th>Contacto</th><th>Entrega</th><th>Total</th><th>Acción</th></tr></thead>
                 <tbody id="lista-clientes"></tbody>
             </table>
         </div>
     </div>
 
-    <button id="btn-flotante-carrito" onclick="abrirCarrito()">
-        <i class="fa-solid fa-cart-shopping"></i>
-        <span id="contador-carrito">0</span>
-    </button>
+    <button id="btn-flotante-carrito" onclick="abrirCarrito()"><i class="fa-solid fa-cart-shopping"></i><span id="contador-carrito">0</span></button>
 
-    <!-- Modal del Carrito -->
+    <!-- Modal Carrito -->
     <div id="modal-carrito" class="modal-oculto">
         <div class="modal-contenido">
-            <div class="modal-header">
-                <h2>Resumen de Orden</h2>
-                <button class="btn-cerrar" onclick="cerrarCarrito()"><i class="fa-solid fa-xmark"></i></button>
-            </div>
+            <div class="modal-header"><h2>Resumen de Orden</h2><button class="btn-cerrar" onclick="cerrarCarrito()"><i class="fa-solid fa-xmark"></i></button></div>
             <div class="modal-body">
                 <div id="carrito-items"></div>
                 <div class="totales-caja">
@@ -86,45 +69,73 @@
                     <input type="text" id="c-tienda" placeholder="Nombre de la Tienda" required>
                     <input type="tel" id="c-tel" placeholder="Número de Teléfono" required>
                     <input type="text" id="c-lugar" placeholder="Lugar / Dirección Exacta" required>
-                    <div class="fecha-box">
-                        <label>Día de entrega:</label>
-                        <input type="date" id="c-fecha-entrega" required>
-                    </div>
-                    <button type="submit" id="btn-guardar" class="btn-primario">
-                        <i class="fa-solid fa-floppy-disk"></i> Guardar Orden
-                    </button>
+                    <div class="fecha-box"><label>Día de entrega:</label><input type="date" id="c-fecha-entrega" required></div>
+                    <button type="submit" id="btn-guardar" class="btn-primario"><i class="fa-solid fa-floppy-disk"></i> Guardar Orden</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Modal Detalle Cotización / Factura -->
+    <!-- Modal Detalle Cliente -->
     <div id="modal-detalle" class="modal-oculto">
         <div class="modal-contenido">
-            <div class="modal-header">
-                <h2>Detalle de Orden</h2>
-                <button class="btn-cerrar" onclick="cerrarDetalle()"><i class="fa-solid fa-xmark"></i></button>
-            </div>
+            <div class="modal-header"><h2>Detalle de Orden</h2><button class="btn-cerrar" onclick="cerrarDetalle()"><i class="fa-solid fa-xmark"></i></button></div>
             <div class="modal-body">
                 <div id="detalle-info" class="detalle-info-caja"></div>
                 <h3>Productos Solicitados</h3>
                 <div id="detalle-items" class="detalle-items-caja"></div>
-<div class="botones-accion-detalle">
-                    <button onclick="editarCotizacion()" class="btn-secundario">
-                        <i class="fa-solid fa-pen-to-square"></i> Modificar
-                    </button>
-                    <button onclick="generarFactura()" class="btn-primario">
-                        <i class="fa-solid fa-file-invoice"></i> PDF
-                    </button>
-                    <!-- NUEVO BOTÓN DE WHATSAPP -->
-                    <button onclick="enviarWhatsApp()" class="btn-whatsapp">
-                        <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem;"></i> Enviar
-                    </button>
+                <div class="botones-accion-detalle">
+                    <button onclick="editarCotizacion()" class="btn-secundario"><i class="fa-solid fa-pen-to-square"></i> Modificar</button>
+                    <button onclick="generarFactura()" class="btn-primario"><i class="fa-solid fa-file-invoice"></i> PDF</button>
+                    <button onclick="enviarWhatsApp()" class="btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Enviar</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="app.js?v=15"></script>
+    <!-- === NUEVO MODAL: AGREGAR PRODUCTO CON CÁMARA === -->
+    <div id="modal-producto" class="modal-oculto">
+        <div class="modal-contenido">
+            <div class="modal-header"><h2>Agregar Producto</h2><button class="btn-cerrar" onclick="cerrarModalProducto()"><i class="fa-solid fa-xmark"></i></button></div>
+            <div class="modal-body">
+                <form id="form-producto" onsubmit="guardarProductoNuevo(event)" style="display: flex; flex-direction: column; gap: 12px;">
+                    
+                    <!-- Este input abre la cámara del celular -->
+                    <label style="background: #eef2ff; color: var(--accent); padding: 15px; border-radius: 12px; text-align: center; font-weight: bold; cursor: pointer; border: 2px dashed #c7d2fe;">
+                        <i class="fa-solid fa-camera" style="font-size: 24px; display:block; margin-bottom:5px;"></i> Tomar o Subir Foto
+                        <input type="file" id="p-foto" accept="image/*" capture="environment" onchange="procesarImagen(event)" style="display:none;">
+                    </label>
+                    <p id="foto-estado" style="text-align:center; font-size:0.8rem; color:var(--success); margin:0; display:none;"><i class="fa-solid fa-check-circle"></i> Foto lista</p>
+
+                    <input type="text" id="p-codigo" placeholder="Código / SKU (Ej: PROD-01)" required style="padding:14px; border-radius:10px; border:1px solid #e2e8f0;">
+                    <input type="text" id="p-marca" placeholder="Marca (Ej: Yummies)" required style="padding:14px; border-radius:10px; border:1px solid #e2e8f0;">
+                    <input type="text" id="p-nombre" placeholder="Nombre del Producto" required style="padding:14px; border-radius:10px; border:1px solid #e2e8f0;">
+                    
+                    <select id="p-categoria" required style="padding:14px; border-radius:10px; border:1px solid #e2e8f0;">
+                        <option value="">Selecciona la Categoría</option>
+                        <option value="Limpieza">Limpieza</option>
+                        <option value="Higiene">Higiene</option>
+                        <option value="Abarrotes">Abarrotes</option>
+                        <option value="Snacks">Snacks</option>
+                        <option value="Lacteos">Lácteos</option>
+                        <option value="Bebidas">Bebidas</option>
+                        <option value="Gamer">Gamer</option>
+                        <option value="Accesorio">Accesorio (Tecnología)</option>
+                    </select>
+
+                    <div style="display:flex; gap:10px;">
+                        <input type="number" id="p-stock" placeholder="Stock Inicial" required style="padding:14px; border-radius:10px; border:1px solid #e2e8f0; width:50%;">
+                        <input type="number" id="p-costo" placeholder="Costo Lps." step="0.01" required style="padding:14px; border-radius:10px; border:1px solid #e2e8f0; width:50%;">
+                    </div>
+                    
+                    <input type="number" id="p-precio" placeholder="Precio Público Lps." step="0.01" required style="padding:14px; border-radius:10px; border:1px solid #e2e8f0; font-weight:bold; color:var(--success);">
+
+                    <button type="submit" id="btn-guardar-prod" class="btn-primario" style="margin-top:10px;"><i class="fa-solid fa-cloud-arrow-up"></i> Guardar en Inventario</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js?v=20"></script>
 </body>
 </html>
