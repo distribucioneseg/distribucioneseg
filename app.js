@@ -327,3 +327,43 @@ function generarFactura() {
     `);
     ventana.document.close();
 }
+
+// ==== ENVIAR POR WHATSAPP ====
+function enviarWhatsApp() {
+    const c = clientesGlobal[indiceCotizacionActiva];
+    if (!c) return;
+
+    // 1. Limpiamos el número de teléfono (quitamos espacios o guiones si los hay)
+    let telefono = c.telefono.replace(/\D/g, '');
+
+    // 2. Validamos el código de Honduras (+504)
+    if (telefono.length === 8) {
+        telefono = '504' + telefono; // Si solo puso 8 números, le agregamos el 504
+    } else if (!telefono.startsWith('504')) {
+        telefono = '504' + telefono; // Por precaución
+    }
+
+    // 3. Construimos el mensaje de forma elegante
+    let mensaje = `*¡Hola ${c.cliente}!* 👋\n`;
+    mensaje += `Aquí tienes el resumen de tu pedido de *DISTRIBUCIONES E&G*:\n\n`;
+    mensaje += `🏢 *Tienda:* ${c.tienda}\n`;
+    mensaje += `📅 *Fecha de Entrega:* ${formatearFecha(c.fechaEntrega)}\n`;
+    mensaje += `📍 *Lugar:* ${c.lugar}\n\n`;
+    mensaje += `*🛒 Detalle del pedido:*\n`;
+
+    if (c.carrito) {
+        try {
+            const arrCarrito = JSON.parse(c.carrito);
+            arrCarrito.forEach(item => {
+                mensaje += `▪️ ${item.cantidad}x ${item.nombre}\n`;
+            });
+        } catch(e) {}
+    }
+
+    mensaje += `\n💰 *Total a Pagar:* Lps. ${formatoMoneda(c.total)}\n\n`;
+    mensaje += `¡Gracias por tu preferencia!`;
+
+    // 4. Abrimos WhatsApp con el texto codificado
+    const url = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
+    window.open(url, '_blank');
+}

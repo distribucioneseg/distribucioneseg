@@ -104,3 +104,7 @@ body.show-admin .admin-panel { display: block; }
     .modal-contenido { height: 85vh; border-radius: 24px; }
     .botones-accion-detalle { display: flex; gap: 10px; }
 }
+
+/* --- Botón de WhatsApp --- */
+.btn-whatsapp { background: #25D366; color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 700; font-size: 1rem; width: 100%; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s;}
+.btn-whatsapp:active { transform: scale(0.96); }
