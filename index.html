@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DISTRIBUCIONES E&G</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Iconos de Google -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Iconos reparados (Usando FontAwesome CDN por estabilidad) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <header>
@@ -16,13 +16,13 @@
         <div class="tabs">
             <button onclick="switchTab('tienda')" class="active" id="tab-tienda">Tienda</button>
             <button onclick="switchTab('clientes')" id="tab-clientes">Clientes</button>
-            <button onclick="toggleAdmin()" id="btn-admin"><span class="material-icons" style="font-size: 18px;">admin_panel_settings</span></button>
+            <button onclick="toggleAdmin()" id="btn-admin"><i class="fa-solid fa-user-shield"></i></button>
         </div>
     </header>
 
     <div class="controls-container">
         <div class="search-box">
-            <span class="material-icons">search</span>
+            <i class="fa-solid fa-magnifying-glass"></i>
             <input type="text" id="search-prod" placeholder="Buscar producto..." onkeyup="filtrarProductos()">
         </div>
         <select id="cat-filter" onchange="filtrarProductos()">
@@ -30,18 +30,16 @@
         </select>
     </div>
 
-    <!-- Pestaña Tienda -->
     <div id="view-tienda" class="view-section active">
         <main>
             <section id="productos-grid" class="grid"></section>
         </main>
     </div>
 
-    <!-- Pestaña Clientes -->
     <div id="view-clientes" class="view-section">
         <div class="controls-container" style="margin-top: 0;">
             <div class="search-box">
-                <span class="material-icons">person_search</span>
+                <i class="fa-solid fa-user-magnifying-glass"></i>
                 <input type="text" id="search-client" placeholder="Buscar por cliente o tienda..." onkeyup="filtrarClientes()">
             </div>
         </div>
@@ -63,7 +61,7 @@
 
     <!-- BOTÓN FLOTANTE DEL CARRITO -->
     <button id="btn-flotante-carrito" onclick="abrirCarrito()">
-        <span class="material-icons">shopping_cart</span>
+        <i class="fa-solid fa-cart-shopping"></i>
         <span id="contador-carrito">0</span>
     </button>
 
@@ -72,13 +70,13 @@
         <div class="modal-contenido">
             <div class="modal-header">
                 <h2>Resumen de Cotización</h2>
-                <button class="btn-cerrar" onclick="cerrarCarrito()"><span class="material-icons">close</span></button>
+                <button class="btn-cerrar" onclick="cerrarCarrito()"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
             <div class="modal-body">
                 <div id="carrito-items">
                     <div class="empty-state">
-                        <span class="material-icons" style="font-size: 48px; color: #ccc;">remove_shopping_cart</span>
+                        <i class="fa-solid fa-cart-arrow-down" style="font-size: 48px; color: #ccc;"></i>
                         <p>No has agregado productos</p>
                     </div>
                 </div>
@@ -99,13 +97,14 @@
                         <input type="date" id="c-fecha-entrega" required>
                     </div>
                     <button type="submit" id="btn-guardar" class="btn-verde">
-                        <span class="material-icons">save</span> Guardar Cotización
+                        <i class="fa-solid fa-floppy-disk"></i> Guardar Cotización
                     </button>
                 </form>
             </div>
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <!-- Forzamos al navegador a no usar caché añadiendo un parámetro falso al script -->
+    <script src="app.js?v=2"></script>
 </body>
 </html>
