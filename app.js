@@ -36,7 +36,6 @@ function toggleAdmin() {
     }
 }
 
-// Funciones del Modal
 function abrirCarrito() { document.getElementById('modal-carrito').style.display = 'flex'; }
 function cerrarCarrito() { document.getElementById('modal-carrito').style.display = 'none'; }
 
@@ -45,10 +44,9 @@ function renderProductos(productos) {
     grid.innerHTML = "";
     
     productos.forEach((prod, index) => {
-        // Aseguramos que el precio sea válido para evitar errores
         let precioBase = prod.precioUnitario || 0;
-        
         let tablaDescuentos = "";
+        
         if (prod.precio5 || prod.precio6 || prod.precio12) {
             tablaDescuentos = `<div class="tabla-descuentos">
                 ${prod.precio5 ? `<div class="tag-desc">5+ Unids: <b>Lps. ${prod.precio5}</b></div>` : ''}
@@ -71,7 +69,7 @@ function renderProductos(productos) {
                 ${tablaDescuentos}
                 
                 <button class="btn-add" onclick="agregarAlCarrito(${index})">
-                    <span class="material-icons" style="font-size: 18px;">add_shopping_cart</span> Agregar
+                    <i class="fa-solid fa-cart-plus"></i> Agregar
                 </button>
                 
                 <div class="admin-panel">
@@ -111,7 +109,6 @@ function agregarAlCarrito(index) {
     }
     actualizarCarrito();
     
-    // Pequeño efecto visual en el botón flotante
     const fab = document.getElementById('btn-flotante-carrito');
     fab.style.transform = 'scale(1.2)';
     setTimeout(() => fab.style.transform = 'scale(1)', 200);
@@ -129,7 +126,7 @@ function actualizarCarrito() {
     let cantidadTotal = 0;
     
     if (carrito.length === 0) {
-        contenedor.innerHTML = `<div class="empty-state"><span class="material-icons" style="font-size: 48px; color: #ccc;">remove_shopping_cart</span><p>No has agregado productos</p></div>`;
+        contenedor.innerHTML = `<div class="empty-state"><i class="fa-solid fa-cart-arrow-down" style="font-size: 48px; color: #ccc;"></i><p>No has agregado productos</p></div>`;
     }
     
     carrito.forEach((item, index) => {
@@ -151,7 +148,7 @@ function actualizarCarrito() {
                     <span>Cantidad: ${item.cantidad} | Subtotal: Lps. ${subtotalItem.toFixed(2)}</span>
                 </div>
                 <button class="btn-remove" onclick="quitarDelCarrito(${index})">
-                    <span class="material-icons" style="font-size: 18px;">delete</span>
+                    <i class="fa-solid fa-trash"></i>
                 </button>
             </div>
         `;
@@ -171,7 +168,7 @@ async function guardarCotizacion(e) {
     e.preventDefault();
     if (carrito.length === 0) return alert("El carrito está vacío. Agrega productos primero.");
     const btn = document.getElementById('btn-guardar');
-    btn.innerHTML = "<span class='material-icons'>hourglass_empty</span> Guardando..."; 
+    btn.innerHTML = "<i class='fa-solid fa-hourglass-half'></i> Guardando..."; 
     btn.disabled = true;
 
     const cotizacion = {
@@ -190,11 +187,11 @@ async function guardarCotizacion(e) {
         carrito = [];
         actualizarCarrito();
         document.getElementById('form-cotizacion').reset();
-        cerrarCarrito(); // Cerramos la ventana modal tras guardar
+        cerrarCarrito();
     } catch (error) {
         alert("Error de conexión al guardar. Verifica tu internet.");
     } finally {
-        btn.innerHTML = "<span class='material-icons'>save</span> Guardar Cotización"; 
+        btn.innerHTML = "<i class='fa-solid fa-floppy-disk'></i> Guardar Cotización"; 
         btn.disabled = false;
     }
 }
