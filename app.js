@@ -387,10 +387,14 @@ function enviarWhatsApp() {
     const c = clientesGlobal[indiceCotizacionActiva];
     if (!c) return;
 
-    let telefono = c.telefono.replace(/\D/g, '');
+    // 1. Convertimos el teléfono a texto explícitamente para evitar el error de Google Sheets
+    let telefono = String(c.telefono).replace(/\D/g, '');
+    
+    // 2. Validamos el código de Honduras (+504)
     if (telefono.length === 8) telefono = '504' + telefono;
     else if (!telefono.startsWith('504')) telefono = '504' + telefono;
 
+    // 3. Construimos el mensaje
     let mensaje = `*¡Hola ${c.cliente}!* 👋\n`;
     mensaje += `Aquí tienes el resumen de tu pedido de *DISTRIBUCIONES E&G*:\n\n`;
     mensaje += `🏢 *Tienda:* ${c.tienda}\n`;
@@ -401,13 +405,16 @@ function enviarWhatsApp() {
     if (c.carrito) {
         try {
             const arrCarrito = JSON.parse(c.carrito);
-            arrCarrito.forEach(item => { mensaje += `▪️ ${item.cantidad}x ${item.nombre}\n`; });
+            arrCarrito.forEach(item => { 
+                mensaje += `▪️ ${item.cantidad}x ${item.nombre}\n`; 
+            });
         } catch(e) {}
     }
 
     mensaje += `\n💰 *Total a Pagar:* Lps. ${formatoMoneda(c.total)}\n\n`;
     mensaje += `¡Gracias por tu preferencia!`;
 
-    const url = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
+    // 4. Usamos la API universal de WhatsApp que no falla en celulares
+    const url = `https://api.whatsapp.com/send?phone=${telefono}&text=${encodeURIComponent(mensaje)}`;
     window.open(url, '_blank');
 }
