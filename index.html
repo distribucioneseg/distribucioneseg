@@ -2,68 +2,107 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DISTRIBUCIONES E&G</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Iconos de Google -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
     <header>
-        <h1>DISTRIBUCIONES E&G</h1>
+        <div class="logo-area">
+            <h1>DISTRIBUCIONES E&G</h1>
+        </div>
         <div class="tabs">
             <button onclick="switchTab('tienda')" class="active" id="tab-tienda">Tienda</button>
-            <button onclick="switchTab('clientes')" id="tab-clientes">Buscar Clientes</button>
+            <button onclick="switchTab('clientes')" id="tab-clientes">Clientes</button>
+            <button onclick="toggleAdmin()" id="btn-admin"><span class="material-icons" style="font-size: 18px;">admin_panel_settings</span></button>
         </div>
     </header>
 
-    <div id="view-tienda" class="view-section active">
-        <div class="controls">
+    <div class="controls-container">
+        <div class="search-box">
+            <span class="material-icons">search</span>
             <input type="text" id="search-prod" placeholder="Buscar producto..." onkeyup="filtrarProductos()">
-            <select id="cat-filter" onchange="filtrarProductos()">
-                <option value="Todas">Todas las categorías</option>
-            </select>
         </div>
+        <select id="cat-filter" onchange="filtrarProductos()">
+            <option value="Todas">Todas las categorías</option>
+        </select>
+    </div>
 
+    <!-- Pestaña Tienda -->
+    <div id="view-tienda" class="view-section active">
         <main>
             <section id="productos-grid" class="grid"></section>
-            
-            <aside id="carrito-panel">
-                <h2>Cotización Actual</h2>
-                <div id="carrito-items"></div>
-                <div class="totales">
-                    <h3>Total: Lps. <span id="gran-total">0.00</span></h3>
-                </div>
-                
-                <form id="form-cotizacion" onsubmit="guardarCotizacion(event)">
-                    <input type="text" id="c-nombre" placeholder="Nombre del Cliente" required>
-                    <input type="text" id="c-tienda" placeholder="Nombre Tienda (Pulpería, Mini Super...)" required>
-                    <input type="text" id="c-tel" placeholder="Teléfono" required>
-                    <input type="text" id="c-lugar" placeholder="Lugar / Dirección" required>
-                    <label>Día de entrega:</label>
-                    <input type="date" id="c-fecha-entrega" required>
-                    <button type="submit" id="btn-guardar">Guardar Cotización</button>
-                </form>
-            </aside>
         </main>
     </div>
 
+    <!-- Pestaña Clientes -->
     <div id="view-clientes" class="view-section">
-        <div class="controls">
-            <input type="text" id="search-client" placeholder="Buscar por cliente o nombre de tienda..." onkeyup="filtrarClientes()">
+        <div class="controls-container" style="margin-top: 0;">
+            <div class="search-box">
+                <span class="material-icons">person_search</span>
+                <input type="text" id="search-client" placeholder="Buscar por cliente o tienda..." onkeyup="filtrarClientes()">
+            </div>
         </div>
         <div class="table-container">
             <table id="tabla-clientes">
                 <thead>
                     <tr>
-                        <th>Cliente</th>
                         <th>Tienda</th>
+                        <th>Cliente</th>
                         <th>Teléfono</th>
                         <th>Lugar</th>
-                        <th>Última Entrega</th>
-                        <th>Total Cotizado</th>
+                        <th>Total</th>
                     </tr>
                 </thead>
                 <tbody id="lista-clientes"></tbody>
             </table>
+        </div>
+    </div>
+
+    <!-- BOTÓN FLOTANTE DEL CARRITO -->
+    <button id="btn-flotante-carrito" onclick="abrirCarrito()">
+        <span class="material-icons">shopping_cart</span>
+        <span id="contador-carrito">0</span>
+    </button>
+
+    <!-- VENTANA EMERGENTE (MODAL) DE COTIZACIÓN -->
+    <div id="modal-carrito" class="modal-oculto">
+        <div class="modal-contenido">
+            <div class="modal-header">
+                <h2>Resumen de Cotización</h2>
+                <button class="btn-cerrar" onclick="cerrarCarrito()"><span class="material-icons">close</span></button>
+            </div>
+            
+            <div class="modal-body">
+                <div id="carrito-items">
+                    <div class="empty-state">
+                        <span class="material-icons" style="font-size: 48px; color: #ccc;">remove_shopping_cart</span>
+                        <p>No has agregado productos</p>
+                    </div>
+                </div>
+                
+                <div class="totales-caja">
+                    <div class="subtotal-row">Subtotal: <span>Lps. <span id="subtotal-display">0.00</span></span></div>
+                    <div class="total-row">Total a Cobrar: <span>Lps. <span id="gran-total">0.00</span></span></div>
+                </div>
+
+                <form id="form-cotizacion" onsubmit="guardarCotizacion(event)">
+                    <h3 class="form-title">Datos de Entrega</h3>
+                    <input type="text" id="c-nombre" placeholder="Nombre del Cliente" required>
+                    <input type="text" id="c-tienda" placeholder="Nombre de la Tienda" required>
+                    <input type="tel" id="c-tel" placeholder="Número de Teléfono" required>
+                    <input type="text" id="c-lugar" placeholder="Lugar / Dirección Exacta" required>
+                    <div class="fecha-box">
+                        <label>Día de entrega:</label>
+                        <input type="date" id="c-fecha-entrega" required>
+                    </div>
+                    <button type="submit" id="btn-guardar" class="btn-verde">
+                        <span class="material-icons">save</span> Guardar Cotización
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 
