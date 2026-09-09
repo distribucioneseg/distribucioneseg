@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DISTRIBUCIONES E&G</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>DISTRIBUCIONES E&G</h1>
+        <div class="tabs">
+            <button onclick="switchTab('tienda')" class="active" id="tab-tienda">Tienda</button>
+            <button onclick="switchTab('clientes')" id="tab-clientes">Buscar Clientes</button>
+        </div>
+    </header>
+
+    <div id="view-tienda" class="view-section active">
+        <div class="controls">
+            <input type="text" id="search-prod" placeholder="Buscar producto..." onkeyup="filtrarProductos()">
+            <select id="cat-filter" onchange="filtrarProductos()">
+                <option value="Todas">Todas las categorías</option>
+            </select>
+        </div>
+
+        <main>
+            <section id="productos-grid" class="grid"></section>
+            
+            <aside id="carrito-panel">
+                <h2>Cotización Actual</h2>
+                <div id="carrito-items"></div>
+                <div class="totales">
+                    <h3>Total: Lps. <span id="gran-total">0.00</span></h3>
+                </div>
+                
+                <form id="form-cotizacion" onsubmit="guardarCotizacion(event)">
+                    <input type="text" id="c-nombre" placeholder="Nombre del Cliente" required>
+                    <input type="text" id="c-tienda" placeholder="Nombre Tienda (Pulpería, Mini Super...)" required>
+                    <input type="text" id="c-tel" placeholder="Teléfono" required>
+                    <input type="text" id="c-lugar" placeholder="Lugar / Dirección" required>
+                    <label>Día de entrega:</label>
+                    <input type="date" id="c-fecha-entrega" required>
+                    <button type="submit" id="btn-guardar">Guardar Cotización</button>
+                </form>
+            </aside>
+        </main>
+    </div>
+
+    <div id="view-clientes" class="view-section">
+        <div class="controls">
+            <input type="text" id="search-client" placeholder="Buscar por cliente o nombre de tienda..." onkeyup="filtrarClientes()">
+        </div>
+        <div class="table-container">
+            <table id="tabla-clientes">
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Tienda</th>
+                        <th>Teléfono</th>
+                        <th>Lugar</th>
+                        <th>Última Entrega</th>
+                        <th>Total Cotizado</th>
+                    </tr>
+                </thead>
+                <tbody id="lista-clientes"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
