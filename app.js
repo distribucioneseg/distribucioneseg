@@ -322,9 +322,23 @@ function generarFactura() {
     let htmlItems = "";
     
     JSON.parse(c.carrito || "[]").forEach(item => {
+        // 1. Calculamos el precio unitario aplicando descuentos por volumen si aplica
+        let precioAplicado = item.prodCompleto && item.prodCompleto.precioUnitario ? item.prodCompleto.precioUnitario : 0;
+        if (item.prodCompleto) {
+            if (item.cantidad >= 12 && item.prodCompleto.precio12 > 0) precioAplicado = item.prodCompleto.precio12;
+            else if (item.cantidad >= 6 && item.prodCompleto.precio6 > 0) precioAplicado = item.prodCompleto.precio6;
+            else if (item.cantidad >= 5 && item.prodCompleto.precio5 > 0) precioAplicado = item.prodCompleto.precio5;
+        }
+        
+        // 2. Calculamos el subtotal por producto
+        const subtotalItem = precioAplicado * item.cantidad;
+
+        // 3. Generamos las 4 columnas de la tabla
         htmlItems += `<tr>
             <td style="padding:12px; border-bottom:1px solid #e5e7eb; text-align:center;">${item.cantidad}</td>
             <td style="padding:12px; border-bottom:1px solid #e5e7eb;">${item.nombre}</td>
+            <td style="padding:12px; border-bottom:1px solid #e5e7eb; text-align:right;">Lps. ${formatoMoneda(precioAplicado)}</td>
+            <td style="padding:12px; border-bottom:1px solid #e5e7eb; text-align:right; font-weight:bold;">Lps. ${formatoMoneda(subtotalItem)}</td>
         </tr>`;
     });
 
@@ -351,7 +365,14 @@ function generarFactura() {
                 <div style="text-align: right;"><b>N° Orden:</b> EG-${nOrden}<br><b>Fecha:</b> ${formatearFecha(c.fechaEntrega)}<br><b>Lugar:</b> ${c.lugar}</div>
             </div>
             <table>
-                <thead><tr><th style="width: 15%; text-align:center;">Cant.</th><th>Descripción del Producto</th></tr></thead>
+                <thead>
+                    <tr>
+                        <th style="width: 10%; text-align:center;">Cant.</th>
+                        <th>Descripción del Producto</th>
+                        <th style="width: 22%; text-align:right;">Precio Unit.</th>
+                        <th style="width: 22%; text-align:right;">Total</th>
+                    </tr>
+                </thead>
                 <tbody>${htmlItems}</tbody>
             </table>
             <div class="total">Total a Cobrar: Lps. ${formatoMoneda(c.total)}</div>
