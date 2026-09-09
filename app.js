@@ -1,5 +1,5 @@
 // ====== ¡PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT! ======
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw4uODpOX0kTxp8G0RvmQLZQjpH9VR63qvSG9oE9jmzL-62dQt-wI0gmp1c785tHb-3/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxVa6O-ymPDa1iZQVywo93xHya1Ntxg5TlEoV2lRQUy-LKfB7hak-lK9TCquzHFd__b/exec';
 
 let productosGlobal = [];
 let clientesGlobal = [];
