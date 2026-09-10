@@ -53,7 +53,7 @@ body.show-admin #btn-admin { background: #fbbf24; color: var(--primary); }
 .grid:not(.list-view) .btn-add { background: var(--accent); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 600; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; font-size: 0.9rem; }
 .grid:not(.list-view) .btn-add:active { transform: scale(0.96); }
 
-/* ==== REDISEÑO VISTA DE LISTA (NATIVA Y BLINDADA) ==== */
+/* ==== REDISEÑO VISTA DE LISTA (APP NATIVA) ==== */
 .grid.list-view { display: flex; flex-direction: column; gap: 10px; }
 .grid.list-view .card { display: flex !important; flex-direction: row !important; flex-wrap: wrap; padding: 12px; align-items: center; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid #f1f5f9; background: #ffffff; gap: 12px; position: relative;}
 .grid.list-view .card-inner { display: flex; flex-direction: row; align-items: center; gap: 12px; flex: 1; min-width: 0; }
@@ -142,12 +142,24 @@ body.show-admin .admin-panel { display: block; animation: fadeIn 0.3s ease; }
 .prov-name { color: #475569; font-weight: 600; }
 .prov-price { color: #0f172a; font-weight: 800; }
 
-/* Botones en Detalle de Orden */
+/* ==== BOTONES EN DETALLE DE ORDEN ==== */
 .botones-accion-detalle { display: flex; flex-direction: column; gap: 12px; margin-top: 25px; }
 .botones-accion-detalle button { width: 100%; margin: 0; font-size: 1rem; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 8px;}
 .btn-whatsapp { background: #25D366; color: white; border: none; }
-.btn-admin-pdf { background: #1e293b; color: white; border: none; }
 .btn-secundario { background: #f1f5f9; color: var(--primary); border: 1px solid #e2e8f0; }
+
+/* EL BOTÓN DE PDF ADMIN (SECRETO) */
+.btn-admin-pdf { 
+    background: #1e293b; 
+    color: white; 
+    border: none; 
+    display: none !important; /* Oculto siempre por defecto */
+}
+
+/* Solo se mostrará cuando se enciende el Modo Admin */
+body.show-admin .btn-admin-pdf { 
+    display: flex !important; 
+}
 
 @media (min-width: 600px) { .botones-accion-detalle { flex-direction: row; flex-wrap: wrap;} .botones-accion-detalle button { flex: 1; min-width: 45%; } }
 

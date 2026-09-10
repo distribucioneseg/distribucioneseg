@@ -17,7 +17,6 @@ function formatoMoneda(valor) {
 window.onload = async () => {
     document.getElementById('productos-grid').innerHTML = "<p style='text-align:center; width:100%; margin-top:30px; color:#64748b;'>Cargando inventario...</p>";
     
-    // Carga la preferencia de vista del usuario
     const vistaGuardada = localStorage.getItem('vistaPreferida') || 'grid';
     cambiarVista(vistaGuardada);
 
@@ -33,7 +32,6 @@ window.onload = async () => {
     }
 };
 
-// ==== FUNCIÓN PARA CAMBIAR VISTA (GRID / LISTA) ====
 function cambiarVista(vista) {
     const grid = document.getElementById('productos-grid');
     const btnGrid = document.getElementById('btn-grid');
@@ -99,7 +97,6 @@ function formatearFecha(fechaStr) {
     return fecha.toLocaleDateString('es-HN', opciones);
 }
 
-// ==== RENDER DE PRODUCTOS (NUEVA ESTRUCTURA PARA VISTAS) ====
 function renderProductos(productos) {
     const grid = document.getElementById('productos-grid');
     grid.innerHTML = "";
@@ -172,8 +169,15 @@ function renderProductos(productos) {
             else imagenFinal = "https://img.icons8.com/color/150/box--v1.png"; 
         }
 
+        let stockNum = parseInt(prod.stock) || 0;
+        let stockClass = "stock-out";
+        let stockText = "● Agotado";
+        if (stockNum > 5) { stockClass = "stock-ok"; stockText = "● Stock"; }
+        else if (stockNum > 0) { stockClass = "stock-low"; stockText = "🔥 Sólo " + stockNum; }
+
         grid.innerHTML += `
             <div class="card">
+                <div class="stock-tag ${stockClass}">${stockText}</div>
                 <div class="card-inner">
                     <div class="img-container"><img src="${imagenFinal}" onerror="this.src='https://img.icons8.com/color/150/box--v1.png'"></div>
                     <div class="info-text">
@@ -185,16 +189,23 @@ function renderProductos(productos) {
                     </div>
                 </div>
                 <div class="card-actions">
-                    <button class="btn-add" onclick="agregarAlCarrito('${prod.codigo}')"><i class="fa-solid fa-cart-plus"></i></button>
+                    <button class="btn-add" onclick="agregarAlCarrito('${prod.codigo}')">
+                        <i class="fa-solid fa-plus icon-list"></i>
+                        <i class="fa-solid fa-cart-plus icon-grid"></i>
+                        <span class="text-grid"> Agregar</span>
+                    </button>
                 </div>
                 <div class="admin-panel">
-                    <div class="admin-header"><i class="fa-solid fa-user-lock"></i> Info Interna</div>
+                    <div class="admin-header"><i class="fa-solid fa-user-lock"></i> Info Interna y Ganancias</div>
                     <div class="admin-stats">
-                        <div class="stat-box profit"><span>Ganancia</span><b>Lps. ${formatoMoneda(gananciaAutomatica)}</b></div>
-                        <div class="stat-box cost"><span>Mejor Costo</span><b>Lps. ${formatoMoneda(costoBajo)}</b></div>
+                        <div class="stat-box cost full-width"><span>Costo Más Bajo</span><b>Lps. ${formatoMoneda(costoBajo)}</b></div>
+                        <div class="stat-box profit"><span>Ganancia Normal</span><b>Lps. ${formatoMoneda(gananciaAutomatica)}</b></div>
+                        ${prod.precio5 ? `<div class="stat-box profit"><span>Ganancia 5+ Unids</span><b>Lps. ${formatoMoneda(parseFloat(prod.precio5) - costoBajo)}</b></div>` : ''}
+                        ${prod.precio6 ? `<div class="stat-box profit"><span>Ganancia Media Doc</span><b>Lps. ${formatoMoneda(parseFloat(prod.precio6) - costoBajo)}</b></div>` : ''}
+                        ${prod.precio12 ? `<div class="stat-box profit"><span>Ganancia Docena</span><b>Lps. ${formatoMoneda(parseFloat(prod.precio12) - costoBajo)}</b></div>` : ''}
                     </div>
                     ${proveedoresHTML ? `<div class="admin-providers">${proveedoresHTML}</div>` : ''}
-                    <button class="btn-secundario" onclick="abrirModalEditar('${prod.codigo}')" style="margin: 10px; width: calc(100% - 20px); font-size: 0.85rem; padding: 10px;"><i class="fa-solid fa-pen"></i> Editar Producto</button>
+                    <button class="btn-secundario" onclick="abrirModalEditar('${prod.codigo}')" style="margin: 10px; width: calc(100% - 20px); font-size: 0.85rem; padding: 10px; border-radius: 12px; font-weight:700;"><i class="fa-solid fa-pen"></i> Editar Producto</button>
                 </div>
             </div>`;
     });
@@ -386,6 +397,7 @@ function editarCotizacion() {
     }
 }
 
+// ==== FACTURA NORMAL ====
 function generarFactura() {
     const c = clientesGlobal[indiceCotizacionActiva];
     const nOrden = Math.floor(Math.random() * 90000) + 10000;
@@ -434,6 +446,78 @@ function generarFactura() {
             <table><thead><tr><th style="width: 10%; text-align:center;">Cant.</th><th>Descripción del Producto</th><th class="dinero" style="width: 25%;">Precio Unit.</th><th class="dinero" style="width: 25%;">Total</th></tr></thead><tbody>${htmlItems}</tbody></table>
             <div class="total-container"><span class="total-label">Total a Cobrar:</span><span class="total-amount">Lps. ${formatoMoneda(c.total)}</span></div>
             <div class="footer">¡Gracias por su preferencia!<br>Documento generado para control y validación de entrega.<br><br><b>Generado por: Renee Coello</b></div>
+            <script>window.print();</script>
+        </body></html>
+    `);
+    ventana.document.close();
+}
+
+// ==== FACTURA ADMIN (CON GANANCIAS) ====
+function generarFacturaAdmin() {
+    const pass = prompt("Ingrese PIN de administrador para ver el reporte de ganancias:");
+    if (pass !== "199311") {
+        if (pass !== null) alert("PIN incorrecto. Acceso denegado.");
+        return;
+    }
+
+    const c = clientesGlobal[indiceCotizacionActiva];
+    const nOrden = Math.floor(Math.random() * 90000) + 10000;
+    let htmlItems = "";
+    let gananciaTotalVenta = 0;
+
+    JSON.parse(c.carrito || "[]").forEach(item => {
+        let prod = item.prodCompleto || {};
+        let precioAplicado = prod.precioUnitario ? parseFloat(prod.precioUnitario) : 0;
+        
+        if (item.cantidad >= 12 && prod.precio12 > 0) precioAplicado = parseFloat(prod.precio12);
+        else if (item.cantidad >= 6 && prod.precio6 > 0) precioAplicado = parseFloat(prod.precio6);
+        else if (item.cantidad >= 5 && prod.precio5 > 0) precioAplicado = parseFloat(prod.precio5);
+
+        let preciosProv = [];
+        for (let i = 1; i <= 6; i++) {
+            let p = parseFloat(prod['p'+i]);
+            if (!isNaN(p) && p > 0) preciosProv.push(p);
+        }
+        let costoBajo = preciosProv.length > 0 ? Math.min(...preciosProv) : (parseFloat(prod.costoBajo) || 0);
+
+        let gananciaUnitaria = precioAplicado - costoBajo;
+        let gananciaTotalItem = gananciaUnitaria * item.cantidad;
+        gananciaTotalVenta += gananciaTotalItem;
+
+        htmlItems += `<tr>
+            <td style="padding:12px; border-bottom:1px solid #334155; text-align:center;">${item.cantidad}</td>
+            <td style="padding:12px; border-bottom:1px solid #334155;">${item.nombre}</td>
+            <td style="padding:12px; border-bottom:1px solid #334155; text-align:right;">Lps. ${formatoMoneda(costoBajo)}</td>
+            <td style="padding:12px; border-bottom:1px solid #334155; text-align:right;">Lps. ${formatoMoneda(precioAplicado)}</td>
+            <td style="padding:12px; border-bottom:1px solid #334155; text-align:right; font-weight:bold; color:#10b981;">Lps. ${formatoMoneda(gananciaTotalItem)}</td>
+        </tr>`;
+    });
+
+    const ventana = window.open('', '_blank');
+    ventana.document.write(`
+        <html><head><title>Reporte de Ganancias - Admin</title>
+        <style>
+            body { font-family: 'Helvetica', sans-serif; padding: 40px; color: #f8fafc; background: #0f172a; max-width: 900px; margin: 0 auto;}
+            .header { text-align: center; border-bottom: 2px solid #334155; padding-bottom: 20px; margin-bottom: 30px;}
+            .header h1 { margin: 0; color: #fbbf24; font-size: 26px;}
+            .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; font-size:14px; line-height:1.6;}
+            table { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size:14px;}
+            thead { display: table-header-group; }
+            th { background: #1e293b; padding: 12px; text-align: left; color: #cbd5e1; border-bottom:2px solid #334155;}
+            th.dinero { text-align: right; white-space: nowrap; }
+            .total-container { text-align: right; padding-top: 20px; border-top: 2px solid #334155; display: flex; justify-content: flex-end; align-items: center; gap: 15px; }
+            .total-label { font-size: 18px; color: #94a3b8; font-weight: bold; text-transform: uppercase; }
+            .total-amount { font-size: 24px; font-weight: 900; color: #10b981; background: rgba(16, 185, 129, 0.1); padding: 10px 20px; border-radius: 12px; border: 1px solid #10b981; }
+            @media print { body { -webkit-print-color-adjust: exact; padding: 0;} }
+        </style>
+        </head><body>
+            <div class="header"><h1>REPORTE DE RENTABILIDAD ADMIN</h1><p>CONFIDENCIAL</p></div>
+            <div class="info-grid">
+                <div><b>Venta a:</b> ${c.cliente} (${c.tienda})<br><b>Teléfono:</b> ${c.telefono}</div>
+                <div style="text-align: right;"><b>N° Venta:</b> EG-${nOrden}<br><b>Cobro a Cliente:</b> Lps. ${formatoMoneda(c.total)}</div>
+            </div>
+            <table><thead><tr><th style="width: 10%; text-align:center;">Cant.</th><th>Producto</th><th class="dinero">Costo Unit.</th><th class="dinero">Vendido Unit.</th><th class="dinero" style="color:#10b981;">Ganancia Neta</th></tr></thead><tbody>${htmlItems}</tbody></table>
+            <div class="total-container"><span class="total-label">Ganancia Total Venta:</span><span class="total-amount">Lps. ${formatoMoneda(gananciaTotalVenta)}</span></div>
             <script>window.print();</script>
         </body></html>
     `);
