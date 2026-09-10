@@ -32,9 +32,7 @@ body.show-admin #btn-admin { background: #fbbf24; color: var(--primary); }
 .view-toggle button { background: transparent; border: none; padding: 10px 20px; border-radius: 8px; color: #64748b; cursor: pointer; transition: 0.3s; font-size: 1.1rem; }
 .view-toggle button.active { background: white; color: var(--accent); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
-@media (min-width: 600px) {
-    .search-box { min-width: 250px; }
-}
+@media (min-width: 600px) { .search-box { min-width: 250px; } }
 
 .view-section { display: none; padding: 0 15px; max-width: 1200px; margin: 0 auto; }
 .view-section.active { display: block; }
@@ -43,11 +41,7 @@ body.show-admin #btn-admin { background: #fbbf24; color: var(--primary); }
 /* ==== CUADRÍCULA NORMAL (GRID) ==== */
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
 
-.grid:not(.list-view) .card { 
-    background: var(--card-bg); border-radius: 20px; padding: 15px; text-align: center; 
-    box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; position: relative; 
-    display: flex !important; flex-direction: column; justify-content: space-between; height: 100%; 
-}
+.grid:not(.list-view) .card { background: var(--card-bg); border-radius: 20px; padding: 15px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; position: relative; display: flex !important; flex-direction: column; justify-content: space-between; height: 100%; }
 .grid:not(.list-view) .card-inner { display: flex; flex-direction: column; flex: 1; }
 .grid:not(.list-view) .info-text { display: flex; flex-direction: column; flex: 1; }
 .grid:not(.list-view) .img-container { background: #f8fafc; border-radius: 12px; padding: 10px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; }
@@ -61,142 +55,31 @@ body.show-admin #btn-admin { background: #fbbf24; color: var(--primary); }
 
 /* ==== REDISEÑO VISTA DE LISTA (NATIVA Y BLINDADA) ==== */
 .grid.list-view { display: flex; flex-direction: column; gap: 10px; }
-
-.grid.list-view .card { 
-    display: flex !important; 
-    flex-direction: row !important; 
-    flex-wrap: wrap; 
-    padding: 12px; 
-    align-items: center; 
-    border-radius: 16px; 
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04); 
-    border: 1px solid #f1f5f9; 
-    background: #ffffff; 
-    gap: 12px; 
-    position: relative;
-}
-
-.grid.list-view .card-inner { 
-    display: flex; 
-    flex-direction: row; 
-    align-items: center; 
-    gap: 12px; 
-    flex: 1; 
-    min-width: 0; /* Evita que textos largos rompan la caja */
-}
-
-.grid.list-view .img-container { 
-    width: 65px; 
-    height: 65px; 
-    padding: 5px; 
-    margin: 0; 
-    border-radius: 12px; 
-    flex-shrink: 0; 
-    background: #f8fafc; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    align-self: flex-start; /* Alinea la foto arriba si hay muchos descuentos */
-}
+.grid.list-view .card { display: flex !important; flex-direction: row !important; flex-wrap: wrap; padding: 12px; align-items: center; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid #f1f5f9; background: #ffffff; gap: 12px; position: relative;}
+.grid.list-view .card-inner { display: flex; flex-direction: row; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+.grid.list-view .img-container { width: 65px; height: 65px; padding: 5px; margin: 0; border-radius: 12px; flex-shrink: 0; background: #f8fafc; display: flex; align-items: center; justify-content: center; align-self: flex-start;}
 .grid.list-view .img-container img { width: 100%; height: 100%; object-fit: contain; }
+.grid.list-view .info-text { flex: 1; display: flex; flex-direction: column; align-items: flex-start; text-align: left; gap: 2px; overflow: hidden; }
+.grid.list-view h3 { font-size: 0.95rem; margin: 0; color: #0f172a; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+.grid.list-view .oferta { font-size: 1.15rem; color: var(--accent); margin: 0 0 4px 0; font-weight: 900; }
 
-.grid.list-view .info-text { 
-    flex: 1; 
-    display: flex; 
-    flex-direction: column; 
-    align-items: flex-start; 
-    text-align: left; 
-    gap: 2px; 
-    overflow: hidden; 
-}
-
-.grid.list-view h3 { 
-    font-size: 0.95rem; 
-    margin: 0; 
-    color: #0f172a; 
-    font-weight: 800; 
-    white-space: nowrap; 
-    overflow: hidden; 
-    text-overflow: ellipsis; 
-    width: 100%; 
-}
-
-.grid.list-view .oferta { 
-    font-size: 1.15rem; 
-    color: var(--accent); 
-    margin: 0 0 4px 0; 
-    font-weight: 900; 
-}
-
-/* ==== NUEVO: Mostrar Descuentos en Vista de Lista ==== */
-.grid.list-view .tabla-descuentos { 
-    display: flex !important; /* Fuerza a que se muestre */
-    flex-direction: row; 
-    flex-wrap: wrap; 
-    gap: 6px; 
-    margin: 0; 
-    padding: 0;
-    width: 100%;
-}
-.grid.list-view .tag-desc {
-    background: #f0fdf4;
-    border: 1px solid #bbf7d0;
-    padding: 3px 6px;
-    border-radius: 6px;
-    font-size: 0.65rem;
-    color: #166534;
-    display: flex;
-    gap: 4px;
-    align-items: center;
-}
-.grid.list-view .tag-desc b {
-    color: #059669;
-    font-size: 0.7rem;
-}
-
-.grid.list-view .card-actions { 
-    margin: 0; 
-    padding: 0; 
-    flex-shrink: 0; 
-    width: auto; 
-    align-self: center;
-}
-
-/* Botón Circular Perfecto */
-.grid.list-view .btn-add { 
-    width: 44px; 
-    height: 44px; 
-    border-radius: 50%; 
-    padding: 0; 
-    background: #e0e7ff; 
-    color: var(--accent); 
-    border: none; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    font-size: 1.2rem;
-}
+.grid.list-view .tabla-descuentos { display: flex !important; flex-direction: row; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; width: 100%;}
+.grid.list-view .tag-desc { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 3px 6px; border-radius: 6px; font-size: 0.65rem; color: #166534; display: flex; gap: 4px; align-items: center;}
+.grid.list-view .tag-desc b { color: #059669; font-size: 0.7rem; }
+.grid.list-view .card-actions { margin: 0; padding: 0; flex-shrink: 0; width: auto; align-self: center;}
+.grid.list-view .btn-add { width: 44px; height: 44px; border-radius: 50%; padding: 0; background: #e0e7ff; color: var(--accent); border: none; display: flex; justify-content: center; align-items: center; font-size: 1.2rem;}
 .grid.list-view .btn-add:active { background: #c7d2fe; transform: scale(0.90); }
+.grid.list-view .cat-tag, .grid.list-view .marca-text, .grid.list-view .stock-tag { display: none !important; }
 
-/* Ocultar elementos innecesarios en vista Lista */
-.grid.list-view .cat-tag, 
-.grid.list-view .marca-text, 
-.grid.list-view .stock-tag { 
-    display: none !important; 
-}
-
-/* Manejo de iconos del botón Agregar */
 .icon-list { display: none; }
 .icon-grid { display: inline-block; }
 .text-grid { display: inline-block; }
-
 .grid.list-view .icon-list { display: inline-block; }
 .grid.list-view .icon-grid { display: none; }
 .grid.list-view .text-grid { display: none; }
-
 .grid.list-view .admin-panel { width: 100%; margin-top: 5px; }
 
-/* Pastilla de Stock Inteligente (Solo Cuadrícula) */
+/* Pastilla de Stock Inteligente */
 .stock-tag { position: absolute; top: 10px; right: 10px; font-size: 0.6rem; font-weight: 800; padding: 4px 8px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 4px; z-index: 5; }
 .stock-ok { background: #dcfce7; color: #166534; }
 .stock-low { background: #ffedd5; color: #c2410c; }
@@ -243,36 +126,41 @@ body.show-admin .admin-panel { display: block; animation: fadeIn 0.3s ease; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
 .admin-header { background: #1e293b; color: white; padding: 8px 12px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; }
-.admin-stats { display: flex; border-bottom: 1px solid #e2e8f0; background: white; }
-.stat-box { flex: 1; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; }
-.stat-box:first-child { border-right: 1px solid #e2e8f0; }
+
+/* Cuadrícula de Ganancias */
+.admin-stats { display: flex; flex-wrap: wrap; border-bottom: 1px solid #e2e8f0; background: white; }
+.stat-box { flex: 1; min-width: 45%; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; }
+.stat-box:nth-child(even) { border-right: none; }
 .stat-box span { font-size: 0.65rem; color: #64748b; text-transform: uppercase; font-weight: 800; }
 .stat-box.profit b { color: #10b981; font-size: 1rem; }
 .stat-box.cost b { color: #3b82f6; font-size: 0.95rem; }
+.stat-box.full-width { min-width: 100%; border-right: none; background: #eff6ff; }
+
 .admin-providers { padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; background: #f8fafc; }
 .prov-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; padding-bottom: 6px; border-bottom: 1px dashed #cbd5e1; }
 .prov-row:last-child { border-bottom: none; padding-bottom: 0; }
 .prov-name { color: #475569; font-weight: 600; }
 .prov-price { color: #0f172a; font-weight: 800; }
 
+/* Botones en Detalle de Orden */
 .botones-accion-detalle { display: flex; flex-direction: column; gap: 12px; margin-top: 25px; }
-.botones-accion-detalle button { width: 100%; margin: 0; font-size: 1rem; padding: 15px; }
-.btn-whatsapp { background: #25D366; color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 700; font-size: 1rem; width: 100%; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s;}
-.btn-whatsapp:active { transform: scale(0.96); }
-@media (min-width: 600px) { .botones-accion-detalle { flex-direction: row; } }
+.botones-accion-detalle button { width: 100%; margin: 0; font-size: 1rem; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 8px;}
+.btn-whatsapp { background: #25D366; color: white; border: none; }
+.btn-admin-pdf { background: #1e293b; color: white; border: none; }
+.btn-secundario { background: #f1f5f9; color: var(--primary); border: 1px solid #e2e8f0; }
+
+@media (min-width: 600px) { .botones-accion-detalle { flex-direction: row; flex-wrap: wrap;} .botones-accion-detalle button { flex: 1; min-width: 45%; } }
 
 /* ==== TABLA DE CLIENTES ==== */
 .table-container { max-width: 1000px; margin: 20px auto; background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); padding: 10px; overflow-x: auto; border: 1px solid #e2e8f0; }
 #tabla-clientes { width: 100%; border-collapse: collapse; }
 #tabla-clientes th { background: #f8fafc; color: #475569; font-weight: 800; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; padding: 15px; border-bottom: 2px solid #e2e8f0; text-align: left; }
 
-/* ==== RESPONSIVO MÓVIL (AJUSTES FINALES) ==== */
+/* ==== RESPONSIVO MÓVIL ==== */
 @media (max-width: 480px) {
     header { flex-direction: column; padding: 12px; }
     .tabs { width: 100%; justify-content: center; }
     .tabs button { flex: 1; justify-content: center; }
-    
-    /* En celulares, la cuadrícula normal usa 2 columnas y textos más pequeños */
     .grid:not(.list-view) { grid-template-columns: repeat(2, 1fr); gap: 10px; }
     .grid:not(.list-view) .card { padding: 10px; border-radius: 16px; }
     .grid:not(.list-view) h3 { font-size: 0.85rem; }
