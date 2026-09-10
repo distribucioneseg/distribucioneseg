@@ -96,32 +96,43 @@ function renderProductos(productos) {
         if (!imagenFinal || imagenFinal.trim() === "" || imagenFinal.includes('dummyimage')) {
             let cat = (prod.categoria || "").toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
             
-            if (cat.includes("LACTEO") || cat.includes("QUESO") || cat.includes("MANTEQUILLA")) imagenFinal = "https://img.icons8.com/color/150/cheese.png"; 
-            else if (cat.includes("EMBUTIDO") || cat.includes("CHORIZO") || cat.includes("SALCHICHA")) imagenFinal = "https://img.icons8.com/color/150/salami.png"; 
-            else if (cat.includes("CARNE") || cat.includes("POLLO") || cat.includes("CERDO")) imagenFinal = "https://img.icons8.com/color/150/beef.png"; 
-            else if (cat.includes("PAN") || cat.includes("REPOSTERIA") || cat.includes("GALLETA")) imagenFinal = "https://img.icons8.com/color/150/bread.png"; 
-            else if (cat.includes("SNACK") || cat.includes("CHURRO") || cat.includes("BOCADILLO")) imagenFinal = "https://img.icons8.com/color/150/potato-chips.png"; 
-            else if (cat.includes("DULCE") || cat.includes("CONFITE") || cat.includes("CHOCOLATE")) imagenFinal = "https://img.icons8.com/color/150/candy.png"; 
-            else if (cat.includes("FRUTA") || cat.includes("VERDURA") || cat.includes("VEGETAL")) imagenFinal = "https://img.icons8.com/color/150/group-of-fruits.png"; 
-            else if (cat.includes("BEBIDA") || cat.includes("REFRESCO") || cat.includes("JUGO")) imagenFinal = "https://img.icons8.com/color/150/soda-can.png"; 
-            else if (cat.includes("CERVEZA") || cat.includes("LICOR") || cat.includes("ALCOHOL")) imagenFinal = "https://img.icons8.com/color/150/beer.png"; 
-            else if (cat.includes("CAFE") || cat.includes("TE")) imagenFinal = "https://img.icons8.com/color/150/coffee-beans.png"; 
-            else if (cat.includes("ENLATADO") || cat.includes("CONSERVA")) imagenFinal = "https://img.icons8.com/color/150/canned-food.png"; 
-            else if (cat.includes("SALSA") || cat.includes("CONDIMENTO") || cat.includes("ESPECIA")) imagenFinal = "https://img.icons8.com/color/150/ketchup.png"; 
-            else if (cat.includes("LIMPIEZA") || cat.includes("DETERGENTE")) imagenFinal = "https://img.icons8.com/color/150/cleaning-products.png"; 
-            else if (cat.includes("HIGIENE") || cat.includes("JABON") || cat.includes("SHAMPOO")) imagenFinal = "https://img.icons8.com/color/150/soap.png"; 
-            else if (cat.includes("PAPEL") || cat.includes("SERVILLETA")) imagenFinal = "https://img.icons8.com/color/150/toilet-paper.png"; 
-            else if (cat.includes("DESECHABLE") || cat.includes("PLASTICO")) imagenFinal = "https://img.icons8.com/color/150/paper-cup.png"; 
-            else if (cat.includes("MEDICINA") || cat.includes("FARMACIA") || cat.includes("PASTILLA")) imagenFinal = "https://img.icons8.com/color/150/pill.png"; 
-            else if (cat.includes("MASCOTA") || cat.includes("PERRO") || cat.includes("GATO")) imagenFinal = "https://img.icons8.com/color/150/dog-bowl.png"; 
-            else if (cat.includes("ABARROTE") || cat.includes("GRANO") || cat.includes("CEREAL")) imagenFinal = "https://img.icons8.com/color/150/ingredients.png"; 
-            else if (cat.includes("GAMER") || cat.includes("JUEGO") || cat.includes("DEDAL") || cat.includes("GATILLO")) imagenFinal = "https://img.icons8.com/color/150/controller.png"; 
+            if (cat.includes("GAMER")) imagenFinal = "https://img.icons8.com/color/150/controller.png"; 
             else if (cat.includes("PERIFERICO") || cat.includes("TECLADO") || cat.includes("MOUSE")) imagenFinal = "https://img.icons8.com/color/150/mouse.png"; 
-            else if (cat.includes("AUDIO") || cat.includes("AUDIFONO") || cat.includes("BOCINA")) imagenFinal = "https://img.icons8.com/color/150/headphones.png"; 
-            else if (cat.includes("CELULAR") || cat.includes("SMARTPHONE") || cat.includes("TELEFONO")) imagenFinal = "https://img.icons8.com/color/150/iphone.png"; 
-            else if (cat.includes("COMPUTADORA") || cat.includes("LAPTOP") || cat.includes("PC")) imagenFinal = "https://img.icons8.com/color/150/laptop.png"; 
-            else if (cat.includes("ALMACENAMIENTO") || cat.includes("USB") || cat.includes("MEMORIA") || cat.includes("MICROSD")) imagenFinal = "https://img.icons8.com/color/150/usb-memory-stick.png"; 
-            else if (cat.includes("CABLE") || cat.includes("CARGADOR") || cat.includes("ACCESORIO")) imagenFinal = "https://img.icons8.com/color/150/usb-plug.png"; 
+            else if (cat.includes("AUDIO") || cat.includes("AUDIFONO")) imagenFinal = "https://img.icons8.com/color/150/headphones.png"; 
+            else if (cat.includes("CABLE") || cat.includes("CARGADOR")) imagenFinal = "https://img.icons8.com/color/150/usb-plug.png"; 
+            else if (cat.includes("ALMACENAMIENTO") || cat.includes("USB") || cat.includes("MICROSD")) imagenFinal = "https://img.icons8.com/color/150/usb-memory-stick.png"; 
+            else if (cat.includes("PROTECTOR") || cat.includes("FUNDA")) imagenFinal = "https://img.icons8.com/color/150/phone-case.png"; 
+            else if (cat.includes("CELULAR") || cat.includes("TELEFONO")) imagenFinal = "https://img.icons8.com/color/150/iphone.png"; 
+            else if (cat.includes("COMPONENTE")) imagenFinal = "https://img.icons8.com/color/150/motherboard.png"; 
+            else if (cat.includes("GRANO")) imagenFinal = "https://img.icons8.com/color/150/ingredients.png"; 
+            else if (cat.includes("ACEITE") || cat.includes("MANTECA")) imagenFinal = "https://img.icons8.com/color/150/olive-oil.png"; 
+            else if (cat.includes("PASTA") || cat.includes("SOPA")) imagenFinal = "https://img.icons8.com/color/150/spaghetti.png"; 
+            else if (cat.includes("ENLATADO") || cat.includes("CONSERVA")) imagenFinal = "https://img.icons8.com/color/150/canned-food.png"; 
+            else if (cat.includes("SALSA") || cat.includes("CONDIMENTO")) imagenFinal = "https://img.icons8.com/color/150/ketchup.png"; 
+            else if (cat.includes("ESPECIA") || cat.includes("AZUCAR") || cat.includes("SAL")) imagenFinal = "https://img.icons8.com/color/150/salt-shaker.png"; 
+            else if (cat.includes("LACTEO") || cat.includes("QUESO") || cat.includes("HUEVO")) imagenFinal = "https://img.icons8.com/color/150/cheese.png"; 
+            else if (cat.includes("EMBUTIDO") || cat.includes("CARNE")) imagenFinal = "https://img.icons8.com/color/150/salami.png"; 
+            else if (cat.includes("PANADERIA") || cat.includes("REPOSTERIA")) imagenFinal = "https://img.icons8.com/color/150/bread.png"; 
+            else if (cat.includes("REFRESCO") || cat.includes("JUGO")) imagenFinal = "https://img.icons8.com/color/150/soda-can.png"; 
+            else if (cat.includes("AGUA")) imagenFinal = "https://img.icons8.com/color/150/water-bottle.png"; 
+            else if (cat.includes("ENERGIZANTE")) imagenFinal = "https://img.icons8.com/color/150/energy-drink.png"; 
+            else if (cat.includes("CERVEZA") || cat.includes("LICOR")) imagenFinal = "https://img.icons8.com/color/150/beer.png"; 
+            else if (cat.includes("SNACK") || cat.includes("CHURRO")) imagenFinal = "https://img.icons8.com/color/150/potato-chips.png"; 
+            else if (cat.includes("DULCE") || cat.includes("CHOCOLATE")) imagenFinal = "https://img.icons8.com/color/150/candy.png"; 
+            else if (cat.includes("CAFE") || cat.includes("TE")) imagenFinal = "https://img.icons8.com/color/150/coffee-beans.png"; 
+            else if (cat.includes("DETERGENTE") || cat.includes("SUAVIZANTE")) imagenFinal = "https://img.icons8.com/color/150/washing-machine.png"; 
+            else if (cat.includes("LIMPIEZA")) imagenFinal = "https://img.icons8.com/color/150/cleaning-products.png"; 
+            else if (cat.includes("HIGIENE") || cat.includes("CORPORAL")) imagenFinal = "https://img.icons8.com/color/150/soap.png"; 
+            else if (cat.includes("CAPILAR") || cat.includes("SHAMPOO")) imagenFinal = "https://img.icons8.com/color/150/shampoo.png"; 
+            else if (cat.includes("DENTAL")) imagenFinal = "https://img.icons8.com/color/150/tooth.png"; 
+            else if (cat.includes("PAPEL") || cat.includes("DESECHABLE")) imagenFinal = "https://img.icons8.com/color/150/toilet-paper.png"; 
+            else if (cat.includes("MEDICINA") || cat.includes("OTC")) imagenFinal = "https://img.icons8.com/color/150/pill.png"; 
+            else if (cat.includes("BEBE")) imagenFinal = "https://img.icons8.com/color/150/pacifier.png"; 
+            else if (cat.includes("MASCOTA")) imagenFinal = "https://img.icons8.com/color/150/dog-bowl.png"; 
+            else if (cat.includes("PAPELERIA") || cat.includes("LIBRERIA")) imagenFinal = "https://img.icons8.com/color/150/school.png"; 
+            else if (cat.includes("FERRETERIA")) imagenFinal = "https://img.icons8.com/color/150/hammer.png"; 
+            else if (cat.includes("PLASTICO") || cat.includes("HOGAR")) imagenFinal = "https://img.icons8.com/color/150/bucket.png"; 
+            else if (cat.includes("COSMETICO") || cat.includes("BELLEZA")) imagenFinal = "https://img.icons8.com/color/150/lipstick.png"; 
             else imagenFinal = "https://img.icons8.com/color/150/box--v1.png"; 
         }
 
@@ -237,9 +248,22 @@ async function guardarProductoNuevo(e) {
     const btn = document.getElementById('btn-guardar-prod');
     btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Subiendo..."; btn.disabled = true;
     const nuevoProd = {
-        accion: "agregar_producto", codigo: document.getElementById('p-codigo').value, marca: document.getElementById('p-marca').value,
-        nombre: document.getElementById('p-nombre').value, categoria: document.getElementById('p-categoria').value, stock: document.getElementById('p-stock').value,
-        costo: document.getElementById('p-costo').value, precio: document.getElementById('p-precio').value, imagenBase64: imgBase64Data, mimeType: imgMimeType, nombreArchivo: imgName
+        accion: "agregar_producto", 
+        codigo: document.getElementById('p-codigo').value, 
+        marca: document.getElementById('p-marca').value,
+        nombre: document.getElementById('p-nombre').value, 
+        categoria: document.getElementById('p-categoria').value, 
+        stock: document.getElementById('p-stock').value,
+        costo: document.getElementById('p-costo').value, 
+        precio: document.getElementById('p-precio').value, 
+        precio5: document.getElementById('p-precio5').value,
+        precio6: document.getElementById('p-precio6').value,
+        precio12: document.getElementById('p-precio12').value,
+        lugar1: document.getElementById('p-lugar1').value,
+        precio1: document.getElementById('p-precio1').value,
+        lugar2: document.getElementById('p-lugar2').value,
+        precio2: document.getElementById('p-precio2').value,
+        imagenBase64: imgBase64Data, mimeType: imgMimeType, nombreArchivo: imgName
     };
     try { await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(nuevoProd) }); alert("¡Producto guardado exitosamente!"); location.reload(); } 
     catch (error) { alert("Error al subir el producto."); btn.innerHTML = "<i class='fa-solid fa-cloud-arrow-up'></i> Guardar en Inventario"; btn.disabled = false; }
@@ -275,8 +299,6 @@ function renderClientes(clientes) {
 function abrirDetalle(index) {
     indiceCotizacionActiva = index;
     const c = clientesGlobal[index];
-    
-    // ==== EL NUEVO DISEÑO ELEGANTE PARA EL DETALLE DE ORDEN ====
     document.getElementById('detalle-info').innerHTML = `
         <div style="background:#f8fafc; padding:15px; border-radius:12px; border:1px solid #e2e8f0; margin-bottom:15px; display:flex; flex-direction:column; gap:8px;">
             <div style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-user" style="color:var(--accent); font-size:1.1rem; width:20px; text-align:center;"></i> <strong style="font-size:1.05rem; color:#1e293b;">${c.cliente}</strong></div>
@@ -288,19 +310,12 @@ function abrirDetalle(index) {
         <div style="background:#eff6ff; border:1px solid #bfdbfe; padding:15px; border-radius:12px; text-align:center;">
             <span style="display:block; font-size:0.8rem; color:#1d4ed8; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">Total de la Orden</span>
             <span style="font-size:1.7rem; color:#1e3a8a; font-weight:900;">Lps. ${formatoMoneda(c.total)}</span>
-        </div>
-    `;
-
+        </div>`;
+    
     let htmlItems = "";
     if (c.carrito) {
         try {
-            JSON.parse(c.carrito).forEach(item => { 
-                htmlItems += `
-                <div style="display:flex; align-items:center; gap:15px; padding:12px 0; border-bottom:1px solid #f1f5f9;">
-                    <div style="background:#eef2ff; color:var(--accent); font-weight:800; padding:6px; border-radius:8px; font-size:0.85rem; min-width:40px; text-align:center;">${item.cantidad}x</div>
-                    <div style="font-size:0.95rem; color:var(--text-dark); font-weight:600; line-height:1.3;">${item.nombre}</div>
-                </div>`; 
-            });
+            JSON.parse(c.carrito).forEach(item => { htmlItems += `<div style="display:flex; align-items:center; gap:15px; padding:12px 0; border-bottom:1px solid #f1f5f9;"><div style="background:#eef2ff; color:var(--accent); font-weight:800; padding:6px; border-radius:8px; font-size:0.85rem; min-width:40px; text-align:center;">${item.cantidad}x</div><div style="font-size:0.95rem; color:var(--text-dark); font-weight:600; line-height:1.3;">${item.nombre}</div></div>`; });
         } catch(e) {}
     }
     document.getElementById('detalle-items').innerHTML = htmlItems || "<p style='color:#64748b;'>Sin detalles guardados.</p>";
@@ -351,7 +366,6 @@ function generarFactura() {
             thead { display: table-header-group; }
             th { background: #f8fafc; padding: 12px; text-align: left; color: #475569; border-bottom:2px solid #e2e8f0;}
             th.dinero { text-align: right; white-space: nowrap; }
-            /* ==== DOBLE COLOR AZUL PARA EL TOTAL (Solución Imagen 4) ==== */
             .total-container { text-align: right; padding-top: 20px; border-top: 2px solid #e2e8f0; page-break-inside: avoid; display: flex; justify-content: flex-end; align-items: center; gap: 15px; }
             .total-label { font-size: 18px; color: #1e3a8a; font-weight: bold; text-transform: uppercase; }
             .total-amount { font-size: 24px; font-weight: 900; color: #2563eb; background: #dbeafe; padding: 10px 20px; border-radius: 12px; border: 1px solid #bfdbfe; }
@@ -365,10 +379,7 @@ function generarFactura() {
                 <div style="text-align: right;"><b>N° Orden:</b> EG-${nOrden}<br><b>Fecha:</b> ${formatearFecha(c.fechaEntrega)}<br><b>Lugar:</b> ${c.lugar}</div>
             </div>
             <table><thead><tr><th style="width: 10%; text-align:center;">Cant.</th><th>Descripción del Producto</th><th class="dinero" style="width: 25%;">Precio Unit.</th><th class="dinero" style="width: 25%;">Total</th></tr></thead><tbody>${htmlItems}</tbody></table>
-            <div class="total-container">
-                <span class="total-label">Total a Cobrar:</span>
-                <span class="total-amount">Lps. ${formatoMoneda(c.total)}</span>
-            </div>
+            <div class="total-container"><span class="total-label">Total a Cobrar:</span><span class="total-amount">Lps. ${formatoMoneda(c.total)}</span></div>
             <div class="footer">¡Gracias por su preferencia!<br>Documento generado para control y validación de entrega.<br><br><b>Generado por: Renee Coello</b></div>
             <script>window.print();</script>
         </body></html>
@@ -382,32 +393,60 @@ function enviarWhatsApp() {
     let telefono = String(c.telefono).replace(/\D/g, '');
     if (telefono.length === 8) telefono = '504' + telefono;
     else if (!telefono.startsWith('504')) telefono = '504' + telefono;
-
     let mensaje = `*¡Hola ${c.cliente}!* 👋\nAquí tienes el resumen de tu pedido de *DISTRIBUCIONES E&G*:\n\n🏢 *Tienda:* ${c.tienda}\n📅 *Fecha de Entrega:* ${formatearFecha(c.fechaEntrega)}\n📍 *Lugar:* ${c.lugar}\n\n*🛒 Detalle del pedido:*\n`;
     if (c.carrito) { try { JSON.parse(c.carrito).forEach(item => { mensaje += `▪️ ${item.cantidad}x ${item.nombre}\n`; }); } catch(e) {} }
     mensaje += `\n💰 *Total a Pagar:* Lps. ${formatoMoneda(c.total)}\n\n¡Gracias por tu preferencia!`;
-
     window.open(`https://api.whatsapp.com/send?phone=${telefono}&text=${encodeURIComponent(mensaje)}`, '_blank');
 }
 
 function abrirModalEditar(codigo) {
     const prod = productosGlobal.find(p => p.codigo === codigo);
     if(!prod) return;
-    document.getElementById('e-codigo').value = prod.codigo; document.getElementById('e-marca').value = prod.marca || "";
-    document.getElementById('e-nombre').value = prod.nombre; document.getElementById('e-categoria').value = prod.categoria || "";
+    document.getElementById('e-codigo').value = prod.codigo; 
+    document.getElementById('e-marca').value = prod.marca || "";
+    document.getElementById('e-nombre').value = prod.nombre; 
+    document.getElementById('e-categoria').value = prod.categoria || "";
     document.getElementById('e-stock').value = prod.stock || 0;
+    
+    document.getElementById('e-precio5').value = prod.precio5 || "";
+    document.getElementById('e-precio6').value = prod.precio6 || "";
+    document.getElementById('e-precio12').value = prod.precio12 || "";
+    document.getElementById('e-lugar1').value = prod.l1 || "";
+    document.getElementById('e-precio1').value = prod.p1 || "";
+    document.getElementById('e-lugar2').value = prod.l2 || "";
+    document.getElementById('e-precio2').value = prod.p2 || "";
+
     let precios = [];
     for(let i=1; i<=6; i++) { let p = parseFloat(prod['p'+i]); if(!isNaN(p) && p>0) precios.push(p); }
     document.getElementById('e-costo').value = precios.length > 0 ? Math.min(...precios) : (parseFloat(prod.costoBajo)||0);
     document.getElementById('e-precio').value = parseFloat(prod.precioUnitario) || 0;
     document.getElementById('modal-editar-producto').style.display = 'flex';
 }
+
 function cerrarModalEditar() { document.getElementById('modal-editar-producto').style.display = 'none'; document.getElementById('form-editar-producto').reset(); document.getElementById('e-foto-estado').style.display = 'none'; imgBase64DataEdit = ""; }
 function procesarImagenEdicion(event) { const file = event.target.files[0]; if (!file) return; imgNameEdit = file.name; imgMimeTypeEdit = file.type; const reader = new FileReader(); reader.onload = function(e) { imgBase64DataEdit = e.target.result.split(',')[1]; document.getElementById('e-foto-estado').style.display = 'block'; }; reader.readAsDataURL(file); }
+
 async function guardarEdicionProducto(e) {
     e.preventDefault();
     const btn = document.getElementById('btn-guardar-edicion'); btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Actualizando..."; btn.disabled = true;
-    const prodEditado = { accion: "editar_producto", codigo: document.getElementById('e-codigo').value, marca: document.getElementById('e-marca').value, nombre: document.getElementById('e-nombre').value, categoria: document.getElementById('e-categoria').value, stock: document.getElementById('e-stock').value, costo: document.getElementById('e-costo').value, precio: document.getElementById('e-precio').value, imagenBase64: imgBase64DataEdit, mimeType: imgMimeTypeEdit, nombreArchivo: imgNameEdit };
+    const prodEditado = { 
+        accion: "editar_producto", 
+        codigo: document.getElementById('e-codigo').value, 
+        marca: document.getElementById('e-marca').value, 
+        nombre: document.getElementById('e-nombre').value, 
+        categoria: document.getElementById('e-categoria').value, 
+        stock: document.getElementById('e-stock').value, 
+        costo: document.getElementById('e-costo').value, 
+        precio: document.getElementById('e-precio').value, 
+        precio5: document.getElementById('e-precio5').value, 
+        precio6: document.getElementById('e-precio6').value, 
+        precio12: document.getElementById('e-precio12').value,
+        lugar1: document.getElementById('e-lugar1').value, 
+        precio1: document.getElementById('e-precio1').value, 
+        lugar2: document.getElementById('e-lugar2').value, 
+        precio2: document.getElementById('e-precio2').value,
+        imagenBase64: imgBase64DataEdit, mimeType: imgMimeTypeEdit, nombreArchivo: imgNameEdit 
+    };
     try { await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(prodEditado) }); alert("¡Producto actualizado exitosamente!"); location.reload(); } 
     catch (error) { alert("Error al actualizar el producto."); btn.innerHTML = "<i class='fa-solid fa-cloud-arrow-up'></i> Actualizar Producto"; btn.disabled = false; }
 }
