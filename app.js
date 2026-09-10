@@ -5,10 +5,8 @@ let clientesGlobal = [];
 let carrito = [];
 let indiceCotizacionActiva = null; 
 
-// Variables para la cámara
-let imgBase64Data = "";
-let imgMimeType = "";
-let imgName = "";
+let imgBase64Data = "", imgMimeType = "", imgName = "";
+let imgBase64DataEdit = "", imgMimeTypeEdit = "", imgNameEdit = "";
 
 function formatoMoneda(valor) {
     let num = parseFloat(valor);
@@ -23,7 +21,6 @@ window.onload = async () => {
         const data = await respuesta.json();
         productosGlobal = data.productos;
         clientesGlobal = data.clientes.reverse(); 
-        cargarCategorias();
         renderProductos(productosGlobal);
         renderClientes(clientesGlobal);
     } catch (error) {
@@ -42,12 +39,10 @@ function toggleAdmin() {
     const pass = prompt("Ingrese clave de administrador:");
     if (pass === "199311") {
         document.body.classList.toggle("show-admin");
-        // Muestra el botón secreto de Nuevo Producto
         document.getElementById('btn-add-producto-nuevo').style.display = document.body.classList.contains("show-admin") ? "block" : "none";
     } else if (pass !== null) alert("Clave incorrecta.");
 }
 
-// ==== APERTURA DE MODALES ====
 function abrirCarrito() { document.getElementById('modal-carrito').style.display = 'flex'; }
 function cerrarCarrito() { document.getElementById('modal-carrito').style.display = 'none'; }
 function cerrarDetalle() { document.getElementById('modal-detalle').style.display = 'none'; }
@@ -121,6 +116,7 @@ function renderProductos(productos) {
             else if (cat.includes("MASCOTA") || cat.includes("PERRO") || cat.includes("GATO")) imagenFinal = "https://img.icons8.com/color/150/dog-bowl.png"; 
             else if (cat.includes("ABARROTE") || cat.includes("GRANO") || cat.includes("CEREAL")) imagenFinal = "https://img.icons8.com/color/150/ingredients.png"; 
             else if (cat.includes("GAMER") || cat.includes("JUEGO") || cat.includes("DEDAL") || cat.includes("GATILLO")) imagenFinal = "https://img.icons8.com/color/150/controller.png"; 
+            else if (cat.includes("PERIFERICO") || cat.includes("TECLADO") || cat.includes("MOUSE")) imagenFinal = "https://img.icons8.com/color/150/mouse.png"; 
             else if (cat.includes("AUDIO") || cat.includes("AUDIFONO") || cat.includes("BOCINA")) imagenFinal = "https://img.icons8.com/color/150/headphones.png"; 
             else if (cat.includes("CELULAR") || cat.includes("SMARTPHONE") || cat.includes("TELEFONO")) imagenFinal = "https://img.icons8.com/color/150/iphone.png"; 
             else if (cat.includes("COMPUTADORA") || cat.includes("LAPTOP") || cat.includes("PC")) imagenFinal = "https://img.icons8.com/color/150/laptop.png"; 
@@ -132,50 +128,39 @@ function renderProductos(productos) {
         grid.innerHTML += `
             <div class="card">
                 <div class="cat-tag">${prod.categoria || 'Genérico'}</div>
-                <div class="img-container">
-                    <img src="${imagenFinal}" onerror="this.src='https://img.icons8.com/color/150/box--v1.png'">
-                </div>
+                <div class="img-container"><img src="${imagenFinal}" onerror="this.src='https://img.icons8.com/color/150/box--v1.png'"></div>
                 <span class="marca-text">${prod.marca || 'S/M'}</span>
                 <h3>${prod.nombre}</h3>
                 <div class="oferta">Lps. ${formatoMoneda(precioBase)}</div>
                 ${tablaDescuentos}
                 <button class="btn-add" onclick="agregarAlCarrito('${prod.codigo}')"><i class="fa-solid fa-cart-plus"></i> Agregar</button>
-                
-               <div class="admin-panel">
+                <div class="admin-panel">
                     <div class="admin-header"><i class="fa-solid fa-user-lock"></i> Info Interna</div>
                     <div class="admin-stats">
                         <div class="stat-box profit"><span>Ganancia</span><b>Lps. ${formatoMoneda(gananciaAutomatica)}</b></div>
                         <div class="stat-box cost"><span>Mejor Costo</span><b>Lps. ${formatoMoneda(costoBajo)}</b></div>
                     </div>
                     ${proveedoresHTML ? `<div class="admin-providers">${proveedoresHTML}</div>` : ''}
-                    
-                    <!-- NUEVO BOTON DE EDITAR (Oculto para clientes) -->
-                    <button class="btn-secundario" onclick="abrirModalEditar('${prod.codigo}')" style="margin: 10px; width: calc(100% - 20px); font-size: 0.85rem; padding: 10px;">
-                        <i class="fa-solid fa-pen"></i> Editar Producto
-                    </button>
+                    <button class="btn-secundario" onclick="abrirModalEditar('${prod.codigo}')" style="margin: 10px; width: calc(100% - 20px); font-size: 0.85rem; padding: 10px;"><i class="fa-solid fa-pen"></i> Editar Producto</button>
                 </div>
-            </div>
-        `;
+            </div>`;
     });
-}
-
-function cargarCategorias() {
-    const categorias = [...new Set(productosGlobal.map(p => p.categoria).filter(Boolean))];
-    const select = document.getElementById('cat-filter');
-    categorias.forEach(cat => { select.innerHTML += `<option value="${cat}">${cat}</option>`; });
 }
 
 function filtrarProductos() {
     const texto = document.getElementById('search-prod').value.toLowerCase();
     const cat = document.getElementById('cat-filter').value;
-    const filtrados = productosGlobal.filter(p => (p.nombre || "").toLowerCase().includes(texto) && (cat === "Todas" || p.categoria === cat));
+    const filtrados = productosGlobal.filter(p => {
+        const matchTexto = (p.nombre || "").toLowerCase().includes(texto);
+        const matchCat = (cat === "Todas") || (p.categoria || "").toLowerCase() === cat.toLowerCase();
+        return matchTexto && matchCat;
+    });
     renderProductos(filtrados);
 }
 
 function filtrarClientes() {
     const texto = document.getElementById('search-client').value.toLowerCase();
     const mesSeleccionado = document.getElementById('mes-filter').value; 
-    
     const filtrados = clientesGlobal.filter(c => {
         const coincideTexto = (c.cliente || "").toLowerCase().includes(texto) || (c.tienda || "").toLowerCase().includes(texto);
         let coincideMes = true;
@@ -196,8 +181,7 @@ function filtrarClientes() {
 function agregarAlCarrito(codigoProd) {
     const prod = productosGlobal.find(p => p.codigo === codigoProd);
     const item = carrito.find(i => i.codigo === codigoProd);
-    if (item) item.cantidad++;
-    else carrito.push({ codigo: prod.codigo, nombre: prod.nombre, prodCompleto: prod, cantidad: 1 });
+    if (item) item.cantidad++; else carrito.push({ codigo: prod.codigo, nombre: prod.nombre, prodCompleto: prod, cantidad: 1 });
     actualizarCarrito();
     const fab = document.getElementById('btn-flotante-carrito');
     fab.style.transform = 'scale(1.15)';
@@ -212,7 +196,6 @@ function actualizarCarrito() {
     const contenedor = document.getElementById('carrito-items');
     contenedor.innerHTML = "";
     let subtotalAcumulado = 0, cantidadTotal = 0;
-    
     if (carrito.length === 0) contenedor.innerHTML = `<div style="text-align:center; color:#cbd5e1; padding: 30px 0;"><i class="fa-solid fa-cart-arrow-down" style="font-size:45px; margin-bottom:10px;"></i><p>Carrito vacío</p></div>`;
     
     carrito.forEach((item, index) => {
@@ -234,58 +217,32 @@ function actualizarCarrito() {
                 </div>
             </div>`;
     });
-    
     let granTotal = subtotalAcumulado > 0 ? Math.ceil(subtotalAcumulado) + 1 : 0;
     document.getElementById('contador-carrito').innerText = cantidadTotal;
     document.getElementById('subtotal-display').innerText = formatoMoneda(subtotalAcumulado);
     document.getElementById('gran-total').innerText = formatoMoneda(granTotal);
 }
 
-// ==== LÓGICA DE AGREGAR PRODUCTO DESDE CÁMARA ====
 function procesarImagen(event) {
     const file = event.target.files[0];
     if (!file) return;
-    
-    imgName = file.name;
-    imgMimeType = file.type;
-    
+    imgName = file.name; imgMimeType = file.type;
     const reader = new FileReader();
-    reader.onload = function(e) {
-        imgBase64Data = e.target.result.split(',')[1];
-        document.getElementById('foto-estado').style.display = 'block'; // Muestra que la foto se cargó
-    };
+    reader.onload = function(e) { imgBase64Data = e.target.result.split(',')[1]; document.getElementById('foto-estado').style.display = 'block'; };
     reader.readAsDataURL(file);
 }
 
 async function guardarProductoNuevo(e) {
     e.preventDefault();
     const btn = document.getElementById('btn-guardar-prod');
-    btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Subiendo..."; 
-    btn.disabled = true;
-
+    btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Subiendo..."; btn.disabled = true;
     const nuevoProd = {
-        accion: "agregar_producto",
-        codigo: document.getElementById('p-codigo').value,
-        marca: document.getElementById('p-marca').value,
-        nombre: document.getElementById('p-nombre').value,
-        categoria: document.getElementById('p-categoria').value,
-        stock: document.getElementById('p-stock').value,
-        costo: document.getElementById('p-costo').value,
-        precio: document.getElementById('p-precio').value,
-        imagenBase64: imgBase64Data,
-        mimeType: imgMimeType,
-        nombreArchivo: imgName
+        accion: "agregar_producto", codigo: document.getElementById('p-codigo').value, marca: document.getElementById('p-marca').value,
+        nombre: document.getElementById('p-nombre').value, categoria: document.getElementById('p-categoria').value, stock: document.getElementById('p-stock').value,
+        costo: document.getElementById('p-costo').value, precio: document.getElementById('p-precio').value, imagenBase64: imgBase64Data, mimeType: imgMimeType, nombreArchivo: imgName
     };
-
-    try {
-        await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(nuevoProd) });
-        alert("¡Producto guardado exitosamente!");
-        location.reload(); 
-    } catch (error) {
-        alert("Error al subir el producto.");
-        btn.innerHTML = "<i class='fa-solid fa-cloud-arrow-up'></i> Guardar en Inventario"; 
-        btn.disabled = false;
-    }
+    try { await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(nuevoProd) }); alert("¡Producto guardado exitosamente!"); location.reload(); } 
+    catch (error) { alert("Error al subir el producto."); btn.innerHTML = "<i class='fa-solid fa-cloud-arrow-up'></i> Guardar en Inventario"; btn.disabled = false; }
 }
 
 async function guardarCotizacion(e) {
@@ -294,23 +251,9 @@ async function guardarCotizacion(e) {
     const btn = document.getElementById('btn-guardar');
     btn.innerHTML = "Guardando..."; btn.disabled = true;
     const totalCrudo = document.getElementById('gran-total').innerText.replace(/,/g, '');
-
-    const cotizacion = {
-        accion: "guardar_cotizacion", // Ahora especificamos qué hace este formulario
-        cliente: document.getElementById('c-nombre').value,
-        tienda: document.getElementById('c-tienda').value,
-        telefono: document.getElementById('c-tel').value,
-        lugar: document.getElementById('c-lugar').value,
-        fechaEntrega: document.getElementById('c-fecha-entrega').value,
-        total: totalCrudo,
-        carrito: carrito
-    };
-
-    try {
-        await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(cotizacion) });
-        alert("¡Guardado exitosamente!");
-        location.reload(); 
-    } catch (error) { alert("Error de conexión al guardar."); }
+    const cotizacion = { accion: "guardar_cotizacion", cliente: document.getElementById('c-nombre').value, tienda: document.getElementById('c-tienda').value, telefono: document.getElementById('c-tel').value, lugar: document.getElementById('c-lugar').value, fechaEntrega: document.getElementById('c-fecha-entrega').value, total: totalCrudo, carrito: carrito };
+    try { await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(cotizacion) }); alert("¡Guardado exitosamente!"); location.reload(); } 
+    catch (error) { alert("Error de conexión al guardar."); }
 }
 
 function renderClientes(clientes) {
@@ -332,34 +275,45 @@ function renderClientes(clientes) {
 function abrirDetalle(index) {
     indiceCotizacionActiva = index;
     const c = clientesGlobal[index];
-    const modal = document.getElementById('modal-detalle');
     
+    // ==== EL NUEVO DISEÑO ELEGANTE PARA EL DETALLE DE ORDEN ====
     document.getElementById('detalle-info').innerHTML = `
-        <strong>Cliente:</strong> ${c.cliente} <br><strong>Tienda:</strong> ${c.tienda} <br><strong>Teléfono:</strong> ${c.telefono} <br>
-        <strong>Dirección:</strong> ${c.lugar} <br><strong>Entrega:</strong> ${formatearFecha(c.fechaEntrega)} <br>
-        <strong style="font-size:1.2rem; color:var(--success); display:block; margin-top:10px;">Total Orden: Lps. ${formatoMoneda(c.total)}</strong>`;
+        <div style="background:#f8fafc; padding:15px; border-radius:12px; border:1px solid #e2e8f0; margin-bottom:15px; display:flex; flex-direction:column; gap:8px;">
+            <div style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-user" style="color:var(--accent); font-size:1.1rem; width:20px; text-align:center;"></i> <strong style="font-size:1.05rem; color:#1e293b;">${c.cliente}</strong></div>
+            <div style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-store" style="color:#64748b; font-size:0.95rem; width:20px; text-align:center;"></i> <span style="font-size:0.95rem; color:#475569;">${c.tienda}</span></div>
+            <div style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-phone" style="color:#64748b; font-size:0.95rem; width:20px; text-align:center;"></i> <span style="font-size:0.95rem; color:#475569;">${c.telefono}</span></div>
+            <div style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-location-dot" style="color:#64748b; font-size:0.95rem; width:20px; text-align:center;"></i> <span style="font-size:0.95rem; color:#475569;">${c.lugar}</span></div>
+            <div style="display:flex; align-items:center; gap:10px; margin-top:5px; padding-top:8px; border-top:1px dashed #cbd5e1;"><i class="fa-solid fa-calendar-day" style="color:#64748b; font-size:0.95rem; width:20px; text-align:center;"></i> <span style="font-size:0.95rem; color:#475569;">Entrega: <strong>${formatearFecha(c.fechaEntrega)}</strong></span></div>
+        </div>
+        <div style="background:#eff6ff; border:1px solid #bfdbfe; padding:15px; border-radius:12px; text-align:center;">
+            <span style="display:block; font-size:0.8rem; color:#1d4ed8; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">Total de la Orden</span>
+            <span style="font-size:1.7rem; color:#1e3a8a; font-weight:900;">Lps. ${formatoMoneda(c.total)}</span>
+        </div>
+    `;
 
     let htmlItems = "";
     if (c.carrito) {
         try {
-            JSON.parse(c.carrito).forEach(item => { htmlItems += `<div style="border-bottom: 1px solid #f1f5f9; padding: 10px 0; display:flex; justify-content:space-between; font-size:0.9rem;"><span><b>${item.cantidad}x</b> ${item.nombre}</span></div>`; });
+            JSON.parse(c.carrito).forEach(item => { 
+                htmlItems += `
+                <div style="display:flex; align-items:center; gap:15px; padding:12px 0; border-bottom:1px solid #f1f5f9;">
+                    <div style="background:#eef2ff; color:var(--accent); font-weight:800; padding:6px; border-radius:8px; font-size:0.85rem; min-width:40px; text-align:center;">${item.cantidad}x</div>
+                    <div style="font-size:0.95rem; color:var(--text-dark); font-weight:600; line-height:1.3;">${item.nombre}</div>
+                </div>`; 
+            });
         } catch(e) {}
     }
-    
     document.getElementById('detalle-items').innerHTML = htmlItems || "<p style='color:#64748b;'>Sin detalles guardados.</p>";
-    modal.style.display = 'flex';
+    document.getElementById('modal-detalle').style.display = 'flex';
 }
 
 function editarCotizacion() {
     const c = clientesGlobal[indiceCotizacionActiva];
     if (c.carrito) {
         carrito = JSON.parse(c.carrito);
-        document.getElementById('c-nombre').value = c.cliente;
-        document.getElementById('c-tienda').value = c.tienda;
-        document.getElementById('c-tel').value = c.telefono;
-        document.getElementById('c-lugar').value = c.lugar;
+        document.getElementById('c-nombre').value = c.cliente; document.getElementById('c-tienda').value = c.tienda;
+        document.getElementById('c-tel').value = c.telefono; document.getElementById('c-lugar').value = c.lugar;
         if (c.fechaEntrega) document.getElementById('c-fecha-entrega').value = new Date(c.fechaEntrega).toISOString().split('T')[0];
-        
         cerrarDetalle(); actualizarCarrito(); abrirCarrito();
     }
 }
@@ -368,7 +322,6 @@ function generarFactura() {
     const c = clientesGlobal[indiceCotizacionActiva];
     const nOrden = Math.floor(Math.random() * 90000) + 10000;
     let htmlItems = "";
-    
     JSON.parse(c.carrito || "[]").forEach(item => {
         let precioAplicado = item.prodCompleto && item.prodCompleto.precioUnitario ? item.prodCompleto.precioUnitario : 0;
         if (item.prodCompleto) {
@@ -377,7 +330,6 @@ function generarFactura() {
             else if (item.cantidad >= 5 && item.prodCompleto.precio5 > 0) precioAplicado = item.prodCompleto.precio5;
         }
         const subtotalItem = precioAplicado * item.cantidad;
-
         htmlItems += `<tr>
             <td style="padding:12px; border-bottom:1px solid #e5e7eb; text-align:center;">${item.cantidad}</td>
             <td style="padding:12px; border-bottom:1px solid #e5e7eb;">${item.nombre}</td>
@@ -399,7 +351,10 @@ function generarFactura() {
             thead { display: table-header-group; }
             th { background: #f8fafc; padding: 12px; text-align: left; color: #475569; border-bottom:2px solid #e2e8f0;}
             th.dinero { text-align: right; white-space: nowrap; }
-            .total { text-align: right; font-size: 22px; font-weight: bold; color: #10b981; padding-top:20px; border-top:2px solid #e2e8f0; page-break-inside: avoid;}
+            /* ==== DOBLE COLOR AZUL PARA EL TOTAL (Solución Imagen 4) ==== */
+            .total-container { text-align: right; padding-top: 20px; border-top: 2px solid #e2e8f0; page-break-inside: avoid; display: flex; justify-content: flex-end; align-items: center; gap: 15px; }
+            .total-label { font-size: 18px; color: #1e3a8a; font-weight: bold; text-transform: uppercase; }
+            .total-amount { font-size: 24px; font-weight: 900; color: #2563eb; background: #dbeafe; padding: 10px 20px; border-radius: 12px; border: 1px solid #bfdbfe; }
             .footer { text-align: center; font-size: 12px; color: #64748b; margin-top: 50px; page-break-inside: avoid;}
             @media print { body { -webkit-print-color-adjust: exact; padding: 0;} }
         </style>
@@ -410,7 +365,10 @@ function generarFactura() {
                 <div style="text-align: right;"><b>N° Orden:</b> EG-${nOrden}<br><b>Fecha:</b> ${formatearFecha(c.fechaEntrega)}<br><b>Lugar:</b> ${c.lugar}</div>
             </div>
             <table><thead><tr><th style="width: 10%; text-align:center;">Cant.</th><th>Descripción del Producto</th><th class="dinero" style="width: 25%;">Precio Unit.</th><th class="dinero" style="width: 25%;">Total</th></tr></thead><tbody>${htmlItems}</tbody></table>
-            <div class="total">Total a Cobrar: Lps. ${formatoMoneda(c.total)}</div>
+            <div class="total-container">
+                <span class="total-label">Total a Cobrar:</span>
+                <span class="total-amount">Lps. ${formatoMoneda(c.total)}</span>
+            </div>
             <div class="footer">¡Gracias por su preferencia!<br>Documento generado para control y validación de entrega.<br><br><b>Generado por: Renee Coello</b></div>
             <script>window.print();</script>
         </body></html>
@@ -432,82 +390,24 @@ function enviarWhatsApp() {
     window.open(`https://api.whatsapp.com/send?phone=${telefono}&text=${encodeURIComponent(mensaje)}`, '_blank');
 }
 
-// ==== VARIABLES Y FUNCIONES PARA EDITAR ====
-let imgBase64DataEdit = "";
-let imgMimeTypeEdit = "";
-let imgNameEdit = "";
-
 function abrirModalEditar(codigo) {
     const prod = productosGlobal.find(p => p.codigo === codigo);
     if(!prod) return;
-    
-    document.getElementById('e-codigo').value = prod.codigo;
-    document.getElementById('e-marca').value = prod.marca || "";
-    document.getElementById('e-nombre').value = prod.nombre;
-    document.getElementById('e-categoria').value = prod.categoria || "";
+    document.getElementById('e-codigo').value = prod.codigo; document.getElementById('e-marca').value = prod.marca || "";
+    document.getElementById('e-nombre').value = prod.nombre; document.getElementById('e-categoria').value = prod.categoria || "";
     document.getElementById('e-stock').value = prod.stock || 0;
-    
-    // Saca el costo más bajo para ponértelo en la cajita
     let precios = [];
-    for(let i=1; i<=6; i++) {
-        let p = parseFloat(prod['p'+i]);
-        if(!isNaN(p) && p>0) precios.push(p);
-    }
-    let cBajo = precios.length > 0 ? Math.min(...precios) : (parseFloat(prod.costoBajo)||0);
-    
-    document.getElementById('e-costo').value = cBajo;
+    for(let i=1; i<=6; i++) { let p = parseFloat(prod['p'+i]); if(!isNaN(p) && p>0) precios.push(p); }
+    document.getElementById('e-costo').value = precios.length > 0 ? Math.min(...precios) : (parseFloat(prod.costoBajo)||0);
     document.getElementById('e-precio').value = parseFloat(prod.precioUnitario) || 0;
-    
     document.getElementById('modal-editar-producto').style.display = 'flex';
 }
-
-function cerrarModalEditar() { 
-    document.getElementById('modal-editar-producto').style.display = 'none'; 
-    document.getElementById('form-editar-producto').reset();
-    document.getElementById('e-foto-estado').style.display = 'none';
-    imgBase64DataEdit = "";
-}
-
-function procesarImagenEdicion(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    imgNameEdit = file.name;
-    imgMimeTypeEdit = file.type;
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        imgBase64DataEdit = e.target.result.split(',')[1];
-        document.getElementById('e-foto-estado').style.display = 'block';
-    };
-    reader.readAsDataURL(file);
-}
-
+function cerrarModalEditar() { document.getElementById('modal-editar-producto').style.display = 'none'; document.getElementById('form-editar-producto').reset(); document.getElementById('e-foto-estado').style.display = 'none'; imgBase64DataEdit = ""; }
+function procesarImagenEdicion(event) { const file = event.target.files[0]; if (!file) return; imgNameEdit = file.name; imgMimeTypeEdit = file.type; const reader = new FileReader(); reader.onload = function(e) { imgBase64DataEdit = e.target.result.split(',')[1]; document.getElementById('e-foto-estado').style.display = 'block'; }; reader.readAsDataURL(file); }
 async function guardarEdicionProducto(e) {
     e.preventDefault();
-    const btn = document.getElementById('btn-guardar-edicion');
-    btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Actualizando..."; 
-    btn.disabled = true;
-
-    const prodEditado = {
-        accion: "editar_producto",
-        codigo: document.getElementById('e-codigo').value,
-        marca: document.getElementById('e-marca').value,
-        nombre: document.getElementById('e-nombre').value,
-        categoria: document.getElementById('e-categoria').value,
-        stock: document.getElementById('e-stock').value,
-        costo: document.getElementById('e-costo').value,
-        precio: document.getElementById('e-precio').value,
-        imagenBase64: imgBase64DataEdit, // Si no cambiaste foto, va vacío y Excel no la borra
-        mimeType: imgMimeTypeEdit,
-        nombreArchivo: imgNameEdit
-    };
-
-    try {
-        await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(prodEditado) });
-        alert("¡Producto actualizado exitosamente!");
-        location.reload(); 
-    } catch (error) {
-        alert("Error al actualizar el producto.");
-        btn.innerHTML = "<i class='fa-solid fa-cloud-arrow-up'></i> Actualizar Producto"; 
-        btn.disabled = false;
-    }
+    const btn = document.getElementById('btn-guardar-edicion'); btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Actualizando..."; btn.disabled = true;
+    const prodEditado = { accion: "editar_producto", codigo: document.getElementById('e-codigo').value, marca: document.getElementById('e-marca').value, nombre: document.getElementById('e-nombre').value, categoria: document.getElementById('e-categoria').value, stock: document.getElementById('e-stock').value, costo: document.getElementById('e-costo').value, precio: document.getElementById('e-precio').value, imagenBase64: imgBase64DataEdit, mimeType: imgMimeTypeEdit, nombreArchivo: imgNameEdit };
+    try { await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(prodEditado) }); alert("¡Producto actualizado exitosamente!"); location.reload(); } 
+    catch (error) { alert("Error al actualizar el producto."); btn.innerHTML = "<i class='fa-solid fa-cloud-arrow-up'></i> Actualizar Producto"; btn.disabled = false; }
 }

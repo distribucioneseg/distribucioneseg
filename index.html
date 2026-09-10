@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DISTRIBUCIONES E&G</title>
-    <link rel="stylesheet" href="style.css?v=20">
+    <link rel="stylesheet" href="style.css?v=30">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
@@ -26,10 +26,38 @@
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <input type="text" id="search-prod" placeholder="Buscar producto..." onkeyup="filtrarProductos()">
             </div>
+            <!-- Subcategorías Ordenadas -->
             <select id="cat-filter" onchange="filtrarProductos()">
                 <option value="Todas">Todas las categorías</option>
+                <optgroup label="Tecnología y Gamer">
+                    <option value="Gamer">Accesorios Gamer</option>
+                    <option value="Periferico">Periféricos (Mouse/Teclado)</option>
+                    <option value="Audio">Audio y Audífonos</option>
+                    <option value="Accesorio">Cables y Cargadores</option>
+                </optgroup>
+                <optgroup label="Abarrotes y Despensa">
+                    <option value="Granos">Granos y Cereales</option>
+                    <option value="Enlatados">Enlatados y Conservas</option>
+                    <option value="Salsas">Salsas y Condimentos</option>
+                    <option value="Lacteos">Lácteos y Huevos</option>
+                    <option value="Embutidos">Embutidos y Carnes</option>
+                    <option value="Panaderia">Panadería y Repostería</option>
+                </optgroup>
+                <optgroup label="Bebidas y Snacks">
+                    <option value="Bebidas">Bebidas y Jugos</option>
+                    <option value="Snacks">Snacks y Churros</option>
+                    <option value="Dulces">Dulces y Chocolates</option>
+                </optgroup>
+                <optgroup label="Higiene y Limpieza">
+                    <option value="Limpieza">Limpieza del Hogar</option>
+                    <option value="Higiene">Higiene Personal</option>
+                    <option value="Papel">Papel y Desechables</option>
+                </optgroup>
+                <optgroup label="Otros">
+                    <option value="Medicinas">Medicinas (OTC)</option>
+                    <option value="Mascotas">Mascotas</option>
+                </optgroup>
             </select>
-            <!-- BOTÓN SECRETO PARA AGREGAR PRODUCTO (Solo sale cuando pones tu clave) -->
             <button id="btn-add-producto-nuevo" onclick="abrirModalProducto()" style="display:none; background:var(--success); color:white; border:none; padding:12px; border-radius:12px; font-weight:700; cursor:pointer;"><i class="fa-solid fa-plus"></i> Nuevo</button>
         </div>
         <main><section id="productos-grid" class="grid"></section></main>
@@ -81,9 +109,9 @@
         <div class="modal-contenido">
             <div class="modal-header"><h2>Detalle de Orden</h2><button class="btn-cerrar" onclick="cerrarDetalle()"><i class="fa-solid fa-xmark"></i></button></div>
             <div class="modal-body">
-                <div id="detalle-info" class="detalle-info-caja"></div>
-                <h3>Productos Solicitados</h3>
-                <div id="detalle-items" class="detalle-items-caja"></div>
+                <div id="detalle-info" class="detalle-info-caja" style="padding:0; border:none; background:transparent;"></div>
+                <h3 style="color:#1e293b; margin-top:20px; font-size:1.1rem;">Productos Solicitados</h3>
+                <div id="detalle-items" class="detalle-items-caja" style="margin-bottom:20px;"></div>
                 <div class="botones-accion-detalle">
                     <button onclick="editarCotizacion()" class="btn-secundario"><i class="fa-solid fa-pen-to-square"></i> Modificar</button>
                     <button onclick="generarFactura()" class="btn-primario"><i class="fa-solid fa-file-invoice"></i> PDF</button>
@@ -93,90 +121,100 @@
         </div>
     </div>
 
-    <!-- === NUEVO MODAL: AGREGAR PRODUCTO CON CÁMARA === -->
+    <!-- Modal: Agregar Producto -->
     <div id="modal-producto" class="modal-oculto">
         <div class="modal-contenido">
             <div class="modal-header"><h2>Agregar Producto</h2><button type="button" class="btn-cerrar" onclick="cerrarModalProducto()"><i class="fa-solid fa-xmark"></i></button></div>
             <div class="modal-body">
                 <form id="form-producto" onsubmit="guardarProductoNuevo(event)" style="display: flex; flex-direction: column; gap: 15px;">
-                    
                     <label style="background: #eef2ff; color: var(--accent); padding: 15px; border-radius: 12px; text-align: center; font-weight: bold; cursor: pointer; border: 2px dashed #c7d2fe;">
                         <i class="fa-solid fa-camera" style="font-size: 24px; display:block; margin-bottom:5px;"></i> Tomar o Subir Foto
                         <input type="file" id="p-foto" accept="image/*" capture="environment" onchange="procesarImagen(event)" style="display:none;">
                     </label>
                     <p id="foto-estado" style="text-align:center; font-size:0.8rem; color:var(--success); margin:0; display:none;"><i class="fa-solid fa-check-circle"></i> Foto lista</p>
-
                     <div style="display: flex; flex-direction: column; gap: 4px;">
                         <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Código / SKU</label>
                         <input type="text" id="p-codigo" placeholder="Ej: PROD-01" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
                     </div>
-
                     <div style="display: flex; gap: 10px;">
                         <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
                             <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Marca</label>
-                            <input type="text" id="p-marca" placeholder="Ej: Yummies" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
+                            <input type="text" id="p-marca" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 4px; flex: 2;">
                             <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Nombre del Producto</label>
-                            <input type="text" id="p-nombre" placeholder="Ej: Zambos Preparados" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
+                            <input type="text" id="p-nombre" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
                         </div>
                     </div>
-                    
                     <div style="display: flex; flex-direction: column; gap: 4px;">
                         <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Categoría</label>
                         <select id="p-categoria" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif; background:white;">
                             <option value="">Selecciona la Categoría</option>
-                            <option value="Limpieza">Limpieza</option>
-                            <option value="Higiene">Higiene</option>
-                            <option value="Abarrotes">Abarrotes</option>
-                            <option value="Snacks">Snacks</option>
-                            <option value="Lacteos">Lácteos</option>
-                            <option value="Bebidas">Bebidas</option>
-                            <option value="Gamer">Gamer</option>
-                            <option value="Accesorio">Accesorio (Tecnología)</option>
+                            <optgroup label="Tecnología y Gamer">
+                                <option value="Gamer">Accesorios Gamer</option>
+                                <option value="Periferico">Periféricos (Mouse/Teclado)</option>
+                                <option value="Audio">Audio y Audífonos</option>
+                                <option value="Accesorio">Cables y Cargadores</option>
+                            </optgroup>
+                            <optgroup label="Abarrotes y Despensa">
+                                <option value="Granos">Granos y Cereales</option>
+                                <option value="Enlatados">Enlatados y Conservas</option>
+                                <option value="Salsas">Salsas y Condimentos</option>
+                                <option value="Lacteos">Lácteos y Huevos</option>
+                                <option value="Embutidos">Embutidos y Carnes</option>
+                                <option value="Panaderia">Panadería y Repostería</option>
+                            </optgroup>
+                            <optgroup label="Bebidas y Snacks">
+                                <option value="Bebidas">Bebidas y Jugos</option>
+                                <option value="Snacks">Snacks y Churros</option>
+                                <option value="Dulces">Dulces y Chocolates</option>
+                            </optgroup>
+                            <optgroup label="Higiene y Limpieza">
+                                <option value="Limpieza">Limpieza del Hogar</option>
+                                <option value="Higiene">Higiene Personal</option>
+                                <option value="Papel">Papel y Desechables</option>
+                            </optgroup>
+                            <optgroup label="Otros">
+                                <option value="Medicinas">Medicinas (OTC)</option>
+                                <option value="Mascotas">Mascotas</option>
+                            </optgroup>
                         </select>
                     </div>
-
                     <div style="display:flex; gap:10px;">
                         <div style="display: flex; flex-direction: column; gap: 4px; width:50%;">
                             <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Stock Disp.</label>
-                            <input type="number" id="p-stock" placeholder="0" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
+                            <input type="number" id="p-stock" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 4px; width:50%;">
                             <label style="font-size: 0.75rem; font-weight: 800; color: #3b82f6; text-transform: uppercase;">Costo (Lps)</label>
-                            <input type="number" id="p-costo" step="0.01" placeholder="0.00" required style="padding:12px; border-radius:10px; border:1px solid #bfdbfe; background:#eff6ff; color:#1d4ed8; font-weight:bold; outline:none; font-family:'Inter', sans-serif;">
+                            <input type="number" id="p-costo" step="0.01" required style="padding:12px; border-radius:10px; border:1px solid #bfdbfe; background:#eff6ff; color:#1d4ed8; font-weight:bold; outline:none; font-family:'Inter', sans-serif;">
                         </div>
                     </div>
-                    
                     <div style="display: flex; flex-direction: column; gap: 4px;">
                         <label style="font-size: 0.75rem; font-weight: 800; color: #10b981; text-transform: uppercase;">Precio Público (Lps)</label>
-                        <input type="number" id="p-precio" step="0.01" placeholder="0.00" required style="padding:14px; border-radius:10px; border:2px solid #a7f3d0; background:#f0fdf4; font-weight:bold; color:#047857; font-size:1.1rem; outline:none; font-family:'Inter', sans-serif;">
+                        <input type="number" id="p-precio" step="0.01" required style="padding:14px; border-radius:10px; border:2px solid #a7f3d0; background:#f0fdf4; font-weight:bold; color:#047857; font-size:1.1rem; outline:none; font-family:'Inter', sans-serif;">
                     </div>
-
                     <button type="submit" id="btn-guardar-prod" class="btn-primario" style="margin-top:5px;"><i class="fa-solid fa-cloud-arrow-up"></i> Guardar en Inventario</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- === MODAL: EDITAR PRODUCTO === -->
+    <!-- Modal: Editar Producto -->
     <div id="modal-editar-producto" class="modal-oculto">
         <div class="modal-contenido">
             <div class="modal-header"><h2>Editar Producto</h2><button type="button" class="btn-cerrar" onclick="cerrarModalEditar()"><i class="fa-solid fa-xmark"></i></button></div>
             <div class="modal-body">
                 <form id="form-editar-producto" onsubmit="guardarEdicionProducto(event)" style="display: flex; flex-direction: column; gap: 15px;">
-                    
                     <label style="background: #eef2ff; color: var(--accent); padding: 15px; border-radius: 12px; text-align: center; font-weight: bold; cursor: pointer; border: 2px dashed #c7d2fe;">
                         <i class="fa-solid fa-camera-rotate" style="font-size: 24px; display:block; margin-bottom:5px;"></i> Cambiar Foto (Opcional)
                         <input type="file" id="e-foto" accept="image/*" onchange="procesarImagenEdicion(event)" style="display:none;">
                     </label>
                     <p id="e-foto-estado" style="text-align:center; font-size:0.8rem; color:var(--success); margin:0; display:none;"><i class="fa-solid fa-check-circle"></i> Nueva foto lista</p>
-
                     <div style="display: flex; flex-direction: column; gap: 4px;">
                         <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Código / SKU</label>
                         <input type="text" id="e-codigo" readonly style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; background:#f1f5f9; color:#64748b; outline:none; font-family:'Inter', sans-serif;">
                     </div>
-
                     <div style="display: flex; gap: 10px;">
                         <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
                             <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Marca</label>
@@ -187,21 +225,40 @@
                             <input type="text" id="e-nombre" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
                         </div>
                     </div>
-                    
                     <div style="display: flex; flex-direction: column; gap: 4px;">
                         <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Categoría</label>
                         <select id="e-categoria" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif; background:white;">
-                            <option value="Limpieza">Limpieza</option>
-                            <option value="Higiene">Higiene</option>
-                            <option value="Abarrotes">Abarrotes</option>
-                            <option value="Snacks">Snacks</option>
-                            <option value="Lacteos">Lácteos</option>
-                            <option value="Bebidas">Bebidas</option>
-                            <option value="Gamer">Gamer</option>
-                            <option value="Accesorio">Accesorio (Tecnología)</option>
+                            <option value="">Selecciona la Categoría</option>
+                            <optgroup label="Tecnología y Gamer">
+                                <option value="Gamer">Accesorios Gamer</option>
+                                <option value="Periferico">Periféricos (Mouse/Teclado)</option>
+                                <option value="Audio">Audio y Audífonos</option>
+                                <option value="Accesorio">Cables y Cargadores</option>
+                            </optgroup>
+                            <optgroup label="Abarrotes y Despensa">
+                                <option value="Granos">Granos y Cereales</option>
+                                <option value="Enlatados">Enlatados y Conservas</option>
+                                <option value="Salsas">Salsas y Condimentos</option>
+                                <option value="Lacteos">Lácteos y Huevos</option>
+                                <option value="Embutidos">Embutidos y Carnes</option>
+                                <option value="Panaderia">Panadería y Repostería</option>
+                            </optgroup>
+                            <optgroup label="Bebidas y Snacks">
+                                <option value="Bebidas">Bebidas y Jugos</option>
+                                <option value="Snacks">Snacks y Churros</option>
+                                <option value="Dulces">Dulces y Chocolates</option>
+                            </optgroup>
+                            <optgroup label="Higiene y Limpieza">
+                                <option value="Limpieza">Limpieza del Hogar</option>
+                                <option value="Higiene">Higiene Personal</option>
+                                <option value="Papel">Papel y Desechables</option>
+                            </optgroup>
+                            <optgroup label="Otros">
+                                <option value="Medicinas">Medicinas (OTC)</option>
+                                <option value="Mascotas">Mascotas</option>
+                            </optgroup>
                         </select>
                     </div>
-
                     <div style="display:flex; gap:10px;">
                         <div style="display: flex; flex-direction: column; gap: 4px; width:50%;">
                             <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Stock Disp.</label>
@@ -212,19 +269,16 @@
                             <input type="number" id="e-costo" step="0.01" required style="padding:12px; border-radius:10px; border:1px solid #bfdbfe; background:#eff6ff; color:#1d4ed8; font-weight:bold; outline:none; font-family:'Inter', sans-serif;">
                         </div>
                     </div>
-                    
                     <div style="display: flex; flex-direction: column; gap: 4px;">
                         <label style="font-size: 0.75rem; font-weight: 800; color: #10b981; text-transform: uppercase;">Precio Público (Lps)</label>
                         <input type="number" id="e-precio" step="0.01" required style="padding:14px; border-radius:10px; border:2px solid #a7f3d0; background:#f0fdf4; font-weight:bold; color:#047857; font-size:1.1rem; outline:none; font-family:'Inter', sans-serif;">
                     </div>
-
                     <button type="submit" id="btn-guardar-edicion" class="btn-primario" style="margin-top:5px;"><i class="fa-solid fa-cloud-arrow-up"></i> Actualizar Producto</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Script versionado para matar el caché del celular -->
-    <script src="app.js?v=26"></script>
+    <script src="app.js?v=30"></script>
 </body>
 </html>

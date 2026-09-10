@@ -187,3 +187,16 @@ body.show-admin .admin-panel {
 /* --- Botón de WhatsApp --- */
 .btn-whatsapp { background: #25D366; color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 700; font-size: 1rem; width: 100%; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s;}
 .btn-whatsapp:active { transform: scale(0.96); }
+
+.mes-filter-input { 
+    padding: 13px 15px; 
+    border: 1px solid #e2e8f0; 
+    border-radius: 12px; 
+    background: white; 
+    font-size: 0.95rem; 
+    outline: none; 
+    color: var(--text-dark); 
+    font-weight: 600; 
+    flex: 1; 
+    min-width: 180px; /* Esto evita que se corte */
+}
