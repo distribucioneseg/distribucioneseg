@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DISTRIBUCIONES E&G</title>
-    <link rel="stylesheet" href="style.css?v=60">
+    <link rel="stylesheet" href="style.css?v=85">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
@@ -27,16 +27,59 @@
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <input type="text" id="search-prod" placeholder="Buscar producto..." onkeyup="filtrarProductos()">
             </div>
+            
             <select id="cat-filter" onchange="filtrarProductos()">
                 <option value="Todas">Todas las categorías</option>
-                <optgroup label="🎮 Tecnología y Gamer"><option value="Gamer">Accesorios Gamer</option><option value="Periferico">Periféricos (Mouse/Teclado)</option><option value="Audio">Audio y Audífonos</option><option value="Cables">Cables y Cargadores</option><option value="Almacenamiento">Almacenamiento (USB/MicroSD)</option><option value="Protectores">Fundas y Protectores</option><option value="Celulares">Celulares y Tablets</option><option value="Componentes">Componentes PC</option></optgroup>
-                <optgroup label="🛒 Abarrotes y Despensa"><option value="Granos">Granos y Cereales</option><option value="Aceites">Aceites y Mantecas</option><option value="Pastas">Pastas y Sopas Instantáneas</option><option value="Enlatados">Enlatados y Conservas</option><option value="Salsas">Salsas y Condimentos</option><option value="Especias">Azúcar, Sal y Especias</option><option value="Lacteos">Lácteos y Huevos</option><option value="Embutidos">Embutidos y Carnes</option><option value="Panaderia">Panadería y Repostería</option></optgroup>
-                <optgroup label="🥤 Bebidas y Snacks"><option value="Refrescos">Refrescos y Jugos</option><option value="Agua">Agua Purificada</option><option value="Energizantes">Bebidas Energizantes</option><option value="Cervezas">Cervezas y Licores</option><option value="Snacks">Snacks y Churros</option><option value="Dulces">Dulces y Chocolates</option><option value="Cafe">Café y Té</option></optgroup>
-                <optgroup label="🧼 Higiene y Limpieza"><option value="Detergentes">Detergentes y Suavizantes</option><option value="Limpieza">Limpieza del Hogar</option><option value="Higiene">Higiene Corporal</option><option value="Capilar">Cuidado Capilar (Shampoo/Gel)</option><option value="Dental">Cuidado Dental</option><option value="Papel">Papel y Desechables</option></optgroup>
-                <optgroup label="📦 Variedades y Otros"><option value="Medicinas">Medicinas (OTC)</option><option value="Bebes">Cuidado del Bebé</option><option value="Mascotas">Mascotas</option><option value="Papeleria">Librería y Papelería</option><option value="Ferreteria">Ferretería Básica</option><option value="Plasticos">Hogar y Plásticos</option><option value="Cosmeticos">Cosméticos y Belleza</option></optgroup>
+                <optgroup label="🎮 Tecnología y Gamer">
+                    <option value="Gamer">Accesorios Gamer</option>
+                    <option value="Periferico">Periféricos (Mouse/Teclado)</option>
+                    <option value="Audio">Audio y Audífonos</option>
+                    <option value="Cables">Cables y Cargadores</option>
+                    <option value="Almacenamiento">Almacenamiento (USB/MicroSD)</option>
+                    <option value="Protectores">Fundas y Protectores</option>
+                    <option value="Celulares">Celulares y Tablets</option>
+                    <option value="Componentes">Componentes PC</option>
+                </optgroup>
+                <optgroup label="🛒 Abarrotes y Despensa">
+                    <option value="Granos">Granos y Cereales</option>
+                    <option value="Aceites">Aceites y Mantecas</option>
+                    <option value="Pastas">Pastas y Sopas Instantáneas</option>
+                    <option value="Enlatados">Enlatados y Conservas</option>
+                    <option value="Salsas">Salsas y Condimentos</option>
+                    <option value="Especias">Azúcar, Sal y Especias</option>
+                    <option value="Lacteos">Lácteos y Huevos</option>
+                    <option value="Embutidos">Embutidos y Carnes</option>
+                    <option value="Panaderia">Panadería y Repostería</option>
+                </optgroup>
+                <optgroup label="🥤 Bebidas y Snacks">
+                    <option value="Refrescos">Refrescos y Jugos</option>
+                    <option value="Agua">Agua Purificada</option>
+                    <option value="Energizantes">Bebidas Energizantes</option>
+                    <option value="Cervezas">Cervezas y Licores</option>
+                    <option value="Snacks">Snacks y Churros</option>
+                    <option value="Dulces">Dulces y Chocolates</option>
+                    <option value="Cafe">Café y Té</option>
+                </optgroup>
+                <optgroup label="🧼 Higiene y Limpieza">
+                    <option value="Detergentes">Detergentes y Suavizantes</option>
+                    <option value="Limpieza">Limpieza del Hogar</option>
+                    <option value="Higiene">Higiene Corporal</option>
+                    <option value="Capilar">Cuidado Capilar (Shampoo/Gel)</option>
+                    <option value="Dental">Cuidado Dental</option>
+                    <option value="Papel">Papel y Desechables</option>
+                </optgroup>
+                <optgroup label="📦 Variedades y Otros">
+                    <option value="Medicinas">Medicinas (OTC)</option>
+                    <option value="Bebes">Cuidado del Bebé</option>
+                    <option value="Mascotas">Mascotas</option>
+                    <option value="Papeleria">Librería y Papelería</option>
+                    <option value="Ferreteria">Ferretería Básica</option>
+                    <option value="Plasticos">Hogar y Plásticos</option>
+                    <option value="Cosmeticos">Cosméticos y Belleza</option>
+                </optgroup>
             </select>
             
-            <!-- NUEVO: SELECTOR DE VISTA MINIATURAS/LISTA -->
+            <!-- SELECTOR DE VISTA MINIATURAS/LISTA -->
             <div class="view-toggle">
                 <button id="btn-grid" class="active" onclick="cambiarVista('grid')" title="Cuadrícula"><i class="fa-solid fa-border-all"></i></button>
                 <button id="btn-list" onclick="cambiarVista('list')" title="Lista"><i class="fa-solid fa-list"></i></button>
@@ -123,26 +166,67 @@
                         <input type="text" id="p-codigo" placeholder="Ej: PROD-01" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
                     </div>
                     
-                    <div style="display: flex; gap: 10px;">
-                        <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
-                            <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Marca</label>
-                            <input type="text" id="p-marca" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
-                        </div>
-                        <div style="display: flex; flex-direction: column; gap: 4px; flex: 2;">
-                            <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Producto</label>
-                            <input type="text" id="p-nombre" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
-                        </div>
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Marca</label>
+                        <input type="text" id="p-marca" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Producto</label>
+                        <input type="text" id="p-nombre" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
                     </div>
                     
                     <div style="display: flex; flex-direction: column; gap: 4px;">
                         <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Categoría</label>
                         <select id="p-categoria" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif; background:white;">
                             <option value="">Selecciona la Categoría</option>
-                            <optgroup label="🎮 Tecnología y Gamer"><option value="Gamer">Accesorios Gamer</option><option value="Periferico">Periféricos (Mouse/Teclado)</option><option value="Audio">Audio y Audífonos</option><option value="Cables">Cables y Cargadores</option><option value="Almacenamiento">Almacenamiento (USB/MicroSD)</option><option value="Protectores">Fundas y Protectores</option><option value="Celulares">Celulares y Tablets</option><option value="Componentes">Componentes PC</option></optgroup>
-                            <optgroup label="🛒 Abarrotes y Despensa"><option value="Granos">Granos y Cereales</option><option value="Aceites">Aceites y Mantecas</option><option value="Pastas">Pastas y Sopas Instantáneas</option><option value="Enlatados">Enlatados y Conservas</option><option value="Salsas">Salsas y Condimentos</option><option value="Especias">Azúcar, Sal y Especias</option><option value="Lacteos">Lácteos y Huevos</option><option value="Embutidos">Embutidos y Carnes</option><option value="Panaderia">Panadería y Repostería</option></optgroup>
-                            <optgroup label="🥤 Bebidas y Snacks"><option value="Refrescos">Refrescos y Jugos</option><option value="Agua">Agua Purificada</option><option value="Energizantes">Bebidas Energizantes</option><option value="Cervezas">Cervezas y Licores</option><option value="Snacks">Snacks y Churros</option><option value="Dulces">Dulces y Chocolates</option><option value="Cafe">Café y Té</option></optgroup>
-                            <optgroup label="🧼 Higiene y Limpieza"><option value="Detergentes">Detergentes y Suavizantes</option><option value="Limpieza">Limpieza del Hogar</option><option value="Higiene">Higiene Corporal</option><option value="Capilar">Cuidado Capilar (Shampoo/Gel)</option><option value="Dental">Cuidado Dental</option><option value="Papel">Papel y Desechables</option></optgroup>
-                            <optgroup label="📦 Variedades y Otros"><option value="Medicinas">Medicinas (OTC)</option><option value="Bebes">Cuidado del Bebé</option><option value="Mascotas">Mascotas</option><option value="Papeleria">Librería y Papelería</option><option value="Ferreteria">Ferretería Básica</option><option value="Plasticos">Hogar y Plásticos</option><option value="Cosmeticos">Cosméticos y Belleza</option></optgroup>
+                            <optgroup label="🎮 Tecnología y Gamer">
+                                <option value="Gamer">Accesorios Gamer</option>
+                                <option value="Periferico">Periféricos (Mouse/Teclado)</option>
+                                <option value="Audio">Audio y Audífonos</option>
+                                <option value="Cables">Cables y Cargadores</option>
+                                <option value="Almacenamiento">Almacenamiento (USB/MicroSD)</option>
+                                <option value="Protectores">Fundas y Protectores</option>
+                                <option value="Celulares">Celulares y Tablets</option>
+                                <option value="Componentes">Componentes PC</option>
+                            </optgroup>
+                            <optgroup label="🛒 Abarrotes y Despensa">
+                                <option value="Granos">Granos y Cereales</option>
+                                <option value="Aceites">Aceites y Mantecas</option>
+                                <option value="Pastas">Pastas y Sopas Instantáneas</option>
+                                <option value="Enlatados">Enlatados y Conservas</option>
+                                <option value="Salsas">Salsas y Condimentos</option>
+                                <option value="Especias">Azúcar, Sal y Especias</option>
+                                <option value="Lacteos">Lácteos y Huevos</option>
+                                <option value="Embutidos">Embutidos y Carnes</option>
+                                <option value="Panaderia">Panadería y Repostería</option>
+                            </optgroup>
+                            <optgroup label="🥤 Bebidas y Snacks">
+                                <option value="Refrescos">Refrescos y Jugos</option>
+                                <option value="Agua">Agua Purificada</option>
+                                <option value="Energizantes">Bebidas Energizantes</option>
+                                <option value="Cervezas">Cervezas y Licores</option>
+                                <option value="Snacks">Snacks y Churros</option>
+                                <option value="Dulces">Dulces y Chocolates</option>
+                                <option value="Cafe">Café y Té</option>
+                            </optgroup>
+                            <optgroup label="🧼 Higiene y Limpieza">
+                                <option value="Detergentes">Detergentes y Suavizantes</option>
+                                <option value="Limpieza">Limpieza del Hogar</option>
+                                <option value="Higiene">Higiene Corporal</option>
+                                <option value="Capilar">Cuidado Capilar (Shampoo/Gel)</option>
+                                <option value="Dental">Cuidado Dental</option>
+                                <option value="Papel">Papel y Desechables</option>
+                            </optgroup>
+                            <optgroup label="📦 Variedades y Otros">
+                                <option value="Medicinas">Medicinas (OTC)</option>
+                                <option value="Bebes">Cuidado del Bebé</option>
+                                <option value="Mascotas">Mascotas</option>
+                                <option value="Papeleria">Librería y Papelería</option>
+                                <option value="Ferreteria">Ferretería Básica</option>
+                                <option value="Plasticos">Hogar y Plásticos</option>
+                                <option value="Cosmeticos">Cosméticos y Belleza</option>
+                            </optgroup>
                         </select>
                     </div>
 
@@ -222,26 +306,67 @@
                         <input type="text" id="e-codigo" readonly style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; background:#f1f5f9; color:#64748b; outline:none; font-family:'Inter', sans-serif;">
                     </div>
                     
-                    <div style="display: flex; gap: 10px;">
-                        <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
-                            <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Marca</label>
-                            <input type="text" id="e-marca" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
-                        </div>
-                        <div style="display: flex; flex-direction: column; gap: 4px; flex: 2;">
-                            <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Producto</label>
-                            <input type="text" id="e-nombre" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
-                        </div>
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Marca</label>
+                        <input type="text" id="e-marca" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Producto</label>
+                        <input type="text" id="e-nombre" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
                     </div>
                     
                     <div style="display: flex; flex-direction: column; gap: 4px;">
                         <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Categoría</label>
                         <select id="e-categoria" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif; background:white;">
                             <option value="">Selecciona la Categoría</option>
-                            <optgroup label="🎮 Tecnología y Gamer"><option value="Gamer">Accesorios Gamer</option><option value="Periferico">Periféricos (Mouse/Teclado)</option><option value="Audio">Audio y Audífonos</option><option value="Cables">Cables y Cargadores</option><option value="Almacenamiento">Almacenamiento (USB/MicroSD)</option><option value="Protectores">Fundas y Protectores</option><option value="Celulares">Celulares y Tablets</option><option value="Componentes">Componentes PC</option></optgroup>
-                            <optgroup label="🛒 Abarrotes y Despensa"><option value="Granos">Granos y Cereales</option><option value="Aceites">Aceites y Mantecas</option><option value="Pastas">Pastas y Sopas Instantáneas</option><option value="Enlatados">Enlatados y Conservas</option><option value="Salsas">Salsas y Condimentos</option><option value="Especias">Azúcar, Sal y Especias</option><option value="Lacteos">Lácteos y Huevos</option><option value="Embutidos">Embutidos y Carnes</option><option value="Panaderia">Panadería y Repostería</option></optgroup>
-                            <optgroup label="🥤 Bebidas y Snacks"><option value="Refrescos">Refrescos y Jugos</option><option value="Agua">Agua Purificada</option><option value="Energizantes">Bebidas Energizantes</option><option value="Cervezas">Cervezas y Licores</option><option value="Snacks">Snacks y Churros</option><option value="Dulces">Dulces y Chocolates</option><option value="Cafe">Café y Té</option></optgroup>
-                            <optgroup label="🧼 Higiene y Limpieza"><option value="Detergentes">Detergentes y Suavizantes</option><option value="Limpieza">Limpieza del Hogar</option><option value="Higiene">Higiene Corporal</option><option value="Capilar">Cuidado Capilar (Shampoo/Gel)</option><option value="Dental">Cuidado Dental</option><option value="Papel">Papel y Desechables</option></optgroup>
-                            <optgroup label="📦 Variedades y Otros"><option value="Medicinas">Medicinas (OTC)</option><option value="Bebes">Cuidado del Bebé</option><option value="Mascotas">Mascotas</option><option value="Papeleria">Librería y Papelería</option><option value="Ferreteria">Ferretería Básica</option><option value="Plasticos">Hogar y Plásticos</option><option value="Cosmeticos">Cosméticos y Belleza</option></optgroup>
+                            <optgroup label="🎮 Tecnología y Gamer">
+                                <option value="Gamer">Accesorios Gamer</option>
+                                <option value="Periferico">Periféricos (Mouse/Teclado)</option>
+                                <option value="Audio">Audio y Audífonos</option>
+                                <option value="Cables">Cables y Cargadores</option>
+                                <option value="Almacenamiento">Almacenamiento (USB/MicroSD)</option>
+                                <option value="Protectores">Fundas y Protectores</option>
+                                <option value="Celulares">Celulares y Tablets</option>
+                                <option value="Componentes">Componentes PC</option>
+                            </optgroup>
+                            <optgroup label="🛒 Abarrotes y Despensa">
+                                <option value="Granos">Granos y Cereales</option>
+                                <option value="Aceites">Aceites y Mantecas</option>
+                                <option value="Pastas">Pastas y Sopas Instantáneas</option>
+                                <option value="Enlatados">Enlatados y Conservas</option>
+                                <option value="Salsas">Salsas y Condimentos</option>
+                                <option value="Especias">Azúcar, Sal y Especias</option>
+                                <option value="Lacteos">Lácteos y Huevos</option>
+                                <option value="Embutidos">Embutidos y Carnes</option>
+                                <option value="Panaderia">Panadería y Repostería</option>
+                            </optgroup>
+                            <optgroup label="🥤 Bebidas y Snacks">
+                                <option value="Refrescos">Refrescos y Jugos</option>
+                                <option value="Agua">Agua Purificada</option>
+                                <option value="Energizantes">Bebidas Energizantes</option>
+                                <option value="Cervezas">Cervezas y Licores</option>
+                                <option value="Snacks">Snacks y Churros</option>
+                                <option value="Dulces">Dulces y Chocolates</option>
+                                <option value="Cafe">Café y Té</option>
+                            </optgroup>
+                            <optgroup label="🧼 Higiene y Limpieza">
+                                <option value="Detergentes">Detergentes y Suavizantes</option>
+                                <option value="Limpieza">Limpieza del Hogar</option>
+                                <option value="Higiene">Higiene Corporal</option>
+                                <option value="Capilar">Cuidado Capilar (Shampoo/Gel)</option>
+                                <option value="Dental">Cuidado Dental</option>
+                                <option value="Papel">Papel y Desechables</option>
+                            </optgroup>
+                            <optgroup label="📦 Variedades y Otros">
+                                <option value="Medicinas">Medicinas (OTC)</option>
+                                <option value="Bebes">Cuidado del Bebé</option>
+                                <option value="Mascotas">Mascotas</option>
+                                <option value="Papeleria">Librería y Papelería</option>
+                                <option value="Ferreteria">Ferretería Básica</option>
+                                <option value="Plasticos">Hogar y Plásticos</option>
+                                <option value="Cosmeticos">Cosméticos y Belleza</option>
+                            </optgroup>
                         </select>
                     </div>
 
@@ -304,6 +429,6 @@
         </div>
     </div>
 
-    <script src="app.js?v=60"></script>
+    <script src="app.js?v=85"></script>
 </body>
 </html>
