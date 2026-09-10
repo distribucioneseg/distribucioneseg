@@ -185,7 +185,7 @@ function renderProductos(productos) {
                     </div>
                 </div>
                 <div class="card-actions">
-                    <button class="btn-add" onclick="agregarAlCarrito('${prod.codigo}')"><i class="fa-solid fa-cart-plus"></i> Agregar</button>
+                    <button class="btn-add" onclick="agregarAlCarrito('${prod.codigo}')"><i class="fa-solid fa-cart-plus"></i></button>
                 </div>
                 <div class="admin-panel">
                     <div class="admin-header"><i class="fa-solid fa-user-lock"></i> Info Interna</div>
