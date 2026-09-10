@@ -1,4 +1,4 @@
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzBujsnS0HoJvTnQpf7eUst-eSNFhd4L3fQEbamYIqfaWc_FjT3kJE53dWHMxkr-B84vw/exec'; // <--- No olvides poner tu URL real aquí
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyAhpGOATUSMG-S2GO9nytRrhT22CgwjAkq2nMNYMZ4_IP7k4IBoS1GG6dK-vz2fBAoag/exec'; // <--- No olvides poner tu URL real aquí
 
 let productosGlobal = [];
 let clientesGlobal = [];
