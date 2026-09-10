@@ -16,6 +16,11 @@ function formatoMoneda(valor) {
 
 window.onload = async () => {
     document.getElementById('productos-grid').innerHTML = "<p style='text-align:center; width:100%; margin-top:30px; color:#64748b;'>Cargando inventario...</p>";
+    
+    // Carga la preferencia de vista del usuario
+    const vistaGuardada = localStorage.getItem('vistaPreferida') || 'grid';
+    cambiarVista(vistaGuardada);
+
     try {
         const respuesta = await fetch(SCRIPT_URL);
         const data = await respuesta.json();
@@ -27,6 +32,25 @@ window.onload = async () => {
         document.getElementById('productos-grid').innerHTML = "<p style='text-align:center; width:100%; color:#ef4444;'>Error de conexión.</p>";
     }
 };
+
+// ==== FUNCIÓN PARA CAMBIAR VISTA (GRID / LISTA) ====
+function cambiarVista(vista) {
+    const grid = document.getElementById('productos-grid');
+    const btnGrid = document.getElementById('btn-grid');
+    const btnList = document.getElementById('btn-list');
+
+    if (vista === 'list') {
+        grid.classList.add('list-view');
+        btnList.classList.add('active');
+        btnGrid.classList.remove('active');
+        localStorage.setItem('vistaPreferida', 'list');
+    } else {
+        grid.classList.remove('list-view');
+        btnGrid.classList.add('active');
+        btnList.classList.remove('active');
+        localStorage.setItem('vistaPreferida', 'grid');
+    }
+}
 
 function switchTab(tab) {
     document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
@@ -52,16 +76,10 @@ function cerrarModalProducto() {
     document.getElementById('form-producto').reset();
     document.getElementById('foto-estado').style.display = 'none';
     imgBase64Data = "";
-    
-    // Ocultar los proveedores extra
-    for(let i=3; i<=6; i++) {
-        let row = document.getElementById('p-prov-row'+i);
-        if(row) row.style.display = 'none';
-    }
+    for(let i=3; i<=6; i++) { let row = document.getElementById('p-prov-row'+i); if(row) row.style.display = 'none'; }
     document.getElementById('p-btn-add-prov').style.display = 'flex';
 }
 
-// ==== FUNCIÓN PARA MOSTRAR LA SIGUIENTE CAJITA DE PROVEEDOR ====
 function mostrarSiguienteProveedor(prefix) {
     for (let i = 3; i <= 6; i++) {
         let row = document.getElementById(prefix + '-prov-row' + i);
@@ -81,6 +99,7 @@ function formatearFecha(fechaStr) {
     return fecha.toLocaleDateString('es-HN', opciones);
 }
 
+// ==== RENDER DE PRODUCTOS (NUEVA ESTRUCTURA PARA VISTAS) ====
 function renderProductos(productos) {
     const grid = document.getElementById('productos-grid');
     grid.innerHTML = "";
@@ -113,7 +132,6 @@ function renderProductos(productos) {
         let imagenFinal = prod.foto;
         if (!imagenFinal || imagenFinal.trim() === "" || imagenFinal.includes('dummyimage')) {
             let cat = (prod.categoria || "").toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            
             if (cat.includes("GAMER")) imagenFinal = "https://img.icons8.com/color/150/controller.png"; 
             else if (cat.includes("PERIFERICO") || cat.includes("TECLADO") || cat.includes("MOUSE")) imagenFinal = "https://img.icons8.com/color/150/mouse.png"; 
             else if (cat.includes("AUDIO") || cat.includes("AUDIFONO")) imagenFinal = "https://img.icons8.com/color/150/headphones.png"; 
@@ -156,13 +174,19 @@ function renderProductos(productos) {
 
         grid.innerHTML += `
             <div class="card">
-                <div class="cat-tag">${prod.categoria || 'Genérico'}</div>
-                <div class="img-container"><img src="${imagenFinal}" onerror="this.src='https://img.icons8.com/color/150/box--v1.png'"></div>
-                <span class="marca-text">${prod.marca || 'S/M'}</span>
-                <h3>${prod.nombre}</h3>
-                <div class="oferta">Lps. ${formatoMoneda(precioBase)}</div>
-                ${tablaDescuentos}
-                <button class="btn-add" onclick="agregarAlCarrito('${prod.codigo}')"><i class="fa-solid fa-cart-plus"></i> Agregar</button>
+                <div class="card-inner">
+                    <div class="img-container"><img src="${imagenFinal}" onerror="this.src='https://img.icons8.com/color/150/box--v1.png'"></div>
+                    <div class="info-text">
+                        <div class="cat-tag">${prod.categoria || 'Genérico'}</div>
+                        <span class="marca-text">${prod.marca || 'S/M'}</span>
+                        <h3>${prod.nombre}</h3>
+                        <div class="oferta">Lps. ${formatoMoneda(precioBase)}</div>
+                        ${tablaDescuentos}
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <button class="btn-add" onclick="agregarAlCarrito('${prod.codigo}')"><i class="fa-solid fa-cart-plus"></i> Agregar</button>
+                </div>
                 <div class="admin-panel">
                     <div class="admin-header"><i class="fa-solid fa-user-lock"></i> Info Interna</div>
                     <div class="admin-stats">
@@ -266,29 +290,16 @@ async function guardarProductoNuevo(e) {
     const btn = document.getElementById('btn-guardar-prod');
     btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Subiendo..."; btn.disabled = true;
     const nuevoProd = {
-        accion: "agregar_producto", 
-        codigo: document.getElementById('p-codigo').value, 
-        marca: document.getElementById('p-marca').value,
-        nombre: document.getElementById('p-nombre').value, 
-        categoria: document.getElementById('p-categoria').value, 
-        stock: document.getElementById('p-stock').value,
-        costo: document.getElementById('p-costo').value, 
-        precio: document.getElementById('p-precio').value, 
-        precio5: document.getElementById('p-precio5').value,
-        precio6: document.getElementById('p-precio6').value,
-        precio12: document.getElementById('p-precio12').value,
-        lugar1: document.getElementById('p-lugar1').value,
-        precio1: document.getElementById('p-precio1').value,
-        lugar2: document.getElementById('p-lugar2').value,
-        precio2: document.getElementById('p-precio2').value,
-        lugar3: document.getElementById('p-lugar3').value,
-        precio3: document.getElementById('p-precio3').value,
-        lugar4: document.getElementById('p-lugar4').value,
-        precio4: document.getElementById('p-precio4').value,
-        lugar5: document.getElementById('p-lugar5').value,
-        precio5: document.getElementById('p-precio5_prov').value,
-        lugar6: document.getElementById('p-lugar6').value,
-        precio6: document.getElementById('p-precio6_prov').value,
+        accion: "agregar_producto", codigo: document.getElementById('p-codigo').value, marca: document.getElementById('p-marca').value,
+        nombre: document.getElementById('p-nombre').value, categoria: document.getElementById('p-categoria').value, stock: document.getElementById('p-stock').value,
+        costo: document.getElementById('p-costo').value, precio: document.getElementById('p-precio').value, 
+        precio5: document.getElementById('p-precio5').value, precio6: document.getElementById('p-precio6').value, precio12: document.getElementById('p-precio12').value,
+        lugar1: document.getElementById('p-lugar1').value, precio1: document.getElementById('p-precio1').value,
+        lugar2: document.getElementById('p-lugar2').value, precio2: document.getElementById('p-precio2').value,
+        lugar3: document.getElementById('p-lugar3').value, precio3: document.getElementById('p-precio3').value,
+        lugar4: document.getElementById('p-lugar4').value, precio4: document.getElementById('p-precio4').value,
+        lugar5: document.getElementById('p-lugar5').value, precio5: document.getElementById('p-precio5_prov').value,
+        lugar6: document.getElementById('p-lugar6').value, precio6: document.getElementById('p-precio6_prov').value,
         imagenBase64: imgBase64Data, mimeType: imgMimeType, nombreArchivo: imgName
     };
     try { await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(nuevoProd) }); alert("¡Producto guardado exitosamente!"); location.reload(); } 
@@ -461,10 +472,7 @@ function abrirModalEditar(codigo) {
     document.getElementById('e-lugar5').value = prod.l5 || ""; document.getElementById('e-precio5_prov').value = prod.p5 || "";
     document.getElementById('e-lugar6').value = prod.l6 || ""; document.getElementById('e-precio6_prov').value = prod.p6 || "";
 
-    for(let i=3; i<=6; i++) {
-        let row = document.getElementById('e-prov-row'+i);
-        row.style.display = 'none';
-    }
+    for(let i=3; i<=6; i++) { let row = document.getElementById('e-prov-row'+i); row.style.display = 'none'; }
     document.getElementById('e-btn-add-prov').style.display = 'flex';
 
     for(let i=3; i<=6; i++) {
