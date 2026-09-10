@@ -1,4 +1,4 @@
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxfSSLKlOxHNjYgoxLFzhLvQ-kLGgvsqa3bAuVSSOqAqGWu4_bpOSIoVy2GZbLx3IVydA/exec'; // <--- No olvides poner tu URL real aquí
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyNS7bp8HLuqncoKuvoGOFxVvwyPJU3728x7Pa9njKn5tarxDPYkXwLbFXRoUiT1UzqLw/exec'; // <--- No olvides poner tu URL real aquí
 
 let productosGlobal = [];
 let clientesGlobal = [];
@@ -52,6 +52,25 @@ function cerrarModalProducto() {
     document.getElementById('form-producto').reset();
     document.getElementById('foto-estado').style.display = 'none';
     imgBase64Data = "";
+    
+    // Ocultar los proveedores extra
+    for(let i=3; i<=6; i++) {
+        let row = document.getElementById('p-prov-row'+i);
+        if(row) row.style.display = 'none';
+    }
+    document.getElementById('p-btn-add-prov').style.display = 'flex';
+}
+
+// ==== FUNCIÓN PARA MOSTRAR LA SIGUIENTE CAJITA DE PROVEEDOR ====
+function mostrarSiguienteProveedor(prefix) {
+    for (let i = 3; i <= 6; i++) {
+        let row = document.getElementById(prefix + '-prov-row' + i);
+        if (row && row.style.display === 'none') {
+            row.style.display = 'flex';
+            if (i === 6) document.getElementById(prefix + '-btn-add-prov').style.display = 'none';
+            break;
+        }
+    }
 }
 
 function formatearFecha(fechaStr) {
@@ -69,7 +88,6 @@ function renderProductos(productos) {
     productos.forEach((prod, index) => {
         let precioBase = parseFloat(prod.precioUnitario) || 0;
         let tablaDescuentos = "";
-        
         if (prod.precio5 || prod.precio6 || prod.precio12) {
             tablaDescuentos = `<div class="tabla-descuentos">
                 ${prod.precio5 ? `<div class="tag-desc">5+ Unids: <b>Lps. ${formatoMoneda(prod.precio5)}</b></div>` : ''}
@@ -263,6 +281,14 @@ async function guardarProductoNuevo(e) {
         precio1: document.getElementById('p-precio1').value,
         lugar2: document.getElementById('p-lugar2').value,
         precio2: document.getElementById('p-precio2').value,
+        lugar3: document.getElementById('p-lugar3').value,
+        precio3: document.getElementById('p-precio3').value,
+        lugar4: document.getElementById('p-lugar4').value,
+        precio4: document.getElementById('p-precio4').value,
+        lugar5: document.getElementById('p-lugar5').value,
+        precio5: document.getElementById('p-precio5_prov').value,
+        lugar6: document.getElementById('p-lugar6').value,
+        precio6: document.getElementById('p-precio6_prov').value,
         imagenBase64: imgBase64Data, mimeType: imgMimeType, nombreArchivo: imgName
     };
     try { await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(nuevoProd) }); alert("¡Producto guardado exitosamente!"); location.reload(); } 
@@ -280,7 +306,6 @@ async function guardarCotizacion(e) {
     catch (error) { alert("Error de conexión al guardar."); }
 }
 
-// ==== SE ELIMINÓ LA COLUMNA DE TOTAL DE AQUÍ ====
 function renderClientes(clientes) {
     const tbody = document.getElementById('lista-clientes');
     tbody.innerHTML = "";
@@ -312,12 +337,10 @@ function abrirDetalle(index) {
             <span style="font-size:1.7rem; color:#1e3a8a; font-weight:900;">Lps. ${formatoMoneda(c.total)}</span>
         </div>`;
     
-    // ==== AHORA CALCULA Y MUESTRA EL PRECIO POR CADA PRODUCTO AQUÍ ====
     let htmlItems = "";
     if (c.carrito) {
         try {
             JSON.parse(c.carrito).forEach(item => { 
-                
                 let precioAplicado = item.prodCompleto && item.prodCompleto.precioUnitario ? parseFloat(item.prodCompleto.precioUnitario) : 0;
                 if (item.prodCompleto) {
                     if (item.cantidad >= 12 && item.prodCompleto.precio12 > 0) precioAplicado = parseFloat(item.prodCompleto.precio12);
@@ -430,10 +453,26 @@ function abrirModalEditar(codigo) {
     document.getElementById('e-precio5').value = prod.precio5 || "";
     document.getElementById('e-precio6').value = prod.precio6 || "";
     document.getElementById('e-precio12').value = prod.precio12 || "";
-    document.getElementById('e-lugar1').value = prod.l1 || "";
-    document.getElementById('e-precio1').value = prod.p1 || "";
-    document.getElementById('e-lugar2').value = prod.l2 || "";
-    document.getElementById('e-precio2').value = prod.p2 || "";
+    
+    document.getElementById('e-lugar1').value = prod.l1 || ""; document.getElementById('e-precio1').value = prod.p1 || "";
+    document.getElementById('e-lugar2').value = prod.l2 || ""; document.getElementById('e-precio2').value = prod.p2 || "";
+    document.getElementById('e-lugar3').value = prod.l3 || ""; document.getElementById('e-precio3').value = prod.p3 || "";
+    document.getElementById('e-lugar4').value = prod.l4 || ""; document.getElementById('e-precio4').value = prod.p4 || "";
+    document.getElementById('e-lugar5').value = prod.l5 || ""; document.getElementById('e-precio5_prov').value = prod.p5 || "";
+    document.getElementById('e-lugar6').value = prod.l6 || ""; document.getElementById('e-precio6_prov').value = prod.p6 || "";
+
+    for(let i=3; i<=6; i++) {
+        let row = document.getElementById('e-prov-row'+i);
+        row.style.display = 'none';
+    }
+    document.getElementById('e-btn-add-prov').style.display = 'flex';
+
+    for(let i=3; i<=6; i++) {
+        if(prod['l'+i] || prod['p'+i]) {
+            document.getElementById('e-prov-row'+i).style.display = 'flex';
+            if(i === 6) document.getElementById('e-btn-add-prov').style.display = 'none';
+        }
+    }
 
     let precios = [];
     for(let i=1; i<=6; i++) { let p = parseFloat(prod['p'+i]); if(!isNaN(p) && p>0) precios.push(p); }
@@ -442,8 +481,24 @@ function abrirModalEditar(codigo) {
     document.getElementById('modal-editar-producto').style.display = 'flex';
 }
 
-function cerrarModalEditar() { document.getElementById('modal-editar-producto').style.display = 'none'; document.getElementById('form-editar-producto').reset(); document.getElementById('e-foto-estado').style.display = 'none'; imgBase64DataEdit = ""; }
-function procesarImagenEdicion(event) { const file = event.target.files[0]; if (!file) return; imgNameEdit = file.name; imgMimeTypeEdit = file.type; const reader = new FileReader(); reader.onload = function(e) { imgBase64DataEdit = e.target.result.split(',')[1]; document.getElementById('e-foto-estado').style.display = 'block'; }; reader.readAsDataURL(file); }
+function cerrarModalEditar() { 
+    document.getElementById('modal-editar-producto').style.display = 'none'; 
+    document.getElementById('form-editar-producto').reset(); 
+    document.getElementById('e-foto-estado').style.display = 'none'; 
+    imgBase64DataEdit = ""; 
+}
+
+function procesarImagenEdicion(event) { 
+    const file = event.target.files[0]; 
+    if (!file) return; 
+    imgNameEdit = file.name; imgMimeTypeEdit = file.type; 
+    const reader = new FileReader(); 
+    reader.onload = function(e) { 
+        imgBase64DataEdit = e.target.result.split(',')[1]; 
+        document.getElementById('e-foto-estado').style.display = 'block'; 
+    }; 
+    reader.readAsDataURL(file); 
+}
 
 async function guardarEdicionProducto(e) {
     e.preventDefault();
@@ -460,10 +515,12 @@ async function guardarEdicionProducto(e) {
         precio5: document.getElementById('e-precio5').value, 
         precio6: document.getElementById('e-precio6').value, 
         precio12: document.getElementById('e-precio12').value,
-        lugar1: document.getElementById('e-lugar1').value, 
-        precio1: document.getElementById('e-precio1').value, 
-        lugar2: document.getElementById('e-lugar2').value, 
-        precio2: document.getElementById('e-precio2').value,
+        lugar1: document.getElementById('e-lugar1').value, precio1: document.getElementById('e-precio1').value, 
+        lugar2: document.getElementById('e-lugar2').value, precio2: document.getElementById('e-precio2').value,
+        lugar3: document.getElementById('e-lugar3').value, precio3: document.getElementById('e-precio3').value,
+        lugar4: document.getElementById('e-lugar4').value, precio4: document.getElementById('e-precio4').value,
+        lugar5: document.getElementById('e-lugar5').value, precio5: document.getElementById('e-precio5_prov').value,
+        lugar6: document.getElementById('e-lugar6').value, precio6: document.getElementById('e-precio6_prov').value,
         imagenBase64: imgBase64DataEdit, mimeType: imgMimeTypeEdit, nombreArchivo: imgNameEdit 
     };
     try { await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(prodEditado) }); alert("¡Producto actualizado exitosamente!"); location.reload(); } 

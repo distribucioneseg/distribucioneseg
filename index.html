@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DISTRIBUCIONES E&G</title>
-    <link rel="stylesheet" href="style.css?v=50">
+    <link rel="stylesheet" href="style.css?v=55">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
@@ -20,6 +20,7 @@
         </div>
     </header>
 
+    <!-- ==== PESTAÑA TIENDA ==== -->
     <div id="view-tienda" class="view-section active">
         <div class="controls-container">
             <div class="search-box">
@@ -28,59 +29,18 @@
             </div>
             <select id="cat-filter" onchange="filtrarProductos()">
                 <option value="Todas">Todas las categorías</option>
-                <optgroup label="🎮 Tecnología y Gamer">
-                    <option value="Gamer">Accesorios Gamer</option>
-                    <option value="Periferico">Periféricos (Mouse/Teclado)</option>
-                    <option value="Audio">Audio y Audífonos</option>
-                    <option value="Cables">Cables y Cargadores</option>
-                    <option value="Almacenamiento">Almacenamiento (USB/MicroSD)</option>
-                    <option value="Protectores">Fundas y Protectores</option>
-                    <option value="Celulares">Celulares y Tablets</option>
-                    <option value="Componentes">Componentes PC</option>
-                </optgroup>
-                <optgroup label="🛒 Abarrotes y Despensa">
-                    <option value="Granos">Granos y Cereales</option>
-                    <option value="Aceites">Aceites y Mantecas</option>
-                    <option value="Pastas">Pastas y Sopas Instantáneas</option>
-                    <option value="Enlatados">Enlatados y Conservas</option>
-                    <option value="Salsas">Salsas y Condimentos</option>
-                    <option value="Especias">Azúcar, Sal y Especias</option>
-                    <option value="Lacteos">Lácteos y Huevos</option>
-                    <option value="Embutidos">Embutidos y Carnes</option>
-                    <option value="Panaderia">Panadería y Repostería</option>
-                </optgroup>
-                <optgroup label="🥤 Bebidas y Snacks">
-                    <option value="Refrescos">Refrescos y Jugos</option>
-                    <option value="Agua">Agua Purificada</option>
-                    <option value="Energizantes">Bebidas Energizantes</option>
-                    <option value="Cervezas">Cervezas y Licores</option>
-                    <option value="Snacks">Snacks y Churros</option>
-                    <option value="Dulces">Dulces y Chocolates</option>
-                    <option value="Cafe">Café y Té</option>
-                </optgroup>
-                <optgroup label="🧼 Higiene y Limpieza">
-                    <option value="Detergentes">Detergentes y Suavizantes</option>
-                    <option value="Limpieza">Limpieza del Hogar</option>
-                    <option value="Higiene">Higiene Corporal</option>
-                    <option value="Capilar">Cuidado Capilar (Shampoo/Gel)</option>
-                    <option value="Dental">Cuidado Dental</option>
-                    <option value="Papel">Papel y Desechables</option>
-                </optgroup>
-                <optgroup label="📦 Variedades y Otros">
-                    <option value="Medicinas">Medicinas (OTC)</option>
-                    <option value="Bebes">Cuidado del Bebé</option>
-                    <option value="Mascotas">Mascotas</option>
-                    <option value="Papeleria">Librería y Papelería</option>
-                    <option value="Ferreteria">Ferretería Básica</option>
-                    <option value="Plasticos">Hogar y Plásticos</option>
-                    <option value="Cosmeticos">Cosméticos y Belleza</option>
-                </optgroup>
+                <optgroup label="🎮 Tecnología y Gamer"><option value="Gamer">Accesorios Gamer</option><option value="Periferico">Periféricos (Mouse/Teclado)</option><option value="Audio">Audio y Audífonos</option><option value="Cables">Cables y Cargadores</option><option value="Almacenamiento">Almacenamiento (USB/MicroSD)</option><option value="Protectores">Fundas y Protectores</option><option value="Celulares">Celulares y Tablets</option><option value="Componentes">Componentes PC</option></optgroup>
+                <optgroup label="🛒 Abarrotes y Despensa"><option value="Granos">Granos y Cereales</option><option value="Aceites">Aceites y Mantecas</option><option value="Pastas">Pastas y Sopas Instantáneas</option><option value="Enlatados">Enlatados y Conservas</option><option value="Salsas">Salsas y Condimentos</option><option value="Especias">Azúcar, Sal y Especias</option><option value="Lacteos">Lácteos y Huevos</option><option value="Embutidos">Embutidos y Carnes</option><option value="Panaderia">Panadería y Repostería</option></optgroup>
+                <optgroup label="🥤 Bebidas y Snacks"><option value="Refrescos">Refrescos y Jugos</option><option value="Agua">Agua Purificada</option><option value="Energizantes">Bebidas Energizantes</option><option value="Cervezas">Cervezas y Licores</option><option value="Snacks">Snacks y Churros</option><option value="Dulces">Dulces y Chocolates</option><option value="Cafe">Café y Té</option></optgroup>
+                <optgroup label="🧼 Higiene y Limpieza"><option value="Detergentes">Detergentes y Suavizantes</option><option value="Limpieza">Limpieza del Hogar</option><option value="Higiene">Higiene Corporal</option><option value="Capilar">Cuidado Capilar (Shampoo/Gel)</option><option value="Dental">Cuidado Dental</option><option value="Papel">Papel y Desechables</option></optgroup>
+                <optgroup label="📦 Variedades y Otros"><option value="Medicinas">Medicinas (OTC)</option><option value="Bebes">Cuidado del Bebé</option><option value="Mascotas">Mascotas</option><option value="Papeleria">Librería y Papelería</option><option value="Ferreteria">Ferretería Básica</option><option value="Plasticos">Hogar y Plásticos</option><option value="Cosmeticos">Cosméticos y Belleza</option></optgroup>
             </select>
             <button id="btn-add-producto-nuevo" onclick="abrirModalProducto()" style="display:none; background:var(--success); color:white; border:none; padding:12px; border-radius:12px; font-weight:700; cursor:pointer;"><i class="fa-solid fa-plus"></i> Nuevo</button>
         </div>
         <main><section id="productos-grid" class="grid"></section></main>
     </div>
 
+    <!-- ==== PESTAÑA CLIENTES ==== -->
     <div id="view-clientes" class="view-section">
         <div class="controls-container">
             <div class="search-box">
@@ -91,7 +51,6 @@
         </div>
         <div class="table-container">
             <table id="tabla-clientes">
-                <!-- Se quitó la columna Total -->
                 <thead><tr><th>Tienda / Cliente</th><th>Contacto</th><th>Entrega</th><th>Acción</th></tr></thead>
                 <tbody id="lista-clientes"></tbody>
             </table>
@@ -100,6 +59,7 @@
 
     <button id="btn-flotante-carrito" onclick="abrirCarrito()"><i class="fa-solid fa-cart-shopping"></i><span id="contador-carrito">0</span></button>
 
+    <!-- ==== MODAL: CARRITO ==== -->
     <div id="modal-carrito" class="modal-oculto">
         <div class="modal-contenido">
             <div class="modal-header"><h2>Resumen de Orden</h2><button class="btn-cerrar" onclick="cerrarCarrito()"><i class="fa-solid fa-xmark"></i></button></div>
@@ -122,6 +82,7 @@
         </div>
     </div>
 
+    <!-- ==== MODAL: DETALLE CLIENTE ==== -->
     <div id="modal-detalle" class="modal-oculto">
         <div class="modal-contenido">
             <div class="modal-header"><h2>Detalle de Orden</h2><button class="btn-cerrar" onclick="cerrarDetalle()"><i class="fa-solid fa-xmark"></i></button></div>
@@ -138,7 +99,7 @@
         </div>
     </div>
 
-    <!-- Modal Agregar -->
+    <!-- ==== MODAL: AGREGAR PRODUCTO NUEVO ==== -->
     <div id="modal-producto" class="modal-oculto">
         <div class="modal-contenido">
             <div class="modal-header"><h2>Agregar Producto</h2><button type="button" class="btn-cerrar" onclick="cerrarModalProducto()"><i class="fa-solid fa-xmark"></i></button></div>
@@ -155,15 +116,14 @@
                         <input type="text" id="p-codigo" placeholder="Ej: PROD-01" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
                     </div>
                     
-                    <div style="display: flex; gap: 10px;">
-                        <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
-                            <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Marca</label>
-                            <input type="text" id="p-marca" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
-                        </div>
-                        <div style="display: flex; flex-direction: column; gap: 4px; flex: 2;">
-                            <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Producto</label> <!-- Corregido aquí -->
-                            <input type="text" id="p-nombre" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
-                        </div>
+                    <!-- MARCA Y PRODUCTO EN FILAS SEPARADAS -->
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Marca</label>
+                        <input type="text" id="p-marca" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Producto</label>
+                        <input type="text" id="p-nombre" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
                     </div>
                     
                     <div style="display: flex; flex-direction: column; gap: 4px;">
@@ -178,18 +138,41 @@
                         </select>
                     </div>
 
+                    <!-- PROVEEDORES -->
                     <div style="background:#f8fafc; padding:10px; border-radius:10px; border:1px solid #e2e8f0;">
                         <label style="font-size: 0.75rem; font-weight: 800; color: #475569; text-transform: uppercase; margin-bottom:8px; display:block;">📦 Proveedores (Opcional)</label>
-                        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+                        
+                        <div id="p-prov-row1" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
                             <input type="text" id="p-lugar1" placeholder="Lugar 1" style="flex:2; min-width:120px; padding:10px; border-radius:8px; border:1px solid #cbd5e1; outline:none; font-family:'Inter', sans-serif;">
                             <input type="number" id="p-precio1" step="0.01" placeholder="Costo 1" style="flex:1; min-width:80px; padding:10px; border-radius:8px; border:1px solid #cbd5e1; outline:none; font-family:'Inter', sans-serif;">
                         </div>
-                        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        <div id="p-prov-row2" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
                             <input type="text" id="p-lugar2" placeholder="Lugar 2" style="flex:2; min-width:120px; padding:10px; border-radius:8px; border:1px solid #cbd5e1; outline:none; font-family:'Inter', sans-serif;">
                             <input type="number" id="p-precio2" step="0.01" placeholder="Costo 2" style="flex:1; min-width:80px; padding:10px; border-radius:8px; border:1px solid #cbd5e1; outline:none; font-family:'Inter', sans-serif;">
                         </div>
+                        <div id="p-prov-row3" style="display: none; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+                            <input type="text" id="p-lugar3" placeholder="Lugar 3" style="flex:2; min-width:120px; padding:10px; border-radius:8px; border:1px solid #cbd5e1; outline:none; font-family:'Inter', sans-serif;">
+                            <input type="number" id="p-precio3" step="0.01" placeholder="Costo 3" style="flex:1; min-width:80px; padding:10px; border-radius:8px; border:1px solid #cbd5e1; outline:none; font-family:'Inter', sans-serif;">
+                        </div>
+                        <div id="p-prov-row4" style="display: none; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+                            <input type="text" id="p-lugar4" placeholder="Lugar 4" style="flex:2; min-width:120px; padding:10px; border-radius:8px; border:1px solid #cbd5e1; outline:none; font-family:'Inter', sans-serif;">
+                            <input type="number" id="p-precio4" step="0.01" placeholder="Costo 4" style="flex:1; min-width:80px; padding:10px; border-radius:8px; border:1px solid #cbd5e1; outline:none; font-family:'Inter', sans-serif;">
+                        </div>
+                        <div id="p-prov-row5" style="display: none; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+                            <input type="text" id="p-lugar5" placeholder="Lugar 5" style="flex:2; min-width:120px; padding:10px; border-radius:8px; border:1px solid #cbd5e1; outline:none; font-family:'Inter', sans-serif;">
+                            <input type="number" id="p-precio5_prov" step="0.01" placeholder="Costo 5" style="flex:1; min-width:80px; padding:10px; border-radius:8px; border:1px solid #cbd5e1; outline:none; font-family:'Inter', sans-serif;">
+                        </div>
+                        <div id="p-prov-row6" style="display: none; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+                            <input type="text" id="p-lugar6" placeholder="Lugar 6" style="flex:2; min-width:120px; padding:10px; border-radius:8px; border:1px solid #cbd5e1; outline:none; font-family:'Inter', sans-serif;">
+                            <input type="number" id="p-precio6_prov" step="0.01" placeholder="Costo 6" style="flex:1; min-width:80px; padding:10px; border-radius:8px; border:1px solid #cbd5e1; outline:none; font-family:'Inter', sans-serif;">
+                        </div>
+                        
+                        <button type="button" id="p-btn-add-prov" onclick="mostrarSiguienteProveedor('p')" style="background:none; border:none; color:var(--accent); font-weight:700; font-size:0.85rem; padding:8px 0; cursor:pointer; display:flex; align-items:center; gap:5px; margin-top:4px;">
+                            <i class="fa-solid fa-circle-plus"></i> Añadir otro proveedor
+                        </button>
                     </div>
 
+                    <!-- PRECIOS MAYOREO -->
                     <div style="background:#f0fdf4; padding:10px; border-radius:10px; border:1px solid #bbf7d0;">
                         <label style="font-size: 0.75rem; font-weight: 800; color: #047857; text-transform: uppercase; margin-bottom:8px; display:block;">🏷️ Precios Mayoreo (Opcional)</label>
                         <div style="display: flex; flex-wrap: wrap; gap: 8px;">
@@ -220,7 +203,7 @@
         </div>
     </div>
 
-    <!-- Modal Editar -->
+    <!-- ==== MODAL: EDITAR PRODUCTO EXISTENTE ==== -->
     <div id="modal-editar-producto" class="modal-oculto">
         <div class="modal-contenido">
             <div class="modal-header"><h2>Editar Producto</h2><button type="button" class="btn-cerrar" onclick="cerrarModalEditar()"><i class="fa-solid fa-xmark"></i></button></div>
@@ -237,15 +220,14 @@
                         <input type="text" id="e-codigo" readonly style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; background:#f1f5f9; color:#64748b; outline:none; font-family:'Inter', sans-serif;">
                     </div>
                     
-                    <div style="display: flex; gap: 10px;">
-                        <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
-                            <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Marca</label>
-                            <input type="text" id="e-marca" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
-                        </div>
-                        <div style="display: flex; flex-direction: column; gap: 4px; flex: 2;">
-                            <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Producto</label> <!-- Corregido aquí -->
-                            <input type="text" id="e-nombre" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
-                        </div>
+                    <!-- MARCA Y PRODUCTO EN FILAS SEPARADAS -->
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Marca</label>
+                        <input type="text" id="e-marca" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Producto</label>
+                        <input type="text" id="e-nombre" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
                     </div>
                     
                     <div style="display: flex; flex-direction: column; gap: 4px;">
@@ -260,18 +242,40 @@
                         </select>
                     </div>
 
+                    <!-- PROVEEDORES EDITAR -->
                     <div style="background:#f8fafc; padding:10px; border-radius:10px; border:1px solid #e2e8f0;">
                         <label style="font-size: 0.75rem; font-weight: 800; color: #475569; text-transform: uppercase; margin-bottom:8px; display:block;">📦 Proveedores (Opcional)</label>
-                        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+                        <div id="e-prov-row1" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
                             <input type="text" id="e-lugar1" placeholder="Lugar 1" style="flex:2; min-width:120px; padding:10px; border-radius:8px; border:1px solid #cbd5e1; outline:none; font-family:'Inter', sans-serif;">
                             <input type="number" id="e-precio1" step="0.01" placeholder="Costo 1" style="flex:1; min-width:80px; padding:10px; border-radius:8px; border:1px solid #cbd5e1; outline:none; font-family:'Inter', sans-serif;">
                         </div>
-                        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        <div id="e-prov-row2" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
                             <input type="text" id="e-lugar2" placeholder="Lugar 2" style="flex:2; min-width:120px; padding:10px; border-radius:8px; border:1px solid #cbd5e1; outline:none; font-family:'Inter', sans-serif;">
                             <input type="number" id="e-precio2" step="0.01" placeholder="Costo 2" style="flex:1; min-width:80px; padding:10px; border-radius:8px; border:1px solid #cbd5e1; outline:none; font-family:'Inter', sans-serif;">
                         </div>
+                        <div id="e-prov-row3" style="display: none; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+                            <input type="text" id="e-lugar3" placeholder="Lugar 3" style="flex:2; min-width:120px; padding:10px; border-radius:8px; border:1px solid #cbd5e1; outline:none; font-family:'Inter', sans-serif;">
+                            <input type="number" id="e-precio3" step="0.01" placeholder="Costo 3" style="flex:1; min-width:80px; padding:10px; border-radius:8px; border:1px solid #cbd5e1; outline:none; font-family:'Inter', sans-serif;">
+                        </div>
+                        <div id="e-prov-row4" style="display: none; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+                            <input type="text" id="e-lugar4" placeholder="Lugar 4" style="flex:2; min-width:120px; padding:10px; border-radius:8px; border:1px solid #cbd5e1; outline:none; font-family:'Inter', sans-serif;">
+                            <input type="number" id="e-precio4" step="0.01" placeholder="Costo 4" style="flex:1; min-width:80px; padding:10px; border-radius:8px; border:1px solid #cbd5e1; outline:none; font-family:'Inter', sans-serif;">
+                        </div>
+                        <div id="e-prov-row5" style="display: none; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+                            <input type="text" id="e-lugar5" placeholder="Lugar 5" style="flex:2; min-width:120px; padding:10px; border-radius:8px; border:1px solid #cbd5e1; outline:none; font-family:'Inter', sans-serif;">
+                            <input type="number" id="e-precio5_prov" step="0.01" placeholder="Costo 5" style="flex:1; min-width:80px; padding:10px; border-radius:8px; border:1px solid #cbd5e1; outline:none; font-family:'Inter', sans-serif;">
+                        </div>
+                        <div id="e-prov-row6" style="display: none; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+                            <input type="text" id="e-lugar6" placeholder="Lugar 6" style="flex:2; min-width:120px; padding:10px; border-radius:8px; border:1px solid #cbd5e1; outline:none; font-family:'Inter', sans-serif;">
+                            <input type="number" id="e-precio6_prov" step="0.01" placeholder="Costo 6" style="flex:1; min-width:80px; padding:10px; border-radius:8px; border:1px solid #cbd5e1; outline:none; font-family:'Inter', sans-serif;">
+                        </div>
+
+                        <button type="button" id="e-btn-add-prov" onclick="mostrarSiguienteProveedor('e')" style="background:none; border:none; color:var(--accent); font-weight:700; font-size:0.85rem; padding:8px 0; cursor:pointer; display:flex; align-items:center; gap:5px; margin-top:4px;">
+                            <i class="fa-solid fa-circle-plus"></i> Añadir otro proveedor
+                        </button>
                     </div>
 
+                    <!-- PRECIOS MAYOREO EDITAR -->
                     <div style="background:#f0fdf4; padding:10px; border-radius:10px; border:1px solid #bbf7d0;">
                         <label style="font-size: 0.75rem; font-weight: 800; color: #047857; text-transform: uppercase; margin-bottom:8px; display:block;">🏷️ Precios Mayoreo (Opcional)</label>
                         <div style="display: flex; flex-wrap: wrap; gap: 8px;">
@@ -302,6 +306,6 @@
         </div>
     </div>
 
-    <script src="app.js?v=50"></script>
+    <script src="app.js?v=55"></script>
 </body>
 </html>
