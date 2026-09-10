@@ -96,6 +96,7 @@ body.show-admin #btn-admin { background: #fbbf24; color: var(--primary); }
     display: flex; 
     align-items: center; 
     justify-content: center; 
+    align-self: flex-start; /* Alinea la foto arriba si hay muchos descuentos */
 }
 .grid.list-view .img-container img { width: 100%; height: 100%; object-fit: contain; }
 
@@ -105,7 +106,7 @@ body.show-admin #btn-admin { background: #fbbf24; color: var(--primary); }
     flex-direction: column; 
     align-items: flex-start; 
     text-align: left; 
-    gap: 4px; 
+    gap: 2px; 
     overflow: hidden; 
 }
 
@@ -120,9 +121,46 @@ body.show-admin #btn-admin { background: #fbbf24; color: var(--primary); }
     width: 100%; 
 }
 
-.grid.list-view .oferta { font-size: 1.15rem; color: var(--accent); margin: 0; font-weight: 900; }
+.grid.list-view .oferta { 
+    font-size: 1.15rem; 
+    color: var(--accent); 
+    margin: 0 0 4px 0; 
+    font-weight: 900; 
+}
 
-.grid.list-view .card-actions { margin: 0; padding: 0; flex-shrink: 0; width: auto; }
+/* ==== NUEVO: Mostrar Descuentos en Vista de Lista ==== */
+.grid.list-view .tabla-descuentos { 
+    display: flex !important; /* Fuerza a que se muestre */
+    flex-direction: row; 
+    flex-wrap: wrap; 
+    gap: 6px; 
+    margin: 0; 
+    padding: 0;
+    width: 100%;
+}
+.grid.list-view .tag-desc {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    padding: 3px 6px;
+    border-radius: 6px;
+    font-size: 0.65rem;
+    color: #166534;
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+.grid.list-view .tag-desc b {
+    color: #059669;
+    font-size: 0.7rem;
+}
+
+.grid.list-view .card-actions { 
+    margin: 0; 
+    padding: 0; 
+    flex-shrink: 0; 
+    width: auto; 
+    align-self: center;
+}
 
 /* Botón Circular Perfecto */
 .grid.list-view .btn-add { 
@@ -143,7 +181,6 @@ body.show-admin #btn-admin { background: #fbbf24; color: var(--primary); }
 /* Ocultar elementos innecesarios en vista Lista */
 .grid.list-view .cat-tag, 
 .grid.list-view .marca-text, 
-.grid.list-view .tabla-descuentos,
 .grid.list-view .stock-tag { 
     display: none !important; 
 }
