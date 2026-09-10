@@ -96,41 +96,64 @@
     <!-- === NUEVO MODAL: AGREGAR PRODUCTO CON CÁMARA === -->
     <div id="modal-producto" class="modal-oculto">
         <div class="modal-contenido">
-            <div class="modal-header"><h2>Agregar Producto</h2><button class="btn-cerrar" onclick="cerrarModalProducto()"><i class="fa-solid fa-xmark"></i></button></div>
+            <div class="modal-header"><h2>Agregar Producto</h2><button type="button" class="btn-cerrar" onclick="cerrarModalProducto()"><i class="fa-solid fa-xmark"></i></button></div>
             <div class="modal-body">
-                <form id="form-producto" onsubmit="guardarProductoNuevo(event)" style="display: flex; flex-direction: column; gap: 12px;">
+                <form id="form-producto" onsubmit="guardarProductoNuevo(event)" style="display: flex; flex-direction: column; gap: 15px;">
                     
-                    <!-- Este input abre la cámara del celular -->
                     <label style="background: #eef2ff; color: var(--accent); padding: 15px; border-radius: 12px; text-align: center; font-weight: bold; cursor: pointer; border: 2px dashed #c7d2fe;">
                         <i class="fa-solid fa-camera" style="font-size: 24px; display:block; margin-bottom:5px;"></i> Tomar o Subir Foto
                         <input type="file" id="p-foto" accept="image/*" capture="environment" onchange="procesarImagen(event)" style="display:none;">
                     </label>
                     <p id="foto-estado" style="text-align:center; font-size:0.8rem; color:var(--success); margin:0; display:none;"><i class="fa-solid fa-check-circle"></i> Foto lista</p>
 
-                    <input type="text" id="p-codigo" placeholder="Código / SKU (Ej: PROD-01)" required style="padding:14px; border-radius:10px; border:1px solid #e2e8f0;">
-                    <input type="text" id="p-marca" placeholder="Marca (Ej: Yummies)" required style="padding:14px; border-radius:10px; border:1px solid #e2e8f0;">
-                    <input type="text" id="p-nombre" placeholder="Nombre del Producto" required style="padding:14px; border-radius:10px; border:1px solid #e2e8f0;">
-                    
-                    <select id="p-categoria" required style="padding:14px; border-radius:10px; border:1px solid #e2e8f0;">
-                        <option value="">Selecciona la Categoría</option>
-                        <option value="Limpieza">Limpieza</option>
-                        <option value="Higiene">Higiene</option>
-                        <option value="Abarrotes">Abarrotes</option>
-                        <option value="Snacks">Snacks</option>
-                        <option value="Lacteos">Lácteos</option>
-                        <option value="Bebidas">Bebidas</option>
-                        <option value="Gamer">Gamer</option>
-                        <option value="Accesorio">Accesorio (Tecnología)</option>
-                    </select>
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Código / SKU</label>
+                        <input type="text" id="p-codigo" placeholder="Ej: PROD-01" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
+                    </div>
 
-                    <div style="display:flex; gap:10px;">
-                        <input type="number" id="p-stock" placeholder="Stock Inicial" required style="padding:14px; border-radius:10px; border:1px solid #e2e8f0; width:50%;">
-                        <input type="number" id="p-costo" placeholder="Costo Lps." step="0.01" required style="padding:14px; border-radius:10px; border:1px solid #e2e8f0; width:50%;">
+                    <div style="display: flex; gap: 10px;">
+                        <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                            <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Marca</label>
+                            <input type="text" id="p-marca" placeholder="Ej: Yummies" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 4px; flex: 2;">
+                            <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Nombre del Producto</label>
+                            <input type="text" id="p-nombre" placeholder="Ej: Zambos Preparados" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
+                        </div>
                     </div>
                     
-                    <input type="number" id="p-precio" placeholder="Precio Público Lps." step="0.01" required style="padding:14px; border-radius:10px; border:1px solid #e2e8f0; font-weight:bold; color:var(--success);">
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Categoría</label>
+                        <select id="p-categoria" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif; background:white;">
+                            <option value="">Selecciona la Categoría</option>
+                            <option value="Limpieza">Limpieza</option>
+                            <option value="Higiene">Higiene</option>
+                            <option value="Abarrotes">Abarrotes</option>
+                            <option value="Snacks">Snacks</option>
+                            <option value="Lacteos">Lácteos</option>
+                            <option value="Bebidas">Bebidas</option>
+                            <option value="Gamer">Gamer</option>
+                            <option value="Accesorio">Accesorio (Tecnología)</option>
+                        </select>
+                    </div>
 
-                    <button type="submit" id="btn-guardar-prod" class="btn-primario" style="margin-top:10px;"><i class="fa-solid fa-cloud-arrow-up"></i> Guardar en Inventario</button>
+                    <div style="display:flex; gap:10px;">
+                        <div style="display: flex; flex-direction: column; gap: 4px; width:50%;">
+                            <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Stock Disp.</label>
+                            <input type="number" id="p-stock" placeholder="0" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 4px; width:50%;">
+                            <label style="font-size: 0.75rem; font-weight: 800; color: #3b82f6; text-transform: uppercase;">Costo (Lps)</label>
+                            <input type="number" id="p-costo" step="0.01" placeholder="0.00" required style="padding:12px; border-radius:10px; border:1px solid #bfdbfe; background:#eff6ff; color:#1d4ed8; font-weight:bold; outline:none; font-family:'Inter', sans-serif;">
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 0.75rem; font-weight: 800; color: #10b981; text-transform: uppercase;">Precio Público (Lps)</label>
+                        <input type="number" id="p-precio" step="0.01" placeholder="0.00" required style="padding:14px; border-radius:10px; border:2px solid #a7f3d0; background:#f0fdf4; font-weight:bold; color:#047857; font-size:1.1rem; outline:none; font-family:'Inter', sans-serif;">
+                    </div>
+
+                    <button type="submit" id="btn-guardar-prod" class="btn-primario" style="margin-top:5px;"><i class="fa-solid fa-cloud-arrow-up"></i> Guardar en Inventario</button>
                 </form>
             </div>
         </div>
@@ -139,48 +162,69 @@
     <!-- === MODAL: EDITAR PRODUCTO === -->
     <div id="modal-editar-producto" class="modal-oculto">
         <div class="modal-contenido">
-            <div class="modal-header"><h2>Editar Producto</h2><button class="btn-cerrar" onclick="cerrarModalEditar()"><i class="fa-solid fa-xmark"></i></button></div>
+            <div class="modal-header"><h2>Editar Producto</h2><button type="button" class="btn-cerrar" onclick="cerrarModalEditar()"><i class="fa-solid fa-xmark"></i></button></div>
             <div class="modal-body">
-                <form id="form-editar-producto" onsubmit="guardarEdicionProducto(event)" style="display: flex; flex-direction: column; gap: 12px;">
+                <form id="form-editar-producto" onsubmit="guardarEdicionProducto(event)" style="display: flex; flex-direction: column; gap: 15px;">
                     
-                    <!-- Este input permite elegir cámara O galería -->
                     <label style="background: #eef2ff; color: var(--accent); padding: 15px; border-radius: 12px; text-align: center; font-weight: bold; cursor: pointer; border: 2px dashed #c7d2fe;">
                         <i class="fa-solid fa-camera-rotate" style="font-size: 24px; display:block; margin-bottom:5px;"></i> Cambiar Foto (Opcional)
                         <input type="file" id="e-foto" accept="image/*" onchange="procesarImagenEdicion(event)" style="display:none;">
                     </label>
                     <p id="e-foto-estado" style="text-align:center; font-size:0.8rem; color:var(--success); margin:0; display:none;"><i class="fa-solid fa-check-circle"></i> Nueva foto lista</p>
 
-                    <input type="text" id="e-codigo" readonly style="padding:14px; border-radius:10px; border:1px solid #e2e8f0; background:#f1f5f9; color:#64748b;">
-                    <input type="text" id="e-marca" placeholder="Marca" required style="padding:14px; border-radius:10px; border:1px solid #e2e8f0;">
-                    <input type="text" id="e-nombre" placeholder="Nombre del Producto" required style="padding:14px; border-radius:10px; border:1px solid #e2e8f0;">
-                    
-                    <select id="e-categoria" required style="padding:14px; border-radius:10px; border:1px solid #e2e8f0;">
-                        <option value="">Selecciona la Categoría</option>
-                        <option value="Limpieza">Limpieza</option>
-                        <option value="Higiene">Higiene</option>
-                        <option value="Abarrotes">Abarrotes</option>
-                        <option value="Snacks">Snacks</option>
-                        <option value="Lacteos">Lácteos</option>
-                        <option value="Bebidas">Bebidas</option>
-                        <option value="Gamer">Gamer</option>
-                        <option value="Accesorio">Accesorio (Tecnología)</option>
-                    </select>
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Código / SKU</label>
+                        <input type="text" id="e-codigo" readonly style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; background:#f1f5f9; color:#64748b; outline:none; font-family:'Inter', sans-serif;">
+                    </div>
 
-                    <div style="display:flex; gap:10px;">
-                        <input type="number" id="e-stock" placeholder="Stock" required style="padding:14px; border-radius:10px; border:1px solid #e2e8f0; width:50%;">
-                        <input type="number" id="e-costo" placeholder="Costo Lps." step="0.01" required style="padding:14px; border-radius:10px; border:1px solid #e2e8f0; width:50%;">
+                    <div style="display: flex; gap: 10px;">
+                        <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                            <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Marca</label>
+                            <input type="text" id="e-marca" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 4px; flex: 2;">
+                            <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Nombre del Producto</label>
+                            <input type="text" id="e-nombre" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
+                        </div>
                     </div>
                     
-                    <input type="number" id="e-precio" placeholder="Precio Público Lps." step="0.01" required style="padding:14px; border-radius:10px; border:1px solid #e2e8f0; font-weight:bold; color:var(--success);">
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Categoría</label>
+                        <select id="e-categoria" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif; background:white;">
+                            <option value="Limpieza">Limpieza</option>
+                            <option value="Higiene">Higiene</option>
+                            <option value="Abarrotes">Abarrotes</option>
+                            <option value="Snacks">Snacks</option>
+                            <option value="Lacteos">Lácteos</option>
+                            <option value="Bebidas">Bebidas</option>
+                            <option value="Gamer">Gamer</option>
+                            <option value="Accesorio">Accesorio (Tecnología)</option>
+                        </select>
+                    </div>
 
-                    <button type="submit" id="btn-guardar-edicion" class="btn-primario" style="margin-top:10px;"><i class="fa-solid fa-cloud-arrow-up"></i> Actualizar Producto</button>
+                    <div style="display:flex; gap:10px;">
+                        <div style="display: flex; flex-direction: column; gap: 4px; width:50%;">
+                            <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Stock Disp.</label>
+                            <input type="number" id="e-stock" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 4px; width:50%;">
+                            <label style="font-size: 0.75rem; font-weight: 800; color: #3b82f6; text-transform: uppercase;">Costo (Lps)</label>
+                            <input type="number" id="e-costo" step="0.01" required style="padding:12px; border-radius:10px; border:1px solid #bfdbfe; background:#eff6ff; color:#1d4ed8; font-weight:bold; outline:none; font-family:'Inter', sans-serif;">
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 0.75rem; font-weight: 800; color: #10b981; text-transform: uppercase;">Precio Público (Lps)</label>
+                        <input type="number" id="e-precio" step="0.01" required style="padding:14px; border-radius:10px; border:2px solid #a7f3d0; background:#f0fdf4; font-weight:bold; color:#047857; font-size:1.1rem; outline:none; font-family:'Inter', sans-serif;">
+                    </div>
+
+                    <button type="submit" id="btn-guardar-edicion" class="btn-primario" style="margin-top:5px;"><i class="fa-solid fa-cloud-arrow-up"></i> Actualizar Producto</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Sube la versión aquí para vencer el caché del celular -->
-    <script src="app.js?v=25"></script>
-
+    <!-- Script versionado para matar el caché del celular -->
+    <script src="app.js?v=26"></script>
 </body>
 </html>
