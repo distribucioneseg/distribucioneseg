@@ -141,13 +141,18 @@ function renderProductos(productos) {
                 ${tablaDescuentos}
                 <button class="btn-add" onclick="agregarAlCarrito('${prod.codigo}')"><i class="fa-solid fa-cart-plus"></i> Agregar</button>
                 
-                <div class="admin-panel">
+               <div class="admin-panel">
                     <div class="admin-header"><i class="fa-solid fa-user-lock"></i> Info Interna</div>
                     <div class="admin-stats">
                         <div class="stat-box profit"><span>Ganancia</span><b>Lps. ${formatoMoneda(gananciaAutomatica)}</b></div>
                         <div class="stat-box cost"><span>Mejor Costo</span><b>Lps. ${formatoMoneda(costoBajo)}</b></div>
                     </div>
                     ${proveedoresHTML ? `<div class="admin-providers">${proveedoresHTML}</div>` : ''}
+                    
+                    <!-- NUEVO BOTON DE EDITAR (Oculto para clientes) -->
+                    <button class="btn-secundario" onclick="abrirModalEditar('${prod.codigo}')" style="margin: 10px; width: calc(100% - 20px); font-size: 0.85rem; padding: 10px;">
+                        <i class="fa-solid fa-pen"></i> Editar Producto
+                    </button>
                 </div>
             </div>
         `;
@@ -425,4 +430,84 @@ function enviarWhatsApp() {
     mensaje += `\n💰 *Total a Pagar:* Lps. ${formatoMoneda(c.total)}\n\n¡Gracias por tu preferencia!`;
 
     window.open(`https://api.whatsapp.com/send?phone=${telefono}&text=${encodeURIComponent(mensaje)}`, '_blank');
+}
+
+// ==== VARIABLES Y FUNCIONES PARA EDITAR ====
+let imgBase64DataEdit = "";
+let imgMimeTypeEdit = "";
+let imgNameEdit = "";
+
+function abrirModalEditar(codigo) {
+    const prod = productosGlobal.find(p => p.codigo === codigo);
+    if(!prod) return;
+    
+    document.getElementById('e-codigo').value = prod.codigo;
+    document.getElementById('e-marca').value = prod.marca || "";
+    document.getElementById('e-nombre').value = prod.nombre;
+    document.getElementById('e-categoria').value = prod.categoria || "";
+    document.getElementById('e-stock').value = prod.stock || 0;
+    
+    // Saca el costo más bajo para ponértelo en la cajita
+    let precios = [];
+    for(let i=1; i<=6; i++) {
+        let p = parseFloat(prod['p'+i]);
+        if(!isNaN(p) && p>0) precios.push(p);
+    }
+    let cBajo = precios.length > 0 ? Math.min(...precios) : (parseFloat(prod.costoBajo)||0);
+    
+    document.getElementById('e-costo').value = cBajo;
+    document.getElementById('e-precio').value = parseFloat(prod.precioUnitario) || 0;
+    
+    document.getElementById('modal-editar-producto').style.display = 'flex';
+}
+
+function cerrarModalEditar() { 
+    document.getElementById('modal-editar-producto').style.display = 'none'; 
+    document.getElementById('form-editar-producto').reset();
+    document.getElementById('e-foto-estado').style.display = 'none';
+    imgBase64DataEdit = "";
+}
+
+function procesarImagenEdicion(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    imgNameEdit = file.name;
+    imgMimeTypeEdit = file.type;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        imgBase64DataEdit = e.target.result.split(',')[1];
+        document.getElementById('e-foto-estado').style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+}
+
+async function guardarEdicionProducto(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btn-guardar-edicion');
+    btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Actualizando..."; 
+    btn.disabled = true;
+
+    const prodEditado = {
+        accion: "editar_producto",
+        codigo: document.getElementById('e-codigo').value,
+        marca: document.getElementById('e-marca').value,
+        nombre: document.getElementById('e-nombre').value,
+        categoria: document.getElementById('e-categoria').value,
+        stock: document.getElementById('e-stock').value,
+        costo: document.getElementById('e-costo').value,
+        precio: document.getElementById('e-precio').value,
+        imagenBase64: imgBase64DataEdit, // Si no cambiaste foto, va vacío y Excel no la borra
+        mimeType: imgMimeTypeEdit,
+        nombreArchivo: imgNameEdit
+    };
+
+    try {
+        await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(prodEditado) });
+        alert("¡Producto actualizado exitosamente!");
+        location.reload(); 
+    } catch (error) {
+        alert("Error al actualizar el producto.");
+        btn.innerHTML = "<i class='fa-solid fa-cloud-arrow-up'></i> Actualizar Producto"; 
+        btn.disabled = false;
+    }
 }

@@ -136,6 +136,51 @@
         </div>
     </div>
 
-    <script src="app.js?v=20"></script>
+    <!-- === MODAL: EDITAR PRODUCTO === -->
+    <div id="modal-editar-producto" class="modal-oculto">
+        <div class="modal-contenido">
+            <div class="modal-header"><h2>Editar Producto</h2><button class="btn-cerrar" onclick="cerrarModalEditar()"><i class="fa-solid fa-xmark"></i></button></div>
+            <div class="modal-body">
+                <form id="form-editar-producto" onsubmit="guardarEdicionProducto(event)" style="display: flex; flex-direction: column; gap: 12px;">
+                    
+                    <!-- Este input permite elegir cámara O galería -->
+                    <label style="background: #eef2ff; color: var(--accent); padding: 15px; border-radius: 12px; text-align: center; font-weight: bold; cursor: pointer; border: 2px dashed #c7d2fe;">
+                        <i class="fa-solid fa-camera-rotate" style="font-size: 24px; display:block; margin-bottom:5px;"></i> Cambiar Foto (Opcional)
+                        <input type="file" id="e-foto" accept="image/*" onchange="procesarImagenEdicion(event)" style="display:none;">
+                    </label>
+                    <p id="e-foto-estado" style="text-align:center; font-size:0.8rem; color:var(--success); margin:0; display:none;"><i class="fa-solid fa-check-circle"></i> Nueva foto lista</p>
+
+                    <input type="text" id="e-codigo" readonly style="padding:14px; border-radius:10px; border:1px solid #e2e8f0; background:#f1f5f9; color:#64748b;">
+                    <input type="text" id="e-marca" placeholder="Marca" required style="padding:14px; border-radius:10px; border:1px solid #e2e8f0;">
+                    <input type="text" id="e-nombre" placeholder="Nombre del Producto" required style="padding:14px; border-radius:10px; border:1px solid #e2e8f0;">
+                    
+                    <select id="e-categoria" required style="padding:14px; border-radius:10px; border:1px solid #e2e8f0;">
+                        <option value="">Selecciona la Categoría</option>
+                        <option value="Limpieza">Limpieza</option>
+                        <option value="Higiene">Higiene</option>
+                        <option value="Abarrotes">Abarrotes</option>
+                        <option value="Snacks">Snacks</option>
+                        <option value="Lacteos">Lácteos</option>
+                        <option value="Bebidas">Bebidas</option>
+                        <option value="Gamer">Gamer</option>
+                        <option value="Accesorio">Accesorio (Tecnología)</option>
+                    </select>
+
+                    <div style="display:flex; gap:10px;">
+                        <input type="number" id="e-stock" placeholder="Stock" required style="padding:14px; border-radius:10px; border:1px solid #e2e8f0; width:50%;">
+                        <input type="number" id="e-costo" placeholder="Costo Lps." step="0.01" required style="padding:14px; border-radius:10px; border:1px solid #e2e8f0; width:50%;">
+                    </div>
+                    
+                    <input type="number" id="e-precio" placeholder="Precio Público Lps." step="0.01" required style="padding:14px; border-radius:10px; border:1px solid #e2e8f0; font-weight:bold; color:var(--success);">
+
+                    <button type="submit" id="btn-guardar-edicion" class="btn-primario" style="margin-top:10px;"><i class="fa-solid fa-cloud-arrow-up"></i> Actualizar Producto</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sube la versión aquí para vencer el caché del celular -->
+    <script src="app.js?v=25"></script>
+
 </body>
 </html>
