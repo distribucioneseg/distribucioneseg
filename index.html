@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DISTRIBUCIONES E&G</title>
-    <link rel="stylesheet" href="style.css?v=45">
+    <link rel="stylesheet" href="style.css?v=50">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
@@ -20,7 +20,6 @@
         </div>
     </header>
 
-    <!-- ==== PESTAÑA TIENDA ==== -->
     <div id="view-tienda" class="view-section active">
         <div class="controls-container">
             <div class="search-box">
@@ -82,7 +81,6 @@
         <main><section id="productos-grid" class="grid"></section></main>
     </div>
 
-    <!-- ==== PESTAÑA CLIENTES ==== -->
     <div id="view-clientes" class="view-section">
         <div class="controls-container">
             <div class="search-box">
@@ -93,7 +91,8 @@
         </div>
         <div class="table-container">
             <table id="tabla-clientes">
-                <thead><tr><th>Tienda / Cliente</th><th>Contacto</th><th>Entrega</th><th>Total</th><th>Acción</th></tr></thead>
+                <!-- Se quitó la columna Total -->
+                <thead><tr><th>Tienda / Cliente</th><th>Contacto</th><th>Entrega</th><th>Acción</th></tr></thead>
                 <tbody id="lista-clientes"></tbody>
             </table>
         </div>
@@ -101,7 +100,6 @@
 
     <button id="btn-flotante-carrito" onclick="abrirCarrito()"><i class="fa-solid fa-cart-shopping"></i><span id="contador-carrito">0</span></button>
 
-    <!-- ==== MODAL: CARRITO ==== -->
     <div id="modal-carrito" class="modal-oculto">
         <div class="modal-contenido">
             <div class="modal-header"><h2>Resumen de Orden</h2><button class="btn-cerrar" onclick="cerrarCarrito()"><i class="fa-solid fa-xmark"></i></button></div>
@@ -124,7 +122,6 @@
         </div>
     </div>
 
-    <!-- ==== MODAL: DETALLE CLIENTE ==== -->
     <div id="modal-detalle" class="modal-oculto">
         <div class="modal-contenido">
             <div class="modal-header"><h2>Detalle de Orden</h2><button class="btn-cerrar" onclick="cerrarDetalle()"><i class="fa-solid fa-xmark"></i></button></div>
@@ -141,7 +138,7 @@
         </div>
     </div>
 
-    <!-- ==== MODAL: AGREGAR PRODUCTO NUEVO ==== -->
+    <!-- Modal Agregar -->
     <div id="modal-producto" class="modal-oculto">
         <div class="modal-contenido">
             <div class="modal-header"><h2>Agregar Producto</h2><button type="button" class="btn-cerrar" onclick="cerrarModalProducto()"><i class="fa-solid fa-xmark"></i></button></div>
@@ -164,7 +161,7 @@
                             <input type="text" id="p-marca" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 4px; flex: 2;">
-                            <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Nombre del Producto</label>
+                            <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Producto</label> <!-- Corregido aquí -->
                             <input type="text" id="p-nombre" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
                         </div>
                     </div>
@@ -181,7 +178,6 @@
                         </select>
                     </div>
 
-                    <!-- PROVEEDORES -->
                     <div style="background:#f8fafc; padding:10px; border-radius:10px; border:1px solid #e2e8f0;">
                         <label style="font-size: 0.75rem; font-weight: 800; color: #475569; text-transform: uppercase; margin-bottom:8px; display:block;">📦 Proveedores (Opcional)</label>
                         <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
@@ -194,7 +190,6 @@
                         </div>
                     </div>
 
-                    <!-- PRECIOS MAYOREO -->
                     <div style="background:#f0fdf4; padding:10px; border-radius:10px; border:1px solid #bbf7d0;">
                         <label style="font-size: 0.75rem; font-weight: 800; color: #047857; text-transform: uppercase; margin-bottom:8px; display:block;">🏷️ Precios Mayoreo (Opcional)</label>
                         <div style="display: flex; flex-wrap: wrap; gap: 8px;">
@@ -225,7 +220,7 @@
         </div>
     </div>
 
-    <!-- ==== MODAL: EDITAR PRODUCTO EXISTENTE ==== -->
+    <!-- Modal Editar -->
     <div id="modal-editar-producto" class="modal-oculto">
         <div class="modal-contenido">
             <div class="modal-header"><h2>Editar Producto</h2><button type="button" class="btn-cerrar" onclick="cerrarModalEditar()"><i class="fa-solid fa-xmark"></i></button></div>
@@ -248,7 +243,7 @@
                             <input type="text" id="e-marca" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 4px; flex: 2;">
-                            <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Nombre del Producto</label>
+                            <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Producto</label> <!-- Corregido aquí -->
                             <input type="text" id="e-nombre" required style="padding:12px; border-radius:10px; border:1px solid #e2e8f0; outline:none; font-family:'Inter', sans-serif;">
                         </div>
                     </div>
@@ -265,7 +260,6 @@
                         </select>
                     </div>
 
-                    <!-- PROVEEDORES EDITAR -->
                     <div style="background:#f8fafc; padding:10px; border-radius:10px; border:1px solid #e2e8f0;">
                         <label style="font-size: 0.75rem; font-weight: 800; color: #475569; text-transform: uppercase; margin-bottom:8px; display:block;">📦 Proveedores (Opcional)</label>
                         <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
@@ -278,7 +272,6 @@
                         </div>
                     </div>
 
-                    <!-- PRECIOS MAYOREO EDITAR -->
                     <div style="background:#f0fdf4; padding:10px; border-radius:10px; border:1px solid #bbf7d0;">
                         <label style="font-size: 0.75rem; font-weight: 800; color: #047857; text-transform: uppercase; margin-bottom:8px; display:block;">🏷️ Precios Mayoreo (Opcional)</label>
                         <div style="display: flex; flex-wrap: wrap; gap: 8px;">
@@ -309,6 +302,6 @@
         </div>
     </div>
 
-    <script src="app.js?v=45"></script>
+    <script src="app.js?v=50"></script>
 </body>
 </html>

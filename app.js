@@ -280,6 +280,7 @@ async function guardarCotizacion(e) {
     catch (error) { alert("Error de conexión al guardar."); }
 }
 
+// ==== SE ELIMINÓ LA COLUMNA DE TOTAL DE AQUÍ ====
 function renderClientes(clientes) {
     const tbody = document.getElementById('lista-clientes');
     tbody.innerHTML = "";
@@ -290,8 +291,7 @@ function renderClientes(clientes) {
                 <td data-label="Tienda / Cliente" style="padding:15px;"><strong>${c.tienda}</strong><br><span style="font-size:0.8rem; color:var(--text-muted);">${c.cliente}</span></td>
                 <td data-label="Contacto" style="padding:15px;"><span style="color:var(--accent); font-weight:600;">${c.telefono}</span><br><span style="font-size:0.8rem;">${c.lugar}</span></td>
                 <td data-label="Entrega" style="padding:15px; font-size:0.9rem;">${fecha}</td>
-                <td data-label="Total" style="color:var(--success); font-weight:800; padding:15px;">Lps. ${formatoMoneda(c.total)}</td>
-                <td data-label="Acción" style="padding:15px;"><button class="btn-secundario" style="padding: 10px; width:40px; height:40px; border-radius:10px;"><i class="fa-solid fa-eye"></i></button></td>
+                <td data-label="Acción" style="padding:15px; text-align:right;"><button class="btn-secundario" style="padding: 10px; width:40px; height:40px; border-radius:10px;"><i class="fa-solid fa-eye"></i></button></td>
             </tr>`;
     });
 }
@@ -312,10 +312,29 @@ function abrirDetalle(index) {
             <span style="font-size:1.7rem; color:#1e3a8a; font-weight:900;">Lps. ${formatoMoneda(c.total)}</span>
         </div>`;
     
+    // ==== AHORA CALCULA Y MUESTRA EL PRECIO POR CADA PRODUCTO AQUÍ ====
     let htmlItems = "";
     if (c.carrito) {
         try {
-            JSON.parse(c.carrito).forEach(item => { htmlItems += `<div style="display:flex; align-items:center; gap:15px; padding:12px 0; border-bottom:1px solid #f1f5f9;"><div style="background:#eef2ff; color:var(--accent); font-weight:800; padding:6px; border-radius:8px; font-size:0.85rem; min-width:40px; text-align:center;">${item.cantidad}x</div><div style="font-size:0.95rem; color:var(--text-dark); font-weight:600; line-height:1.3;">${item.nombre}</div></div>`; });
+            JSON.parse(c.carrito).forEach(item => { 
+                
+                let precioAplicado = item.prodCompleto && item.prodCompleto.precioUnitario ? parseFloat(item.prodCompleto.precioUnitario) : 0;
+                if (item.prodCompleto) {
+                    if (item.cantidad >= 12 && item.prodCompleto.precio12 > 0) precioAplicado = parseFloat(item.prodCompleto.precio12);
+                    else if (item.cantidad >= 6 && item.prodCompleto.precio6 > 0) precioAplicado = parseFloat(item.prodCompleto.precio6);
+                    else if (item.cantidad >= 5 && item.prodCompleto.precio5 > 0) precioAplicado = parseFloat(item.prodCompleto.precio5);
+                }
+                const subtotalItem = precioAplicado * item.cantidad;
+
+                htmlItems += `
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid #f1f5f9;">
+                    <div style="display:flex; align-items:center; gap:15px;">
+                        <div style="background:#eef2ff; color:var(--accent); font-weight:800; padding:6px; border-radius:8px; font-size:0.85rem; min-width:40px; text-align:center;">${item.cantidad}x</div>
+                        <div style="font-size:0.95rem; color:var(--text-dark); font-weight:600; line-height:1.3;">${item.nombre}</div>
+                    </div>
+                    <div style="font-weight:800; color:#10b981; font-size:0.95rem; white-space:nowrap;">Lps. ${formatoMoneda(subtotalItem)}</div>
+                </div>`; 
+            });
         } catch(e) {}
     }
     document.getElementById('detalle-items').innerHTML = htmlItems || "<p style='color:#64748b;'>Sin detalles guardados.</p>";

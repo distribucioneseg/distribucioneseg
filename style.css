@@ -200,3 +200,32 @@ body.show-admin .admin-panel {
     flex: 1; 
     min-width: 180px; /* Esto evita que se corte */
 }
+
+/* ==== MEJORA DE LA TABLA DE CLIENTES ==== */
+.table-container {
+    max-width: 1000px;
+    margin: 20px auto; /* Centra la tabla y le da respiro */
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    padding: 10px;
+    overflow-x: auto;
+    border: 1px solid #e2e8f0;
+}
+
+#tabla-clientes {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#tabla-clientes th {
+    background: #f8fafc;
+    color: #475569;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    padding: 15px;
+    border-bottom: 2px solid #e2e8f0;
+    text-align: left;
+}
