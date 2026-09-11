@@ -16,6 +16,7 @@ function formatoMoneda(valor) {
 
 window.onload = async () => {
     document.getElementById('productos-grid').innerHTML = "<p style='text-align:center; width:100%; margin-top:30px; color:#64748b;'>Cargando inventario...</p>";
+    
     const vistaGuardada = localStorage.getItem('vistaPreferida') || 'grid';
     cambiarVista(vistaGuardada);
 
@@ -35,6 +36,7 @@ function cambiarVista(vista) {
     const grid = document.getElementById('productos-grid');
     const btnGrid = document.getElementById('btn-grid');
     const btnList = document.getElementById('btn-list');
+    if (!btnGrid || !btnList) return;
 
     if (vista === 'list') {
         grid.classList.add('list-view');
@@ -88,7 +90,6 @@ function mostrarSiguienteProveedor(prefix) {
     }
 }
 
-// ==== GENERADOR DE CÓDIGO AUTOMÁTICO ====
 function generarCodigoSKU() {
     const select = document.getElementById('p-categoria');
     const catValue = select.value;
@@ -100,16 +101,17 @@ function generarCodigoSKU() {
 
     const mapPrefijos = {
         "Gamer": "TEC", "Periferico": "TEC", "Audio": "TEC", "Cables": "TEC", "Almacenamiento": "TEC", "Protectores": "TEC", "Celulares": "TEC", "Componentes": "TEC",
+        "Pollo": "CAR", "Res": "CAR", "Cerdo": "CAR", "Mariscos": "MAR", "Embutidos": "EMB",
         "Granos": "ABA", "Aceites": "ABA", "Pastas": "ABA", "Enlatados": "ABA", "Salsas": "ABA", "Especias": "ABA", "Panaderia": "ABA",
-        "Lacteos": "LAC", "Embutidos": "EMB",
+        "Lacteos": "LAC",
         "Refrescos": "BEB", "Agua": "BEB", "Energizantes": "BEB", "Cervezas": "BEB", "Cafe": "BEB", "Snacks": "SNA", "Dulces": "SNA",
         "Detergentes": "LIM", "Limpieza": "LIM", "Higiene": "HIG", "Capilar": "HIG", "Dental": "HIG", "Papel": "PAP",
         "Medicinas": "MED", "Bebes": "BEB2", "Mascotas": "MAS", "Papeleria": "PAP2", "Ferreteria": "FER", "Plasticos": "PLA", "Cosmeticos": "COS"
     };
 
     let prefix = mapPrefijos[catValue] || "E&G";
-
     let maxNum = 0;
+    
     productosGlobal.forEach(p => {
         if (p.codigo && p.codigo.startsWith(prefix + "-")) {
             let partes = p.codigo.split("-");
@@ -163,45 +165,64 @@ function renderProductos(productos) {
 
         let imagenFinal = prod.foto;
         if (!imagenFinal || imagenFinal.trim() === "" || imagenFinal.includes('dummyimage')) {
-            let cat = (prod.categoria || "").toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            if (cat.includes("GAMER")) imagenFinal = "https://img.icons8.com/color/150/controller.png"; 
-            else if (cat.includes("PERIFERICO") || cat.includes("TECLADO") || cat.includes("MOUSE")) imagenFinal = "https://img.icons8.com/color/150/mouse.png"; 
-            else if (cat.includes("AUDIO") || cat.includes("AUDIFONO")) imagenFinal = "https://img.icons8.com/color/150/headphones.png"; 
-            else if (cat.includes("CABLE") || cat.includes("CARGADOR")) imagenFinal = "https://img.icons8.com/color/150/usb-plug.png"; 
-            else if (cat.includes("ALMACENAMIENTO") || cat.includes("USB") || cat.includes("MICROSD")) imagenFinal = "https://img.icons8.com/color/150/usb-memory-stick.png"; 
-            else if (cat.includes("PROTECTOR") || cat.includes("FUNDA")) imagenFinal = "https://img.icons8.com/color/150/phone-case.png"; 
-            else if (cat.includes("CELULAR") || cat.includes("TELEFONO")) imagenFinal = "https://img.icons8.com/color/150/iphone.png"; 
-            else if (cat.includes("COMPONENTE")) imagenFinal = "https://img.icons8.com/color/150/motherboard.png"; 
-            else if (cat.includes("GRANO")) imagenFinal = "https://img.icons8.com/color/150/ingredients.png"; 
-            else if (cat.includes("ACEITE") || cat.includes("MANTECA")) imagenFinal = "https://img.icons8.com/color/150/olive-oil.png"; 
-            else if (cat.includes("PASTA") || cat.includes("SOPA")) imagenFinal = "https://img.icons8.com/color/150/spaghetti.png"; 
-            else if (cat.includes("ENLATADO") || cat.includes("CONSERVA")) imagenFinal = "https://img.icons8.com/color/150/canned-food.png"; 
-            else if (cat.includes("SALSA") || cat.includes("CONDIMENTO")) imagenFinal = "https://img.icons8.com/color/150/ketchup.png"; 
-            else if (cat.includes("ESPECIA") || cat.includes("AZUCAR") || cat.includes("SAL")) imagenFinal = "https://img.icons8.com/color/150/salt-shaker.png"; 
-            else if (cat.includes("LACTEO") || cat.includes("QUESO") || cat.includes("HUEVO")) imagenFinal = "https://img.icons8.com/color/150/cheese.png"; 
-            else if (cat.includes("EMBUTIDO") || cat.includes("EMBUTIDOS")) imagenFinal = "https://img.icons8.com/color/150/salami.png";
-            else if (cat.includes("CARNES") || cat.includes("CARNES")) imagenFinal = "https://img.icons8.com/color/150/chicken.png"; 
-            else if (cat.includes("PANADERIA") || cat.includes("REPOSTERIA")) imagenFinal = "https://img.icons8.com/color/150/bread.png"; 
-            else if (cat.includes("REFRESCO") || cat.includes("JUGO")) imagenFinal = "https://img.icons8.com/color/150/soda-can.png"; 
-            else if (cat.includes("AGUA")) imagenFinal = "https://img.icons8.com/color/150/water-bottle.png"; 
-            else if (cat.includes("ENERGIZANTE")) imagenFinal = "https://img.icons8.com/color/150/energy-drink.png"; 
-            else if (cat.includes("CERVEZA") || cat.includes("LICOR")) imagenFinal = "https://img.icons8.com/color/150/beer.png"; 
-            else if (cat.includes("SNACK") || cat.includes("CHURRO")) imagenFinal = "https://img.icons8.com/color/150/potato-chips.png"; 
-            else if (cat.includes("DULCE") || cat.includes("CHOCOLATE")) imagenFinal = "https://img.icons8.com/color/150/candy.png"; 
-            else if (cat.includes("CAFE") || cat.includes("TE")) imagenFinal = "https://img.icons8.com/color/150/coffee-beans.png"; 
-            else if (cat.includes("DETERGENTE") || cat.includes("SUAVIZANTE")) imagenFinal = "https://img.icons8.com/color/150/washing-machine.png"; 
-            else if (cat.includes("LIMPIEZA")) imagenFinal = "https://img.icons8.com/color/150/cleaning-products.png"; 
-            else if (cat.includes("HIGIENE") || cat.includes("CORPORAL")) imagenFinal = "https://img.icons8.com/color/150/soap.png"; 
-            else if (cat.includes("CAPILAR") || cat.includes("SHAMPOO")) imagenFinal = "https://img.icons8.com/color/150/shampoo.png"; 
-            else if (cat.includes("DENTAL")) imagenFinal = "https://img.icons8.com/color/150/tooth.png"; 
-            else if (cat.includes("PAPEL") || cat.includes("DESECHABLE")) imagenFinal = "https://img.icons8.com/color/150/toilet-paper.png"; 
-            else if (cat.includes("MEDICINA") || cat.includes("OTC")) imagenFinal = "https://img.icons8.com/color/150/pill.png"; 
-            else if (cat.includes("BEBE")) imagenFinal = "https://img.icons8.com/color/150/pacifier.png"; 
-            else if (cat.includes("MASCOTA")) imagenFinal = "https://img.icons8.com/color/150/dog-bowl.png"; 
-            else if (cat.includes("PAPELERIA") || cat.includes("LIBRERIA")) imagenFinal = "https://img.icons8.com/color/150/school.png"; 
-            else if (cat.includes("FERRETERIA")) imagenFinal = "https://img.icons8.com/color/150/hammer.png"; 
-            else if (cat.includes("PLASTICO") || cat.includes("HOGAR")) imagenFinal = "https://img.icons8.com/color/150/bucket.png"; 
-            else if (cat.includes("COSMETICO") || cat.includes("BELLEZA")) imagenFinal = "https://img.icons8.com/color/150/lipstick.png"; 
+            
+            // INTELIGENCIA MEJORADA: Lee la Categoría + El Nombre del Producto para encontrar el icono perfecto
+            let searchStr = ((prod.categoria || "") + " " + (prod.nombre || "")).toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            
+            // Tecnología
+            if (searchStr.includes("GAMER") || searchStr.includes("DEDAL") || searchStr.includes("GATILLO")) imagenFinal = "https://img.icons8.com/color/150/controller.png"; 
+            else if (searchStr.includes("PERIFERICO") || searchStr.includes("TECLADO") || searchStr.includes("MOUSE")) imagenFinal = "https://img.icons8.com/color/150/mouse.png"; 
+            else if (searchStr.includes("AUDIO") || searchStr.includes("AUDIFONO") || searchStr.includes("BOCINA")) imagenFinal = "https://img.icons8.com/color/150/headphones.png"; 
+            else if (searchStr.includes("CABLE") || searchStr.includes("CARGADOR")) imagenFinal = "https://img.icons8.com/color/150/usb-plug.png"; 
+            else if (searchStr.includes("ALMACENAMIENTO") || searchStr.includes("USB") || searchStr.includes("MICROSD")) imagenFinal = "https://img.icons8.com/color/150/usb-memory-stick.png"; 
+            else if (searchStr.includes("PROTECTOR") || searchStr.includes("FUNDA")) imagenFinal = "https://img.icons8.com/color/150/phone-case.png"; 
+            else if (searchStr.includes("CELULAR") || searchStr.includes("TELEFONO")) imagenFinal = "https://img.icons8.com/color/150/iphone.png"; 
+            else if (searchStr.includes("COMPONENTE")) imagenFinal = "https://img.icons8.com/color/150/motherboard.png"; 
+            
+            // Carnes
+            else if (searchStr.includes("POLLO") || searchStr.includes("AVE") || searchStr.includes("ALITA")) imagenFinal = "https://img.icons8.com/color/150/poultry-leg.png"; 
+            else if (searchStr.includes("RES") || searchStr.includes("VACA") || searchStr.includes("CARNE")) imagenFinal = "https://img.icons8.com/color/150/steak-medium.png"; 
+            else if (searchStr.includes("CERDO") || searchStr.includes("CHULETA") || searchStr.includes("COSTILLA")) imagenFinal = "https://img.icons8.com/color/150/pig.png"; 
+            else if (searchStr.includes("PESCADO") || searchStr.includes("MARISCO") || searchStr.includes("CAMARON") || searchStr.includes("TILAPIA")) imagenFinal = "https://img.icons8.com/color/150/fish-food.png"; 
+            else if (searchStr.includes("EMBUTIDO") || searchStr.includes("CHORIZO") || searchStr.includes("SALCHICHA") || searchStr.includes("MORTADELA")) imagenFinal = "https://img.icons8.com/color/150/salami.png"; 
+            
+            // Abarrotes
+            else if (searchStr.includes("GRANO") || searchStr.includes("FRIJOL") || searchStr.includes("ARROZ") || searchStr.includes("MAIZ")) imagenFinal = "https://img.icons8.com/color/150/ingredients.png"; 
+            else if (searchStr.includes("ACEITE") || searchStr.includes("MANTECA")) imagenFinal = "https://img.icons8.com/color/150/olive-oil.png"; 
+            else if (searchStr.includes("PASTA") || searchStr.includes("SOPA") || searchStr.includes("MACARRON")) imagenFinal = "https://img.icons8.com/color/150/spaghetti.png"; 
+            else if (searchStr.includes("ENLATADO") || searchStr.includes("CONSERVA") || searchStr.includes("SARDINA") || searchStr.includes("ATUN")) imagenFinal = "https://img.icons8.com/color/150/canned-food.png"; 
+            else if (searchStr.includes("SALSA") || searchStr.includes("CONDIMENTO") || searchStr.includes("MAYONESA")) imagenFinal = "https://img.icons8.com/color/150/ketchup.png"; 
+            else if (searchStr.includes("ESPECIA") || searchStr.includes("AZUCAR") || searchStr.includes("SAL") || searchStr.includes("CONSOME")) imagenFinal = "https://img.icons8.com/color/150/salt-shaker.png"; 
+            else if (searchStr.includes("HUEVO") || searchStr.includes("CARTON")) imagenFinal = "https://img.icons8.com/color/150/eggs.png"; 
+            else if (searchStr.includes("LACTEO") || searchStr.includes("QUESO") || searchStr.includes("MANTEQUILLA") || searchStr.includes("LECHE")) imagenFinal = "https://img.icons8.com/color/150/cheese.png"; 
+            else if (searchStr.includes("PAN") || searchStr.includes("REPOSTERIA") || searchStr.includes("GALLETA")) imagenFinal = "https://img.icons8.com/color/150/bread.png"; 
+            
+            // Bebidas y Snacks
+            else if (searchStr.includes("REFRESCO") || searchStr.includes("JUGO") || searchStr.includes("COCA") || searchStr.includes("PEPSI") || searchStr.includes("BEBIDA")) imagenFinal = "https://img.icons8.com/color/150/soda-can.png"; 
+            else if (searchStr.includes("AGUA")) imagenFinal = "https://img.icons8.com/color/150/water-bottle.png"; 
+            else if (searchStr.includes("ENERGIZANTE") || searchStr.includes("RAPTOR") || searchStr.includes("MONSTER") || searchStr.includes("AMP")) imagenFinal = "https://img.icons8.com/color/150/energy-drink.png"; 
+            else if (searchStr.includes("CERVEZA") || searchStr.includes("LICOR") || searchStr.includes("RON")) imagenFinal = "https://img.icons8.com/color/150/beer.png"; 
+            else if (searchStr.includes("SNACK") || searchStr.includes("CHURRO") || searchStr.includes("PAPITA") || searchStr.includes("ZAMBO") || searchStr.includes("YUMMIE")) imagenFinal = "https://img.icons8.com/color/150/potato-chips.png"; 
+            else if (searchStr.includes("DULCE") || searchStr.includes("CHOCOLATE") || searchStr.includes("CONFITE") || searchStr.includes("BOMBON")) imagenFinal = "https://img.icons8.com/color/150/candy.png"; 
+            else if (searchStr.includes("CAFE") || searchStr.includes("TE ")) imagenFinal = "https://img.icons8.com/color/150/coffee-beans.png"; 
+            
+            // Higiene y Limpieza
+            else if (searchStr.includes("DETERGENTE") || searchStr.includes("SUAVIZANTE") || searchStr.includes("JABON DE LAVAR") || searchStr.includes("RINSO")) imagenFinal = "https://img.icons8.com/color/150/washing-machine.png"; 
+            else if (searchStr.includes("LIMPIEZA") || searchStr.includes("CLORO") || searchStr.includes("DESINFECTANTE") || searchStr.includes("MISTOLIN")) imagenFinal = "https://img.icons8.com/color/150/cleaning-products.png"; 
+            else if (searchStr.includes("HIGIENE") || searchStr.includes("CORPORAL") || searchStr.includes("JABON DE BAÑO") || searchStr.includes("PROTEX")) imagenFinal = "https://img.icons8.com/color/150/soap.png"; 
+            else if (searchStr.includes("CAPILAR") || searchStr.includes("SHAMPOO") || searchStr.includes("ACONDICIONADOR")) imagenFinal = "https://img.icons8.com/color/150/shampoo.png"; 
+            else if (searchStr.includes("DENTAL") || searchStr.includes("COLGATE") || searchStr.includes("CEPILLO")) imagenFinal = "https://img.icons8.com/color/150/tooth.png"; 
+            else if (searchStr.includes("PAPEL") || searchStr.includes("DESECHABLE") || searchStr.includes("SERVILLETA") || searchStr.includes("VASO")) imagenFinal = "https://img.icons8.com/color/150/toilet-paper.png"; 
+            
+            // Otros
+            else if (searchStr.includes("MEDICINA") || searchStr.includes("OTC") || searchStr.includes("PASTILLA") || searchStr.includes("PANADOL")) imagenFinal = "https://img.icons8.com/color/150/pill.png"; 
+            else if (searchStr.includes("BEBE") || searchStr.includes("PAÑAL") || searchStr.includes("TOALLITA")) imagenFinal = "https://img.icons8.com/color/150/pacifier.png"; 
+            else if (searchStr.includes("MASCOTA") || searchStr.includes("PERRO") || searchStr.includes("GATO") || searchStr.includes("DOGUI")) imagenFinal = "https://img.icons8.com/color/150/dog-bowl.png"; 
+            else if (searchStr.includes("PAPELERIA") || searchStr.includes("LIBRERIA") || searchStr.includes("CUADERNO") || searchStr.includes("LAPIZ")) imagenFinal = "https://img.icons8.com/color/150/school.png"; 
+            else if (searchStr.includes("FERRETERIA") || searchStr.includes("CLAVO") || searchStr.includes("HERRAMIENTA")) imagenFinal = "https://img.icons8.com/color/150/hammer.png"; 
+            else if (searchStr.includes("PLASTICO") || searchStr.includes("HOGAR") || searchStr.includes("BASURA") || searchStr.includes("ESCOBA")) imagenFinal = "https://img.icons8.com/color/150/bucket.png"; 
+            else if (searchStr.includes("COSMETICO") || searchStr.includes("BELLEZA") || searchStr.includes("MAQUILLAJE")) imagenFinal = "https://img.icons8.com/color/150/lipstick.png"; 
+            
             else imagenFinal = "https://img.icons8.com/color/150/box--v1.png"; 
         }
 
@@ -364,7 +385,6 @@ async function guardarCotizacion(e) {
     catch (error) { alert("Error de conexión al guardar."); }
 }
 
-// ==== ELIMINAR COTIZACIÓN ====
 async function eliminarCotizacion() {
     const pass = prompt("Ingrese PIN de administrador para eliminar:");
     if (pass !== "199311") {
