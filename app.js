@@ -166,62 +166,56 @@ function renderProductos(productos) {
         let imagenFinal = prod.foto;
         if (!imagenFinal || imagenFinal.trim() === "" || imagenFinal.includes('dummyimage')) {
             
-            // INTELIGENCIA MEJORADA: Lee la Categoría + El Nombre del Producto para encontrar el icono perfecto
+            // INTELIGENCIA EXACTA DE PALABRAS: Evita errores como "Rosal" -> "Sal" o "Detergente" -> "Te"
             let searchStr = ((prod.categoria || "") + " " + (prod.nombre || "")).toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            const has = (...words) => words.some(w => new RegExp(`\\b${w}\\b`).test(searchStr));
+
+            if (has("GAMER", "DEDAL", "GATILLO", "DEDALES", "GATILLOS")) imagenFinal = "https://img.icons8.com/color/150/controller.png"; 
+            else if (has("PERIFERICO", "TECLADO", "MOUSE")) imagenFinal = "https://img.icons8.com/color/150/mouse.png"; 
+            else if (has("AUDIO", "AUDIFONO", "BOCINA", "AUDIFONOS", "BOCINAS")) imagenFinal = "https://img.icons8.com/color/150/headphones.png"; 
+            else if (has("CABLE", "CARGADOR", "CABLES", "CARGADORES")) imagenFinal = "https://img.icons8.com/color/150/usb-plug.png"; 
+            else if (has("ALMACENAMIENTO", "USB", "MICROSD", "MEMORIA")) imagenFinal = "https://img.icons8.com/color/150/usb-memory-stick.png"; 
+            else if (has("PROTECTOR", "FUNDA", "VIDRIO", "TEMPLADO")) imagenFinal = "https://img.icons8.com/color/150/phone-case.png"; 
+            else if (has("CELULAR", "TELEFONO", "SMARTPHONE")) imagenFinal = "https://img.icons8.com/color/150/iphone.png"; 
+            else if (has("COMPONENTE", "DISCO", "RAM", "PC")) imagenFinal = "https://img.icons8.com/color/150/motherboard.png"; 
             
-            // Tecnología
-            if (searchStr.includes("GAMER") || searchStr.includes("DEDAL") || searchStr.includes("GATILLO")) imagenFinal = "https://img.icons8.com/color/150/controller.png"; 
-            else if (searchStr.includes("PERIFERICO") || searchStr.includes("TECLADO") || searchStr.includes("MOUSE")) imagenFinal = "https://img.icons8.com/color/150/mouse.png"; 
-            else if (searchStr.includes("AUDIO") || searchStr.includes("AUDIFONO") || searchStr.includes("BOCINA")) imagenFinal = "https://img.icons8.com/color/150/headphones.png"; 
-            else if (searchStr.includes("CABLE") || searchStr.includes("CARGADOR")) imagenFinal = "https://img.icons8.com/color/150/usb-plug.png"; 
-            else if (searchStr.includes("ALMACENAMIENTO") || searchStr.includes("USB") || searchStr.includes("MICROSD")) imagenFinal = "https://img.icons8.com/color/150/usb-memory-stick.png"; 
-            else if (searchStr.includes("PROTECTOR") || searchStr.includes("FUNDA")) imagenFinal = "https://img.icons8.com/color/150/phone-case.png"; 
-            else if (searchStr.includes("CELULAR") || searchStr.includes("TELEFONO")) imagenFinal = "https://img.icons8.com/color/150/iphone.png"; 
-            else if (searchStr.includes("COMPONENTE")) imagenFinal = "https://img.icons8.com/color/150/motherboard.png"; 
+            else if (has("POLLO", "AVE", "ALITA", "ALITAS", "PECHUGA", "PIERNA")) imagenFinal = "https://img.icons8.com/color/150/chicken.png"; 
+            else if (has("RES", "VACA", "CARNE", "MOLIDA", "COSTILLA")) imagenFinal = "https://img.icons8.com/color/150/steak-medium.png"; 
+            else if (has("CERDO", "CHULETA", "LOMO", "CHICHARRON")) imagenFinal = "https://img.icons8.com/color/150/pig.png"; 
+            else if (has("PESCADO", "MARISCO", "CAMARON", "TILAPIA", "JAIBA", "CEVICHE")) imagenFinal = "https://img.icons8.com/color/150/fish-food.png"; 
+            else if (has("EMBUTIDO", "EMBUTIDOS", "CHORIZO", "SALCHICHA", "MORTADELA", "JAMON", "SALCHICHON")) imagenFinal = "https://img.icons8.com/color/150/salami.png"; 
             
-            // Carnes
-            else if (searchStr.includes("POLLO") || searchStr.includes("AVE") || searchStr.includes("ALITA")) imagenFinal = "https://img.icons8.com/color/150/poultry-leg.png"; 
-            else if (searchStr.includes("RES") || searchStr.includes("VACA") || searchStr.includes("CARNE")) imagenFinal = "https://img.icons8.com/color/150/steak-medium.png"; 
-            else if (searchStr.includes("CERDO") || searchStr.includes("CHULETA") || searchStr.includes("COSTILLA")) imagenFinal = "https://img.icons8.com/color/150/pig.png"; 
-            else if (searchStr.includes("PESCADO") || searchStr.includes("MARISCO") || searchStr.includes("CAMARON") || searchStr.includes("TILAPIA")) imagenFinal = "https://img.icons8.com/color/150/fish-food.png"; 
-            else if (searchStr.includes("EMBUTIDO") || searchStr.includes("CHORIZO") || searchStr.includes("SALCHICHA") || searchStr.includes("MORTADELA")) imagenFinal = "https://img.icons8.com/color/150/salami.png"; 
+            else if (has("GRANO", "GRANOS", "FRIJOL", "FRIJOLES", "ARROZ", "MAIZ", "HARINA", "TRIGO", "AVENA", "MASECA")) imagenFinal = "https://img.icons8.com/color/150/ingredients.png"; 
+            else if (has("ACEITE", "MANTECA", "MARGARINA", "CLOVER")) imagenFinal = "https://img.icons8.com/color/150/olive-oil.png"; 
+            else if (has("PASTA", "SOPA", "MACARRON", "ESPAGUETI", "MAGGI", "LAKY", "MARUCHAN")) imagenFinal = "https://img.icons8.com/color/150/spaghetti.png"; 
+            else if (has("ENLATADO", "CONSERVA", "SARDINA", "ATUN", "MAIZ DULCE", "JALAPEÑO")) imagenFinal = "https://img.icons8.com/color/150/canned-food.png"; 
+            else if (has("SALSA", "CONDIMENTO", "MAYONESA", "NATURAS", "CATCHUP", "KETCHUP", "MOSTAZA")) imagenFinal = "https://img.icons8.com/color/150/ketchup.png"; 
+            else if (has("ESPECIA", "ESPECIAS", "AZUCAR", "SAL", "CONSOME", "CUBITO", "PIMIENTA", "SABORIZANTE")) imagenFinal = "https://img.icons8.com/color/150/salt-shaker.png"; 
+            else if (has("HUEVO", "HUEVOS", "CARTON")) imagenFinal = "https://img.icons8.com/color/150/eggs.png"; 
+            else if (has("LACTEO", "LACTEOS", "QUESO", "MANTEQUILLA", "LECHE", "REQUESON", "YOGUR", "SULA", "LEYDE")) imagenFinal = "https://img.icons8.com/color/150/cheese.png"; 
+            else if (has("PAN", "REPOSTERIA", "GALLETA", "GALLETAS", "BIMBO", "MOLDE")) imagenFinal = "https://img.icons8.com/color/150/bread.png"; 
             
-            // Abarrotes
-            else if (searchStr.includes("GRANO") || searchStr.includes("FRIJOL") || searchStr.includes("ARROZ") || searchStr.includes("MAIZ")) imagenFinal = "https://img.icons8.com/color/150/ingredients.png"; 
-            else if (searchStr.includes("ACEITE") || searchStr.includes("MANTECA")) imagenFinal = "https://img.icons8.com/color/150/olive-oil.png"; 
-            else if (searchStr.includes("PASTA") || searchStr.includes("SOPA") || searchStr.includes("MACARRON")) imagenFinal = "https://img.icons8.com/color/150/spaghetti.png"; 
-            else if (searchStr.includes("ENLATADO") || searchStr.includes("CONSERVA") || searchStr.includes("SARDINA") || searchStr.includes("ATUN")) imagenFinal = "https://img.icons8.com/color/150/canned-food.png"; 
-            else if (searchStr.includes("SALSA") || searchStr.includes("CONDIMENTO") || searchStr.includes("MAYONESA")) imagenFinal = "https://img.icons8.com/color/150/ketchup.png"; 
-            else if (searchStr.includes("ESPECIA") || searchStr.includes("AZUCAR") || searchStr.includes("SAL") || searchStr.includes("CONSOME")) imagenFinal = "https://img.icons8.com/color/150/salt-shaker.png"; 
-            else if (searchStr.includes("HUEVO") || searchStr.includes("CARTON")) imagenFinal = "https://img.icons8.com/color/150/eggs.png"; 
-            else if (searchStr.includes("LACTEO") || searchStr.includes("QUESO") || searchStr.includes("MANTEQUILLA") || searchStr.includes("LECHE")) imagenFinal = "https://img.icons8.com/color/150/cheese.png"; 
-            else if (searchStr.includes("PAN") || searchStr.includes("REPOSTERIA") || searchStr.includes("GALLETA")) imagenFinal = "https://img.icons8.com/color/150/bread.png"; 
+            else if (has("REFRESCO", "JUGO", "COCA", "PEPSI", "BEBIDA", "7UP", "MIRINDA", "TROPICAL", "LINK")) imagenFinal = "https://img.icons8.com/color/150/soda-can.png"; 
+            else if (has("AGUA", "BOTELLA", "OASIS", "AZUL")) imagenFinal = "https://img.icons8.com/color/150/water-bottle.png"; 
+            else if (has("ENERGIZANTE", "RAPTOR", "MONSTER", "AMP", "ADRENALINA")) imagenFinal = "https://img.icons8.com/color/150/energy-drink.png"; 
+            else if (has("CERVEZA", "LICOR", "RON", "SALVAVIDA", "IMPERIAL", "BARENA", "CORONA")) imagenFinal = "https://img.icons8.com/color/150/beer.png"; 
+            else if (has("SNACK", "SNACKS", "CHURRO", "CHURROS", "PAPITA", "ZAMBO", "ZAMBOS", "YUMMIE", "YUMMIES", "TAQUERITO", "TAQUERITOS", "DORITO", "LAY")) imagenFinal = "https://img.icons8.com/color/150/potato-chips.png"; 
+            else if (has("DULCE", "DULCES", "CHOCOLATE", "CONFITE", "BOMBON", "GOMITA")) imagenFinal = "https://img.icons8.com/color/150/candy.png"; 
+            else if (has("CAFE", "TE", "INDIO", "MAYA", "ORO")) imagenFinal = "https://img.icons8.com/color/150/coffee-to-go.png"; 
             
-            // Bebidas y Snacks
-            else if (searchStr.includes("REFRESCO") || searchStr.includes("JUGO") || searchStr.includes("COCA") || searchStr.includes("PEPSI") || searchStr.includes("BEBIDA")) imagenFinal = "https://img.icons8.com/color/150/soda-can.png"; 
-            else if (searchStr.includes("AGUA")) imagenFinal = "https://img.icons8.com/color/150/water-bottle.png"; 
-            else if (searchStr.includes("ENERGIZANTE") || searchStr.includes("RAPTOR") || searchStr.includes("MONSTER") || searchStr.includes("AMP")) imagenFinal = "https://img.icons8.com/color/150/energy-drink.png"; 
-            else if (searchStr.includes("CERVEZA") || searchStr.includes("LICOR") || searchStr.includes("RON")) imagenFinal = "https://img.icons8.com/color/150/beer.png"; 
-            else if (searchStr.includes("SNACK") || searchStr.includes("CHURRO") || searchStr.includes("PAPITA") || searchStr.includes("ZAMBO") || searchStr.includes("YUMMIE")) imagenFinal = "https://img.icons8.com/color/150/potato-chips.png"; 
-            else if (searchStr.includes("DULCE") || searchStr.includes("CHOCOLATE") || searchStr.includes("CONFITE") || searchStr.includes("BOMBON")) imagenFinal = "https://img.icons8.com/color/150/candy.png"; 
-            else if (searchStr.includes("CAFE") || searchStr.includes("TE ")) imagenFinal = "https://img.icons8.com/color/150/coffee-beans.png"; 
+            else if (has("DETERGENTE", "SUAVIZANTE", "JABON DE LAVAR", "RINSO", "XEDEX", "CETECO", "ENSUENO", "SUAVITEL", "DOWNY")) imagenFinal = "https://img.icons8.com/color/150/washing-machine.png"; 
+            else if (has("LIMPIEZA", "CLORO", "DESINFECTANTE", "MISTOLIN", "LAVAPLATOS", "ACCION", "MAGIA BLANCA", "PISO", "ESCOBA")) imagenFinal = "https://img.icons8.com/color/150/cleaning-products.png"; 
+            else if (has("HIGIENE", "CORPORAL", "JABON", "PROTEX", "SHAMPOO", "ACONDICIONADOR", "CAPILAR", "CREMA", "DESODORANTE", "REXONA", "AXE")) imagenFinal = "https://img.icons8.com/color/150/soap.png"; 
+            else if (has("DENTAL", "COLGATE", "CEPILLO", "HILO", "ENJUAGUE")) imagenFinal = "https://img.icons8.com/color/150/tooth.png"; 
+            else if (has("PAPEL", "DESECHABLE", "SERVILLETA", "VASO", "PLATO", "ENCANTO", "ROSAL", "SCOTT")) imagenFinal = "https://img.icons8.com/color/150/toilet-paper.png"; 
             
-            // Higiene y Limpieza
-            else if (searchStr.includes("DETERGENTE") || searchStr.includes("SUAVIZANTE") || searchStr.includes("JABON DE LAVAR") || searchStr.includes("RINSO")) imagenFinal = "https://img.icons8.com/color/150/washing-machine.png"; 
-            else if (searchStr.includes("LIMPIEZA") || searchStr.includes("CLORO") || searchStr.includes("DESINFECTANTE") || searchStr.includes("MISTOLIN")) imagenFinal = "https://img.icons8.com/color/150/cleaning-products.png"; 
-            else if (searchStr.includes("HIGIENE") || searchStr.includes("CORPORAL") || searchStr.includes("JABON DE BAÑO") || searchStr.includes("PROTEX")) imagenFinal = "https://img.icons8.com/color/150/soap.png"; 
-            else if (searchStr.includes("CAPILAR") || searchStr.includes("SHAMPOO") || searchStr.includes("ACONDICIONADOR")) imagenFinal = "https://img.icons8.com/color/150/shampoo.png"; 
-            else if (searchStr.includes("DENTAL") || searchStr.includes("COLGATE") || searchStr.includes("CEPILLO")) imagenFinal = "https://img.icons8.com/color/150/tooth.png"; 
-            else if (searchStr.includes("PAPEL") || searchStr.includes("DESECHABLE") || searchStr.includes("SERVILLETA") || searchStr.includes("VASO")) imagenFinal = "https://img.icons8.com/color/150/toilet-paper.png"; 
-            
-            // Otros
-            else if (searchStr.includes("MEDICINA") || searchStr.includes("OTC") || searchStr.includes("PASTILLA") || searchStr.includes("PANADOL")) imagenFinal = "https://img.icons8.com/color/150/pill.png"; 
-            else if (searchStr.includes("BEBE") || searchStr.includes("PAÑAL") || searchStr.includes("TOALLITA")) imagenFinal = "https://img.icons8.com/color/150/pacifier.png"; 
-            else if (searchStr.includes("MASCOTA") || searchStr.includes("PERRO") || searchStr.includes("GATO") || searchStr.includes("DOGUI")) imagenFinal = "https://img.icons8.com/color/150/dog-bowl.png"; 
-            else if (searchStr.includes("PAPELERIA") || searchStr.includes("LIBRERIA") || searchStr.includes("CUADERNO") || searchStr.includes("LAPIZ")) imagenFinal = "https://img.icons8.com/color/150/school.png"; 
-            else if (searchStr.includes("FERRETERIA") || searchStr.includes("CLAVO") || searchStr.includes("HERRAMIENTA")) imagenFinal = "https://img.icons8.com/color/150/hammer.png"; 
-            else if (searchStr.includes("PLASTICO") || searchStr.includes("HOGAR") || searchStr.includes("BASURA") || searchStr.includes("ESCOBA")) imagenFinal = "https://img.icons8.com/color/150/bucket.png"; 
-            else if (searchStr.includes("COSMETICO") || searchStr.includes("BELLEZA") || searchStr.includes("MAQUILLAJE")) imagenFinal = "https://img.icons8.com/color/150/lipstick.png"; 
+            else if (has("MEDICINA", "OTC", "PASTILLA", "PANADOL", "ALKA", "TABCIN", "SUDAGRIP", "JARABE")) imagenFinal = "https://img.icons8.com/color/150/pill.png"; 
+            else if (has("BEBE", "PAÑAL", "TOALLITA", "HUGGIES", "PAMPERS", "GERBER")) imagenFinal = "https://img.icons8.com/color/150/pacifier.png"; 
+            else if (has("MASCOTA", "PERRO", "GATO", "DOGUI", "GATINA", "ALIMENTO")) imagenFinal = "https://img.icons8.com/color/150/dog-bowl.png"; 
+            else if (has("PAPELERIA", "LIBRERIA", "CUADERNO", "LAPIZ", "MARCADOR", "BORRADOR")) imagenFinal = "https://img.icons8.com/color/150/school.png"; 
+            else if (has("FERRETERIA", "CLAVO", "HERRAMIENTA", "FOCO", "BOMBILLO", "CINTA")) imagenFinal = "https://img.icons8.com/color/150/hammer.png"; 
+            else if (has("PLASTICO", "HOGAR", "BASURA", "RECIPIENTE", "BOLSA")) imagenFinal = "https://img.icons8.com/color/150/bucket.png"; 
+            else if (has("COSMETICO", "BELLEZA", "MAQUILLAJE", "LABIAL", "POLVO")) imagenFinal = "https://img.icons8.com/color/150/lipstick.png"; 
             
             else imagenFinal = "https://img.icons8.com/color/150/box--v1.png"; 
         }
