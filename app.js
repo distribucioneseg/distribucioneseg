@@ -179,7 +179,8 @@ function renderProductos(productos) {
             else if (cat.includes("SALSA") || cat.includes("CONDIMENTO")) imagenFinal = "https://img.icons8.com/color/150/ketchup.png"; 
             else if (cat.includes("ESPECIA") || cat.includes("AZUCAR") || cat.includes("SAL")) imagenFinal = "https://img.icons8.com/color/150/salt-shaker.png"; 
             else if (cat.includes("LACTEO") || cat.includes("QUESO") || cat.includes("HUEVO")) imagenFinal = "https://img.icons8.com/color/150/cheese.png"; 
-            else if (cat.includes("EMBUTIDO") || cat.includes("CARNE")) imagenFinal = "https://img.icons8.com/color/150/salami.png"; 
+            else if (cat.includes("EMBUTIDO") || cat.includes("EMBUTIDOS")) imagenFinal = "https://img.icons8.com/color/150/salami.png";
+            else if (cat.includes("CARNES") || cat.includes("CARNES")) imagenFinal = "https://img.icons8.com/color/150/chicken.png"; 
             else if (cat.includes("PANADERIA") || cat.includes("REPOSTERIA")) imagenFinal = "https://img.icons8.com/color/150/bread.png"; 
             else if (cat.includes("REFRESCO") || cat.includes("JUGO")) imagenFinal = "https://img.icons8.com/color/150/soda-can.png"; 
             else if (cat.includes("AGUA")) imagenFinal = "https://img.icons8.com/color/150/water-bottle.png"; 
