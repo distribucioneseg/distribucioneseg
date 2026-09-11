@@ -53,7 +53,7 @@ body.show-admin #btn-admin { background: #fbbf24; color: var(--primary); }
 .grid:not(.list-view) .btn-add { background: var(--accent); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 600; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; font-size: 0.9rem; }
 .grid:not(.list-view) .btn-add:active { transform: scale(0.96); }
 
-/* ==== REDISEÑO VISTA DE LISTA (APP NATIVA) ==== */
+/* ==== REDISEÑO VISTA DE LISTA (NATIVA Y BLINDADA) ==== */
 .grid.list-view { display: flex; flex-direction: column; gap: 10px; }
 .grid.list-view .card { display: flex !important; flex-direction: row !important; flex-wrap: wrap; padding: 12px; align-items: center; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid #f1f5f9; background: #ffffff; gap: 12px; position: relative;}
 .grid.list-view .card-inner { display: flex; flex-direction: row; align-items: center; gap: 12px; flex: 1; min-width: 0; }
@@ -127,7 +127,6 @@ body.show-admin .admin-panel { display: block; animation: fadeIn 0.3s ease; }
 
 .admin-header { background: #1e293b; color: white; padding: 8px 12px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; }
 
-/* Cuadrícula de Ganancias */
 .admin-stats { display: flex; flex-wrap: wrap; border-bottom: 1px solid #e2e8f0; background: white; }
 .stat-box { flex: 1; min-width: 45%; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; }
 .stat-box:nth-child(even) { border-right: none; }
@@ -148,16 +147,13 @@ body.show-admin .admin-panel { display: block; animation: fadeIn 0.3s ease; }
 .btn-whatsapp { background: #25D366; color: white; border: none; }
 .btn-secundario { background: #f1f5f9; color: var(--primary); border: 1px solid #e2e8f0; }
 
-/* EL BOTÓN DE PDF ADMIN (SECRETO) */
-.btn-admin-pdf { 
-    background: #1e293b; 
-    color: white; 
-    border: none; 
-    display: none !important; /* Oculto siempre por defecto */
-}
+/* BOTONES SECRETOS ADMIN */
+.btn-admin-pdf { background: #1e293b; color: white; border: none; display: none !important; }
+.btn-eliminar { background: #fee2e2; color: var(--danger); border: 1px solid #fca5a5; display: none !important; }
+.btn-eliminar:active { background: #fca5a5; }
 
-/* Solo se mostrará cuando se enciende el Modo Admin */
-body.show-admin .btn-admin-pdf { 
+body.show-admin .btn-admin-pdf, 
+body.show-admin .btn-eliminar { 
     display: flex !important; 
 }
 

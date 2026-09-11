@@ -1,4 +1,4 @@
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyNS7bp8HLuqncoKuvoGOFxVvwyPJU3728x7Pa9njKn5tarxDPYkXwLbFXRoUiT1UzqLw/exec'; // <--- No olvides poner tu URL real aquí
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzmfCtdIY5F-2zD4obMVxE26FZLT7yENQTBW0Oek1doWH3oqD0CG-qU6qoRob9z-kgu-g/exec'; // <--- No olvides poner tu URL real aquí
 
 let productosGlobal = [];
 let clientesGlobal = [];
@@ -16,7 +16,6 @@ function formatoMoneda(valor) {
 
 window.onload = async () => {
     document.getElementById('productos-grid').innerHTML = "<p style='text-align:center; width:100%; margin-top:30px; color:#64748b;'>Cargando inventario...</p>";
-    
     const vistaGuardada = localStorage.getItem('vistaPreferida') || 'grid';
     cambiarVista(vistaGuardada);
 
@@ -87,6 +86,42 @@ function mostrarSiguienteProveedor(prefix) {
             break;
         }
     }
+}
+
+// ==== GENERADOR DE CÓDIGO AUTOMÁTICO ====
+function generarCodigoSKU() {
+    const select = document.getElementById('p-categoria');
+    const catValue = select.value;
+    
+    if(!catValue) {
+        document.getElementById('p-codigo').value = "";
+        return;
+    }
+
+    const mapPrefijos = {
+        "Gamer": "TEC", "Periferico": "TEC", "Audio": "TEC", "Cables": "TEC", "Almacenamiento": "TEC", "Protectores": "TEC", "Celulares": "TEC", "Componentes": "TEC",
+        "Granos": "ABA", "Aceites": "ABA", "Pastas": "ABA", "Enlatados": "ABA", "Salsas": "ABA", "Especias": "ABA", "Panaderia": "ABA",
+        "Lacteos": "LAC", "Embutidos": "EMB",
+        "Refrescos": "BEB", "Agua": "BEB", "Energizantes": "BEB", "Cervezas": "BEB", "Cafe": "BEB", "Snacks": "SNA", "Dulces": "SNA",
+        "Detergentes": "LIM", "Limpieza": "LIM", "Higiene": "HIG", "Capilar": "HIG", "Dental": "HIG", "Papel": "PAP",
+        "Medicinas": "MED", "Bebes": "BEB2", "Mascotas": "MAS", "Papeleria": "PAP2", "Ferreteria": "FER", "Plasticos": "PLA", "Cosmeticos": "COS"
+    };
+
+    let prefix = mapPrefijos[catValue] || "E&G";
+
+    let maxNum = 0;
+    productosGlobal.forEach(p => {
+        if (p.codigo && p.codigo.startsWith(prefix + "-")) {
+            let partes = p.codigo.split("-");
+            if (partes.length === 2) {
+                let num = parseInt(partes[1], 10);
+                if (!isNaN(num) && num > maxNum) maxNum = num;
+            }
+        }
+    });
+
+    maxNum++;
+    document.getElementById('p-codigo').value = prefix + "-" + String(maxNum).padStart(3, '0');
 }
 
 function formatearFecha(fechaStr) {
@@ -328,6 +363,33 @@ async function guardarCotizacion(e) {
     catch (error) { alert("Error de conexión al guardar."); }
 }
 
+// ==== ELIMINAR COTIZACIÓN ====
+async function eliminarCotizacion() {
+    const pass = prompt("Ingrese PIN de administrador para eliminar:");
+    if (pass !== "199311") {
+        if (pass !== null) alert("PIN incorrecto. Acceso denegado.");
+        return;
+    }
+
+    if (!confirm("¿ESTÁS SEGURO? Esta cotización se borrará permanentemente de tu Excel.")) return;
+
+    const c = clientesGlobal[indiceCotizacionActiva];
+    const btn = document.querySelector('.btn-eliminar');
+    btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Eliminando...";
+    btn.disabled = true;
+
+    const peticion = { accion: "eliminar_cotizacion", fila: c.fila };
+    try {
+        await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(peticion) });
+        alert("¡Cotización eliminada exitosamente!");
+        location.reload();
+    } catch (error) {
+        alert("Error al eliminar.");
+        btn.innerHTML = "<i class='fa-solid fa-trash'></i> Eliminar Cotización";
+        btn.disabled = false;
+    }
+}
+
 function renderClientes(clientes) {
     const tbody = document.getElementById('lista-clientes');
     tbody.innerHTML = "";
@@ -397,7 +459,6 @@ function editarCotizacion() {
     }
 }
 
-// ==== FACTURA NORMAL ====
 function generarFactura() {
     const c = clientesGlobal[indiceCotizacionActiva];
     const nOrden = Math.floor(Math.random() * 90000) + 10000;
@@ -452,7 +513,6 @@ function generarFactura() {
     ventana.document.close();
 }
 
-// ==== FACTURA ADMIN (CON GANANCIAS) ====
 function generarFacturaAdmin() {
     const pass = prompt("Ingrese PIN de administrador para ver el reporte de ganancias:");
     if (pass !== "199311") {
