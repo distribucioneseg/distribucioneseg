@@ -1,4 +1,4 @@
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwk3686HDYSsJ0ihtqCCUvqQl1-sF8zCFbsUElMcUxGZPHjJM5NXmAYS2JIfMOrW1KLMw/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxghNAPfy4LOh2WFlBhu-8S-g9CFxtF_xfu_dtiKpf9LKsYJNrZ6lx6AvBXraqDKkQg2Q/exec';
 
 let productosGlobal = [], clientesGlobal = [], carrito = [];
 let indiceCotizacionActiva = null; 
