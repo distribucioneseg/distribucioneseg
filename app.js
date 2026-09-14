@@ -1,4 +1,4 @@
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwMTQwz2qQ38jFpq51hdPtZgmREp9NLJ6fgGz6kEL8TppdmcxMYfbq5NrDiLkjmuGe3pA/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwk3686HDYSsJ0ihtqCCUvqQl1-sF8zCFbsUElMcUxGZPHjJM5NXmAYS2JIfMOrW1KLMw/exec';
 
 let productosGlobal = [], clientesGlobal = [], carrito = [];
 let indiceCotizacionActiva = null; 
@@ -12,19 +12,49 @@ function formatoMoneda(valor) {
 }
 
 window.onload = async () => {
-    document.getElementById('productos-grid').innerHTML = "<div style='text-align:center; width:100%; margin-top:60px; color:var(--text-muted);'><i class='fa-solid fa-circle-notch fa-spin' style='font-size:40px; margin-bottom:15px; color:var(--accent);'></i><h3 style='margin:0; font-weight:700;'>Cargando inventario...</h3></div>";
     const vistaGuardada = localStorage.getItem('vistaPreferida') || 'grid';
     cambiarVista(vistaGuardada);
 
+    // 1. CARGA INSTANTÁNEA DESDE CACHÉ (Evita la pantalla de carga larga)
+    const cache = localStorage.getItem('eg_data_cache');
+    if (cache) {
+        try {
+            const dataCache = JSON.parse(cache);
+            productosGlobal = dataCache.productos || [];
+            clientesGlobal = [...(dataCache.clientes || [])].reverse();
+            renderProductos(productosGlobal);
+            renderClientes(clientesGlobal);
+            mostrarToast("Buscando actualizaciones...");
+        } catch (e) {
+            console.log("Error leyendo caché");
+        }
+    } else {
+        // Solo muestra el icono grande si es la primera vez que se abre la app en la vida
+        document.getElementById('productos-grid').innerHTML = "<div style='text-align:center; width:100%; margin-top:60px; color:var(--text-muted);'><i class='fa-solid fa-circle-notch fa-spin' style='font-size:40px; margin-bottom:15px; color:var(--accent);'></i><h3 style='margin:0; font-weight:700;'>Cargando inventario...</h3></div>";
+    }
+
+    // 2. SINCRONIZACIÓN EN SEGUNDO PLANO
     try {
         const respuesta = await fetch(SCRIPT_URL);
         const data = await respuesta.json();
-        productosGlobal = data.productos;
-        clientesGlobal = data.clientes.reverse(); 
+        
+        // Guardar la versión más nueva en el celular
+        localStorage.setItem('eg_data_cache', JSON.stringify(data));
+        
+        productosGlobal = data.productos || [];
+        clientesGlobal = [...(data.clientes || [])].reverse(); 
+        
+        // Actualizar la pantalla silenciosamente
         renderProductos(productosGlobal);
         renderClientes(clientesGlobal);
+        
+        if (cache) mostrarToast("¡Inventario actualizado!");
     } catch (error) {
-        document.getElementById('productos-grid').innerHTML = "<div style='text-align:center; width:100%; margin-top:60px; color:var(--danger);'><i class='fa-solid fa-triangle-exclamation' style='font-size:40px; margin-bottom:15px;'></i><h3 style='margin:0; font-weight:700;'>Error de conexión</h3><p>Verifica tu internet o contacta soporte.</p></div>";
+        if (!cache) {
+            document.getElementById('productos-grid').innerHTML = "<div style='text-align:center; width:100%; margin-top:60px; color:var(--danger);'><i class='fa-solid fa-triangle-exclamation' style='font-size:40px; margin-bottom:15px;'></i><h3 style='margin:0; font-weight:700;'>Error de conexión</h3><p>Verifica tu internet o contacta soporte.</p></div>";
+        } else {
+            mostrarToast("Modo sin conexión activado.");
+        }
     }
 };
 
@@ -144,7 +174,6 @@ function renderProductos(productos) {
             }
         }
 
-        // Recupera datos calculados por el Script
         let costoBajo = parseFloat(prod.costoBajo) || 0;
         let gananciaAutomatica = parseFloat(prod.gananciaNormal) || 0;
 
@@ -341,12 +370,10 @@ async function guardarProductoNuevo(e) {
     const btn = document.getElementById('btn-guardar-prod');
     btn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin'></i> Registrando..."; btn.disabled = true;
     
-    // Ya no tomamos el costo general manualmente, enviamos los datos de los proveedores y el script se encarga.
     const nuevoProd = {
         accion: "agregar_producto", codigo: document.getElementById('p-codigo').value, marca: document.getElementById('p-marca').value,
         nombre: document.getElementById('p-nombre').value, categoria: document.getElementById('p-categoria').value, stock: document.getElementById('p-stock').value,
-        costo: document.getElementById('p-costo').value, // Solo se usa si no hay proveedores
-        precio: document.getElementById('p-precio').value, 
+        costo: document.getElementById('p-costo').value, precio: document.getElementById('p-precio').value, 
         precio5: document.getElementById('p-precio5').value, precio6: document.getElementById('p-precio6').value, precio12: document.getElementById('p-precio12').value,
         lugar1: document.getElementById('p-lugar1').value, precio1: document.getElementById('p-precio1').value,
         lugar2: document.getElementById('p-lugar2').value, precio2: document.getElementById('p-precio2').value,
@@ -525,7 +552,6 @@ function generarFacturaAdmin() {
         else if (item.cantidad >= 6 && prod.precio6 > 0) precioAplicado = parseFloat(prod.precio6);
         else if (item.cantidad >= 5 && prod.precio5 > 0) precioAplicado = parseFloat(prod.precio5);
 
-        // Toma el costo mínimo calculado por el Apps Script si existe, sino calcula en el aire
         let costoBajo = parseFloat(prod.costoBajo) || 0;
         if (costoBajo === 0) {
             let preciosProv = [];
