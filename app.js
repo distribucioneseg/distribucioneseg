@@ -1,4 +1,4 @@
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzmfCtdIY5F-2zD4obMVxE26FZLT7yENQTBW0Oek1doWH3oqD0CG-qU6qoRob9z-kgu-g/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwMTQwz2qQ38jFpq51hdPtZgmREp9NLJ6fgGz6kEL8TppdmcxMYfbq5NrDiLkjmuGe3pA/exec';
 
 let productosGlobal = [];
 let clientesGlobal = [];
@@ -84,7 +84,6 @@ function cerrarModalProducto() {
     document.getElementById('foto-estado').style.display = 'none';
     imgBase64Data = "";
     for(let i=3; i<=6; i++) { let row = document.getElementById('p-prov-row'+i); if(row) row.style.display = 'none'; }
-    document.getElementById('p-btn-add-prov').style.display = 'flex';
 }
 
 function mostrarSiguienteProveedor(prefix) {
@@ -124,7 +123,6 @@ function generarCodigoSKU() {
             }
         }
     });
-
     maxNum++;
     document.getElementById('p-codigo').value = prefix + "-" + String(maxNum).padStart(3, '0');
 }
@@ -313,8 +311,7 @@ function agregarAlCarrito(codigoProd) {
     if (item) item.cantidad++; else carrito.push({ codigo: prod.codigo, nombre: prod.nombre, prodCompleto: prod, cantidad: 1 });
     actualizarCarrito();
     
-    // Mejor respuesta visual para venta en campo
-    mostrarToast("Añadido: " + prod.nombre);
+    mostrarToast("Agregado: " + prod.nombre);
     const fab = document.getElementById('btn-flotante-carrito');
     fab.style.transform = 'scale(1.2)';
     setTimeout(() => fab.style.transform = 'scale(1)', 250);
@@ -367,7 +364,7 @@ function procesarImagen(event) {
 async function guardarProductoNuevo(e) {
     e.preventDefault();
     const btn = document.getElementById('btn-guardar-prod');
-    btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Subiendo..."; btn.disabled = true;
+    btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Guardando..."; btn.disabled = true;
     const nuevoProd = {
         accion: "agregar_producto", codigo: document.getElementById('p-codigo').value, marca: document.getElementById('p-marca').value,
         nombre: document.getElementById('p-nombre').value, categoria: document.getElementById('p-categoria').value, stock: document.getElementById('p-stock').value,
@@ -382,38 +379,32 @@ async function guardarProductoNuevo(e) {
         imagenBase64: imgBase64Data, mimeType: imgMimeType, nombreArchivo: imgName
     };
     try { await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(nuevoProd) }); alert("¡Producto guardado exitosamente!"); location.reload(); } 
-    catch (error) { alert("Error al subir el producto."); btn.innerHTML = "<i class='fa-solid fa-cloud-arrow-up'></i> Guardar en Inventario"; btn.disabled = false; }
+    catch (error) { alert("Error de conexión."); btn.innerHTML = "<i class='fa-solid fa-cloud-arrow-up'></i> Guardar en Inventario"; btn.disabled = false; }
 }
 
 async function guardarCotizacion(e) {
     e.preventDefault();
     if (carrito.length === 0) return alert("Agrega productos primero.");
     const btn = document.getElementById('btn-guardar');
-    btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Guardando..."; btn.disabled = true;
+    btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Confirmando..."; btn.disabled = true;
     const totalCrudo = document.getElementById('gran-total').innerText.replace(/,/g, '');
     const cotizacion = { accion: "guardar_cotizacion", cliente: document.getElementById('c-nombre').value, tienda: document.getElementById('c-tienda').value, telefono: document.getElementById('c-tel').value, lugar: document.getElementById('c-lugar').value, fechaEntrega: document.getElementById('c-fecha-entrega').value, total: totalCrudo, carrito: carrito };
-    try { await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(cotizacion) }); alert("¡Orden guardada exitosamente!"); location.reload(); } 
-    catch (error) { alert("Error de conexión al guardar."); btn.innerHTML = "<i class='fa-solid fa-floppy-disk'></i> Guardar Orden"; btn.disabled = false; }
+    try { await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(cotizacion) }); alert("¡Orden confirmada exitosamente!"); location.reload(); } 
+    catch (error) { alert("Error de conexión."); btn.innerHTML = "<i class='fa-solid fa-floppy-disk'></i> Confirmar Orden"; btn.disabled = false; }
 }
 
 async function eliminarCotizacion() {
     const pass = prompt("Ingrese PIN de administrador para eliminar:");
-    if (pass !== "199311") {
-        if (pass !== null) alert("PIN incorrecto. Acceso denegado.");
-        return;
-    }
-
+    if (pass !== "199311") { if (pass !== null) alert("PIN incorrecto."); return; }
     if (!confirm("¿ESTÁS SEGURO? Esta cotización se borrará permanentemente de tu Excel.")) return;
 
     const c = clientesGlobal[indiceCotizacionActiva];
     const btn = document.querySelector('.btn-eliminar');
-    btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Eliminando...";
-    btn.disabled = true;
+    btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Eliminando..."; btn.disabled = true;
 
-    const peticion = { accion: "eliminar_cotizacion", fila: c.fila };
     try {
-        await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(peticion) });
-        alert("¡Cotización eliminada exitosamente!");
+        await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ accion: "eliminar_cotizacion", fila: c.fila }) });
+        alert("Cotización eliminada exitosamente.");
         location.reload();
     } catch (error) {
         alert("Error al eliminar.");
@@ -426,13 +417,12 @@ function renderClientes(clientes) {
     const tbody = document.getElementById('lista-clientes');
     tbody.innerHTML = "";
     clientes.forEach((c, index) => {
-        let fecha = formatearFecha(c.fechaEntrega);
         tbody.innerHTML += `
-            <tr onclick="abrirDetalle(${index})" style="cursor:pointer; border-bottom: 1px solid #f1f5f9; transition:0.2s;">
-                <td data-label="Tienda / Cliente" style="padding:15px;"><strong>${c.tienda}</strong><br><span style="font-size:0.85rem; color:var(--text-muted);">${c.cliente}</span></td>
-                <td data-label="Contacto" style="padding:15px;"><span style="color:var(--accent); font-weight:600;">${c.telefono}</span><br><span style="font-size:0.85rem;">${c.lugar}</span></td>
-                <td data-label="Entrega" style="padding:15px; font-size:0.95rem; font-weight:500;">${fecha}</td>
-                <td data-label="Acción" style="padding:15px; text-align:right;"><button class="btn-secundario" style="padding: 10px; width:44px; height:44px; border-radius:12px; font-size:1.1rem;"><i class="fa-solid fa-eye"></i></button></td>
+            <tr onclick="abrirDetalle(${index})" style="cursor:pointer;">
+                <td data-label="Tienda / Cliente"><strong>${c.tienda}</strong><br><span style="font-size:0.85rem; color:var(--text-muted);">${c.cliente}</span></td>
+                <td data-label="Contacto"><span style="color:var(--accent); font-weight:600;">${c.telefono}</span><br><span style="font-size:0.85rem;">${c.lugar}</span></td>
+                <td data-label="Entrega" style="font-weight:600;">${formatearFecha(c.fechaEntrega)}</td>
+                <td data-label="Acción"><button class="btn-secundario" style="padding: 10px; width:44px; height:44px; border-radius:12px; font-size:1.1rem;"><i class="fa-solid fa-eye"></i></button></td>
             </tr>`;
     });
 }
@@ -441,14 +431,14 @@ function abrirDetalle(index) {
     indiceCotizacionActiva = index;
     const c = clientesGlobal[index];
     document.getElementById('detalle-info').innerHTML = `
-        <div style="background:#f8fafc; padding:18px; border-radius:16px; border:1px solid #e2e8f0; margin-bottom:15px; display:flex; flex-direction:column; gap:10px;">
+        <div style="background:#f8fafc; padding:18px; border-radius:16px; border:1px solid #e2e8f0; display:flex; flex-direction:column; gap:10px;">
             <div style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-user" style="color:var(--accent); font-size:1.15rem; width:20px; text-align:center;"></i> <strong style="font-size:1.1rem; color:#1e293b;">${c.cliente}</strong></div>
             <div style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-store" style="color:#64748b; font-size:1rem; width:20px; text-align:center;"></i> <span style="font-size:1rem; color:#475569; font-weight:600;">${c.tienda}</span></div>
             <div style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-phone" style="color:#64748b; font-size:1rem; width:20px; text-align:center;"></i> <span style="font-size:1rem; color:#475569;">${c.telefono}</span></div>
             <div style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-location-dot" style="color:#64748b; font-size:1rem; width:20px; text-align:center;"></i> <span style="font-size:1rem; color:#475569;">${c.lugar}</span></div>
             <div style="display:flex; align-items:center; gap:12px; margin-top:8px; padding-top:12px; border-top:1px dashed #cbd5e1;"><i class="fa-solid fa-calendar-day" style="color:#64748b; font-size:1rem; width:20px; text-align:center;"></i> <span style="font-size:1rem; color:#475569;">Entrega: <strong>${formatearFecha(c.fechaEntrega)}</strong></span></div>
         </div>
-        <div style="background:#eff6ff; border:1px solid #bfdbfe; padding:20px; border-radius:16px; text-align:center; box-shadow:0 4px 10px rgba(59,130,246,0.05);">
+        <div style="background:#eff6ff; border:1px solid #bfdbfe; padding:20px; border-radius:16px; margin-top:15px; text-align:center; box-shadow:0 4px 10px rgba(59,130,246,0.05);">
             <span style="display:block; font-size:0.85rem; color:#1d4ed8; font-weight:800; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Total de la Orden</span>
             <span style="font-size:1.8rem; color:#1e3a8a; font-weight:900;">Lps. ${formatoMoneda(c.total)}</span>
         </div>`;
@@ -463,15 +453,13 @@ function abrirDetalle(index) {
                     else if (item.cantidad >= 6 && item.prodCompleto.precio6 > 0) precioAplicado = parseFloat(item.prodCompleto.precio6);
                     else if (item.cantidad >= 5 && item.prodCompleto.precio5 > 0) precioAplicado = parseFloat(item.prodCompleto.precio5);
                 }
-                const subtotalItem = precioAplicado * item.cantidad;
-
                 htmlItems += `
                 <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid #f1f5f9;">
                     <div style="display:flex; align-items:center; gap:15px;">
                         <div style="background:#eef2ff; color:var(--accent); font-weight:800; padding:8px; border-radius:10px; font-size:0.9rem; min-width:44px; text-align:center;">${item.cantidad}x</div>
                         <div style="font-size:1rem; color:var(--text-dark); font-weight:600; line-height:1.3;">${item.nombre}</div>
                     </div>
-                    <div style="font-weight:800; color:#10b981; font-size:1rem; white-space:nowrap;">Lps. ${formatoMoneda(subtotalItem)}</div>
+                    <div style="font-weight:800; color:#10b981; font-size:1rem; white-space:nowrap;">Lps. ${formatoMoneda(precioAplicado * item.cantidad)}</div>
                 </div>`; 
             });
         } catch(e) {}
@@ -502,12 +490,11 @@ function generarFactura() {
             else if (item.cantidad >= 6 && item.prodCompleto.precio6 > 0) precioAplicado = item.prodCompleto.precio6;
             else if (item.cantidad >= 5 && item.prodCompleto.precio5 > 0) precioAplicado = item.prodCompleto.precio5;
         }
-        const subtotalItem = precioAplicado * item.cantidad;
         htmlItems += `<tr>
             <td style="padding:12px; border-bottom:1px solid #e5e7eb; text-align:center;">${item.cantidad}</td>
             <td style="padding:12px; border-bottom:1px solid #e5e7eb;">${item.nombre}</td>
-            <td style="padding:12px; border-bottom:1px solid #e5e7eb; text-align:right; white-space:nowrap;">Lps. ${formatoMoneda(precioAplicado)}</td>
-            <td style="padding:12px; border-bottom:1px solid #e5e7eb; text-align:right; font-weight:bold; white-space:nowrap;">Lps. ${formatoMoneda(subtotalItem)}</td>
+            <td style="padding:12px; border-bottom:1px solid #e5e7eb; text-align:right;">Lps. ${formatoMoneda(precioAplicado)}</td>
+            <td style="padding:12px; border-bottom:1px solid #e5e7eb; text-align:right; font-weight:bold;">Lps. ${formatoMoneda(precioAplicado * item.cantidad)}</td>
         </tr>`;
     });
 
@@ -519,16 +506,11 @@ function generarFactura() {
             .header { text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 20px; margin-bottom: 30px;}
             .header h1 { margin: 0; color: #0f172a; font-size: 26px;}
             .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; font-size:14px; line-height:1.6;}
-            table { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size:14px; page-break-inside: auto;}
-            tr { page-break-inside: avoid; page-break-after: auto; }
-            thead { display: table-header-group; }
+            table { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size:14px;}
             th { background: #f8fafc; padding: 12px; text-align: left; color: #475569; border-bottom:2px solid #e2e8f0;}
-            th.dinero { text-align: right; white-space: nowrap; }
-            .total-container { text-align: right; padding-top: 20px; border-top: 2px solid #e2e8f0; page-break-inside: avoid; display: flex; justify-content: flex-end; align-items: center; gap: 15px; }
-            .total-label { font-size: 18px; color: #1e3a8a; font-weight: bold; text-transform: uppercase; }
+            .total-container { text-align: right; padding-top: 20px; border-top: 2px solid #e2e8f0; display: flex; justify-content: flex-end; align-items: center; gap: 15px; }
             .total-amount { font-size: 24px; font-weight: 900; color: #2563eb; background: #dbeafe; padding: 10px 20px; border-radius: 12px; border: 1px solid #bfdbfe; }
-            .footer { text-align: center; font-size: 12px; color: #64748b; margin-top: 50px; page-break-inside: avoid;}
-            @media print { body { -webkit-print-color-adjust: exact; padding: 0;} }
+            .footer { text-align: center; font-size: 12px; color: #64748b; margin-top: 50px;}
         </style>
         </head><body>
             <div class="header"><h1>DISTRIBUCIONES E&G</h1><p>Comayagua, Honduras</p></div>
@@ -536,9 +518,9 @@ function generarFactura() {
                 <div><b>Cliente:</b> ${c.cliente}<br><b>Tienda:</b> ${c.tienda}<br><b>Teléfono:</b> ${c.telefono}</div>
                 <div style="text-align: right;"><b>N° Orden:</b> EG-${nOrden}<br><b>Fecha:</b> ${formatearFecha(c.fechaEntrega)}<br><b>Lugar:</b> ${c.lugar}</div>
             </div>
-            <table><thead><tr><th style="width: 10%; text-align:center;">Cant.</th><th>Descripción del Producto</th><th class="dinero" style="width: 25%;">Precio Unit.</th><th class="dinero" style="width: 25%;">Total</th></tr></thead><tbody>${htmlItems}</tbody></table>
-            <div class="total-container"><span class="total-label">Total a Cobrar:</span><span class="total-amount">Lps. ${formatoMoneda(c.total)}</span></div>
-            <div class="footer">¡Gracias por su preferencia!<br>Documento generado para control y validación de entrega.<br><br><b>Generado por: Renee Coello</b></div>
+            <table><thead><tr><th style="width: 10%; text-align:center;">Cant.</th><th>Descripción</th><th style="width: 25%; text-align:right;">Precio Unit.</th><th style="width: 25%; text-align:right;">Total</th></tr></thead><tbody>${htmlItems}</tbody></table>
+            <div class="total-container"><span style="font-size: 18px; color: #1e3a8a; font-weight: bold; text-transform: uppercase;">Total a Cobrar:</span><span class="total-amount">Lps. ${formatoMoneda(c.total)}</span></div>
+            <div class="footer">¡Gracias por su preferencia!<br><br><b>Generado por: El Profe Coello</b></div>
             <script>window.print();</script>
         </body></html>
     `);
@@ -547,13 +529,9 @@ function generarFactura() {
 
 function generarFacturaAdmin() {
     const pass = prompt("Ingrese PIN de administrador para ver el reporte de ganancias:");
-    if (pass !== "199311") {
-        if (pass !== null) alert("PIN incorrecto. Acceso denegado.");
-        return;
-    }
+    if (pass !== "199311") { if (pass !== null) alert("PIN incorrecto."); return; }
 
     const c = clientesGlobal[indiceCotizacionActiva];
-    const nOrden = Math.floor(Math.random() * 90000) + 10000;
     let htmlItems = "";
     let gananciaTotalVenta = 0;
 
@@ -570,10 +548,9 @@ function generarFacturaAdmin() {
             let p = parseFloat(prod['p'+i]);
             if (!isNaN(p) && p > 0) preciosProv.push(p);
         }
+        // Extrae el costo mínimo si no está guardado. 
         let costoBajo = preciosProv.length > 0 ? Math.min(...preciosProv) : (parseFloat(prod.costoBajo) || 0);
-
-        let gananciaUnitaria = precioAplicado - costoBajo;
-        let gananciaTotalItem = gananciaUnitaria * item.cantidad;
+        let gananciaTotalItem = (precioAplicado - costoBajo) * item.cantidad;
         gananciaTotalVenta += gananciaTotalItem;
 
         htmlItems += `<tr>
@@ -587,29 +564,24 @@ function generarFacturaAdmin() {
 
     const ventana = window.open('', '_blank');
     ventana.document.write(`
-        <html><head><title>Reporte de Ganancias - Admin</title>
+        <html><head><title>Reporte Rentabilidad</title>
         <style>
             body { font-family: 'Helvetica', sans-serif; padding: 40px; color: #f8fafc; background: #0f172a; max-width: 900px; margin: 0 auto;}
             .header { text-align: center; border-bottom: 2px solid #334155; padding-bottom: 20px; margin-bottom: 30px;}
-            .header h1 { margin: 0; color: #fbbf24; font-size: 26px;}
-            .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; font-size:14px; line-height:1.6;}
+            .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; font-size:14px;}
             table { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size:14px;}
-            thead { display: table-header-group; }
             th { background: #1e293b; padding: 12px; text-align: left; color: #cbd5e1; border-bottom:2px solid #334155;}
-            th.dinero { text-align: right; white-space: nowrap; }
             .total-container { text-align: right; padding-top: 20px; border-top: 2px solid #334155; display: flex; justify-content: flex-end; align-items: center; gap: 15px; }
-            .total-label { font-size: 18px; color: #94a3b8; font-weight: bold; text-transform: uppercase; }
             .total-amount { font-size: 24px; font-weight: 900; color: #10b981; background: rgba(16, 185, 129, 0.1); padding: 10px 20px; border-radius: 12px; border: 1px solid #10b981; }
-            @media print { body { -webkit-print-color-adjust: exact; padding: 0;} }
         </style>
         </head><body>
-            <div class="header"><h1>REPORTE DE RENTABILIDAD ADMIN</h1><p>CONFIDENCIAL</p></div>
+            <div class="header"><h1 style="margin:0; color:#fbbf24;">REPORTE DE RENTABILIDAD ADMIN</h1><p>CONFIDENCIAL</p></div>
             <div class="info-grid">
                 <div><b>Venta a:</b> ${c.cliente} (${c.tienda})<br><b>Teléfono:</b> ${c.telefono}</div>
-                <div style="text-align: right;"><b>N° Venta:</b> EG-${nOrden}<br><b>Cobro a Cliente:</b> Lps. ${formatoMoneda(c.total)}</div>
+                <div style="text-align: right;"><b>N° Venta:</b> EG-${Math.floor(Math.random() * 90000) + 10000}<br><b>Cobro a Cliente:</b> Lps. ${formatoMoneda(c.total)}</div>
             </div>
-            <table><thead><tr><th style="width: 10%; text-align:center;">Cant.</th><th>Producto</th><th class="dinero">Costo Unit.</th><th class="dinero">Vendido Unit.</th><th class="dinero" style="color:#10b981;">Ganancia Neta</th></tr></thead><tbody>${htmlItems}</tbody></table>
-            <div class="total-container"><span class="total-label">Ganancia Total Venta:</span><span class="total-amount">Lps. ${formatoMoneda(gananciaTotalVenta)}</span></div>
+            <table><thead><tr><th style="width: 10%; text-align:center;">Cant.</th><th>Producto</th><th style="text-align:right;">Costo Unit.</th><th style="text-align:right;">Vendido Unit.</th><th style="text-align:right; color:#10b981;">Ganancia Neta</th></tr></thead><tbody>${htmlItems}</tbody></table>
+            <div class="total-container"><span style="font-size: 18px; color: #94a3b8; font-weight: bold;">Ganancia Total Venta:</span><span class="total-amount">Lps. ${formatoMoneda(gananciaTotalVenta)}</span></div>
             <script>window.print();</script>
         </body></html>
     `);
@@ -621,7 +593,6 @@ function enviarWhatsApp() {
     if (!c) return;
     let telefono = String(c.telefono).replace(/\D/g, '');
     if (telefono.length === 8) telefono = '504' + telefono;
-    else if (!telefono.startsWith('504')) telefono = '504' + telefono;
     let mensaje = `*¡Hola ${c.cliente}!* 👋\nAquí tienes el resumen de tu pedido confirmado con *DISTRIBUCIONES E&G*:\n\n🏢 *Tienda:* ${c.tienda}\n📅 *Fecha de Entrega:* ${formatearFecha(c.fechaEntrega)}\n📍 *Ubicación:* ${c.lugar}\n\n*🛒 Detalle del pedido:*\n`;
     if (c.carrito) { try { JSON.parse(c.carrito).forEach(item => { mensaje += `▪️ ${item.cantidad}x ${item.nombre}\n`; }); } catch(e) {} }
     mensaje += `\n💰 *Total a Cancelar:* Lps. ${formatoMoneda(c.total)}\n\n¡Gracias por preferir nuestro servicio en su negocio!`;
@@ -649,12 +620,11 @@ function abrirModalEditar(codigo) {
     document.getElementById('e-lugar6').value = prod.l6 || ""; document.getElementById('e-precio6_prov').value = prod.p6 || "";
 
     for(let i=3; i<=6; i++) { let row = document.getElementById('e-prov-row'+i); row.style.display = 'none'; }
-    document.getElementById('e-btn-add-prov').style.display = 'flex';
-
+    
     for(let i=3; i<=6; i++) {
         if(prod['l'+i] || prod['p'+i]) {
-            document.getElementById('e-prov-row'+i).style.display = 'flex';
-            if(i === 6) document.getElementById('e-btn-add-prov').style.display = 'none';
+            let row = document.getElementById('e-prov-row'+i);
+            if(row) row.style.display = 'flex';
         }
     }
 
@@ -707,6 +677,6 @@ async function guardarEdicionProducto(e) {
         lugar6: document.getElementById('e-lugar6').value, precio6: document.getElementById('e-precio6_prov').value,
         imagenBase64: imgBase64DataEdit, mimeType: imgMimeTypeEdit, nombreArchivo: imgNameEdit 
     };
-    try { await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(prodEditado) }); alert("¡Producto actualizado exitosamente!"); location.reload(); } 
-    catch (error) { alert("Error al actualizar el producto."); btn.innerHTML = "<i class='fa-solid fa-cloud-arrow-up'></i> Actualizar Producto"; btn.disabled = false; }
+    try { await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(prodEditado) }); alert("¡Actualizado exitosamente!"); location.reload(); } 
+    catch (error) { alert("Error de conexión."); btn.innerHTML = "<i class='fa-solid fa-cloud-arrow-up'></i> Actualizar Producto"; btn.disabled = false; }
 }
