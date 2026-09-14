@@ -1,4 +1,4 @@
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzmfCtdIY5F-2zD4obMVxE26FZLT7yENQTBW0Oek1doWH3oqD0CG-qU6qoRob9z-kgu-g/exec'; // <--- No olvides poner tu URL real aquí
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzmfCtdIY5F-2zD4obMVxE26FZLT7yENQTBW0Oek1doWH3oqD0CG-qU6qoRob9z-kgu-g/exec';
 
 let productosGlobal = [];
 let clientesGlobal = [];
@@ -15,7 +15,7 @@ function formatoMoneda(valor) {
 }
 
 window.onload = async () => {
-    document.getElementById('productos-grid').innerHTML = "<p style='text-align:center; width:100%; margin-top:30px; color:#64748b;'>Cargando inventario...</p>";
+    document.getElementById('productos-grid').innerHTML = "<p style='text-align:center; width:100%; margin-top:40px; color:#64748b; font-weight:600;'><i class='fa-solid fa-spinner fa-spin' style='font-size:24px; margin-bottom:10px; display:block;'></i>Cargando inventario...</p>";
     const vistaGuardada = localStorage.getItem('vistaPreferida') || 'grid';
     cambiarVista(vistaGuardada);
 
@@ -27,9 +27,18 @@ window.onload = async () => {
         renderProductos(productosGlobal);
         renderClientes(clientesGlobal);
     } catch (error) {
-        document.getElementById('productos-grid').innerHTML = "<p style='text-align:center; width:100%; color:#ef4444;'>Error de conexión.</p>";
+        document.getElementById('productos-grid').innerHTML = "<p style='text-align:center; width:100%; margin-top:40px; color:#ef4444; font-weight:bold;'><i class='fa-solid fa-triangle-exclamation' style='font-size:30px; margin-bottom:10px; display:block;'></i>Error de conexión.</p>";
     }
 };
+
+function mostrarToast(mensaje) {
+    const toast = document.getElementById('toast');
+    const toastMsg = document.getElementById('toast-msg');
+    if (!toast || !toastMsg) return;
+    toastMsg.innerText = mensaje;
+    toast.classList.add('show');
+    setTimeout(() => { toast.classList.remove('show'); }, 2000);
+}
 
 function cambiarVista(vista) {
     const grid = document.getElementById('productos-grid');
@@ -122,13 +131,12 @@ function generarCodigoSKU() {
 
 function formatearFecha(fechaStr) {
     if(!fechaStr) return "Sin fecha";
-    const opciones = { year: 'numeric', month: 'long', day: 'numeric' };
+    const opciones = { year: 'numeric', month: 'short', day: 'numeric' };
     let fecha = new Date(fechaStr);
     fecha.setMinutes(fecha.getMinutes() + fecha.getTimezoneOffset());
     return fecha.toLocaleDateString('es-HN', opciones);
 }
 
-// ==== INTELIGENCIA DE ICONOS MEJORADA ====
 function renderProductos(productos) {
     const grid = document.getElementById('productos-grid');
     grid.innerHTML = "";
@@ -160,17 +168,13 @@ function renderProductos(productos) {
 
         let imagenFinal = prod.foto;
         if (!imagenFinal || imagenFinal.trim() === "" || imagenFinal.includes('dummyimage')) {
-            
-            // NORMALIZA LA CATEGORÍA Y EL NOMBRE (Evita errores de tildes o mayúsculas)
             let cat = (prod.categoria || "").toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
             let nom = (prod.nombre || "").toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
             let searchStr = cat + " " + nom;
             
-            // Función para buscar PALABRAS EXACTAS (evita que "Rosal" sea "Sal")
             const hasCat = (...words) => words.some(w => new RegExp(`\\b${w}`).test(cat));
             const hasStr = (...words) => words.some(w => new RegExp(`\\b${w}`).test(searchStr));
 
-            // === 1. TECNOLOGIA ===
             if (hasCat("GAMER", "TECNOLOGIA", "PERIFERICO", "CELULAR", "AUDIO", "CABLE", "COMPONENTE", "PROTECTOR", "ALMACENAMIENTO")) {
                 if (hasStr("PERIFERICO", "TECLADO", "MOUSE")) imagenFinal = "https://img.icons8.com/color/150/mouse.png"; 
                 else if (hasStr("AUDIO", "AUDIFONO", "BOCINA", "AUDIFONOS")) imagenFinal = "https://img.icons8.com/color/150/headphones.png"; 
@@ -181,8 +185,6 @@ function renderProductos(productos) {
                 else if (hasStr("COMPONENTE", "DISCO", "RAM", "PC")) imagenFinal = "https://img.icons8.com/color/150/motherboard.png"; 
                 else imagenFinal = "https://img.icons8.com/color/150/controller.png"; 
             }
-            
-            // === 2. CARNES Y EMBUTIDOS ===
             else if (hasCat("CARNE", "EMBUTIDO", "POLLO", "RES", "CERDO", "MARISCO")) {
                 if (hasStr("POLLO", "AVE", "ALITA", "ALITAS", "PECHUGA", "PIERNA")) imagenFinal = "https://img.icons8.com/color/150/thanksgiving-turkey.png"; 
                 else if (hasStr("RES", "VACA", "MOLIDA", "COSTILLA")) imagenFinal = "https://img.icons8.com/color/150/steak-medium.png"; 
@@ -190,8 +192,6 @@ function renderProductos(productos) {
                 else if (hasStr("PESCADO", "MARISCO", "CAMARON", "TILAPIA", "JAIBA")) imagenFinal = "https://img.icons8.com/color/150/fish-food.png"; 
                 else imagenFinal = "https://img.icons8.com/color/150/salami.png"; 
             }
-            
-            // === 3. HIGIENE Y LIMPIEZA ===
             else if (hasCat("LIMPIEZA", "HIGIENE", "DETERGENTE", "CAPILAR", "DENTAL", "PAPEL")) {
                 if (hasStr("PAPEL", "DESECHABLE", "SERVILLETA", "VASO", "PLATO", "ENCANTO", "ROSAL")) imagenFinal = "https://img.icons8.com/color/150/toilet-paper.png"; 
                 else if (hasStr("DETERGENTE", "SUAVIZANTE", "RINSO", "XEDEX", "CETECO", "ENSUENO", "SUAVITEL", "DOWNY")) imagenFinal = "https://img.icons8.com/color/150/washing-machine.png"; 
@@ -201,8 +201,6 @@ function renderProductos(productos) {
                 else if (hasStr("JABON", "PROTEX", "CORPORAL", "HIGIENE", "CREMA", "DESODORANTE", "LLAVES")) imagenFinal = "https://img.icons8.com/color/150/soap.png"; 
                 else imagenFinal = "https://img.icons8.com/color/150/broom.png";
             }
-            
-            // === 4. BEBIDAS Y SNACKS ===
             else if (hasCat("BEBIDA", "SNACK", "REFRESCO", "ENERGIZANTE", "CERVEZA", "DULCE", "CAFE")) {
                 if (hasStr("AGUA", "BOTELLA", "OASIS", "AZUL")) imagenFinal = "https://img.icons8.com/color/150/water-bottle.png"; 
                 else if (hasStr("ENERGIZANTE", "RAPTOR", "MONSTER", "AMP", "ADRENALINA")) imagenFinal = "https://img.icons8.com/color/150/energy-drink.png"; 
@@ -212,8 +210,6 @@ function renderProductos(productos) {
                 else if (hasStr("CAFE", "TE", "INDIO", "MAYA", "ORO")) imagenFinal = "https://img.icons8.com/color/150/coffee-to-go.png"; 
                 else imagenFinal = "https://img.icons8.com/color/150/orange-juice.png"; 
             }
-            
-            // === 5. ABARROTES Y DESPENSA ===
             else if (hasCat("ABARROTE", "DESPENSA", "GRANO", "ACEITE", "PASTA", "ENLATADO", "SALSA", "ESPECIA", "LACTEO", "PANADERIA")) {
                 if (hasStr("LACTEO", "QUESO", "MANTEQUILLA", "LECHE", "REQUESON", "YOGUR", "SULA", "LEYDE")) imagenFinal = "https://img.icons8.com/color/150/cheese.png"; 
                 else if (hasStr("HUEVO", "HUEVOS", "CARTON")) imagenFinal = "https://img.icons8.com/color/150/eggs.png"; 
@@ -226,8 +222,6 @@ function renderProductos(productos) {
                 else if (hasStr("CAFE", "INDIO", "MAYA", "ORO")) imagenFinal = "https://img.icons8.com/color/150/coffee-to-go.png"; 
                 else imagenFinal = "https://img.icons8.com/color/150/ingredients.png"; 
             }
-            
-            // === 6. VARIOS Y OTROS ===
             else {
                 if (hasStr("MEDICINA", "OTC", "PASTILLA", "PANADOL", "ALKA", "TABCIN", "SUDAGRIP", "JARABE")) imagenFinal = "https://img.icons8.com/color/150/pill.png"; 
                 else if (hasStr("BEBE", "PAÑAL", "TOALLITA", "HUGGIES", "PAMPERS", "GERBER")) imagenFinal = "https://img.icons8.com/color/150/pacifier.png"; 
@@ -276,7 +270,7 @@ function renderProductos(productos) {
                         ${prod.precio12 ? `<div class="stat-box profit"><span>Ganancia Docena</span><b>Lps. ${formatoMoneda(parseFloat(prod.precio12) - costoBajo)}</b></div>` : ''}
                     </div>
                     ${proveedoresHTML ? `<div class="admin-providers">${proveedoresHTML}</div>` : ''}
-                    <button class="btn-secundario" onclick="abrirModalEditar('${prod.codigo}')" style="margin: 10px; width: calc(100% - 20px); font-size: 0.85rem; padding: 10px; border-radius: 12px; font-weight:700;"><i class="fa-solid fa-pen"></i> Editar Producto</button>
+                    <button class="btn-secundario" onclick="abrirModalEditar('${prod.codigo}')" style="margin: 10px; width: calc(100% - 20px); font-size: 0.9rem; padding: 12px; border-radius: 12px; font-weight:700;"><i class="fa-solid fa-pen"></i> Editar Producto</button>
                 </div>
             </div>`;
     });
@@ -318,9 +312,12 @@ function agregarAlCarrito(codigoProd) {
     const item = carrito.find(i => i.codigo === codigoProd);
     if (item) item.cantidad++; else carrito.push({ codigo: prod.codigo, nombre: prod.nombre, prodCompleto: prod, cantidad: 1 });
     actualizarCarrito();
+    
+    // Mejor respuesta visual para venta en campo
+    mostrarToast("Añadido: " + prod.nombre);
     const fab = document.getElementById('btn-flotante-carrito');
-    fab.style.transform = 'scale(1.15)';
-    setTimeout(() => fab.style.transform = 'scale(1)', 200);
+    fab.style.transform = 'scale(1.2)';
+    setTimeout(() => fab.style.transform = 'scale(1)', 250);
 }
 
 function sumarCantidad(index) { carrito[index].cantidad++; actualizarCarrito(); }
@@ -331,7 +328,7 @@ function actualizarCarrito() {
     const contenedor = document.getElementById('carrito-items');
     contenedor.innerHTML = "";
     let subtotalAcumulado = 0, cantidadTotal = 0;
-    if (carrito.length === 0) contenedor.innerHTML = `<div style="text-align:center; color:#cbd5e1; padding: 30px 0;"><i class="fa-solid fa-cart-arrow-down" style="font-size:45px; margin-bottom:10px;"></i><p>Carrito vacío</p></div>`;
+    if (carrito.length === 0) contenedor.innerHTML = `<div style="text-align:center; color:#cbd5e1; padding: 40px 0;"><i class="fa-solid fa-cart-arrow-down" style="font-size:50px; margin-bottom:15px;"></i><p style="font-weight:600;">Tu carrito está vacío</p></div>`;
     
     carrito.forEach((item, index) => {
         let precioAplicado = item.prodCompleto.precioUnitario || 0;
@@ -345,9 +342,9 @@ function actualizarCarrito() {
         
         contenedor.innerHTML += `
             <div class="item-carrito">
-                <div class="item-info-header"><div><h4>${item.nombre}</h4><p>Lps. ${formatoMoneda(precioAplicado)} c/u</p></div><div style="text-align:right; font-weight:bold; color:var(--text-dark);">Lps. ${formatoMoneda(subtotalItem)}</div></div>
+                <div class="item-info-header"><div><h4>${item.nombre}</h4><p>Lps. ${formatoMoneda(precioAplicado)} c/u</p></div><div style="text-align:right; font-weight:bold; color:var(--text-dark); font-size:1.1rem;">Lps. ${formatoMoneda(subtotalItem)}</div></div>
                 <div class="item-controles">
-                    <div class="qty-box"><button type="button" class="btn-qty" onclick="restarCantidad(${index})"><i class="fa-solid fa-minus"></i></button><span style="font-weight:700; width:20px; text-align:center;">${item.cantidad}</span><button type="button" class="btn-qty" onclick="sumarCantidad(${index})"><i class="fa-solid fa-plus"></i></button></div>
+                    <div class="qty-box"><button type="button" class="btn-qty" onclick="restarCantidad(${index})"><i class="fa-solid fa-minus"></i></button><span style="font-weight:800; width:24px; text-align:center;">${item.cantidad}</span><button type="button" class="btn-qty" onclick="sumarCantidad(${index})"><i class="fa-solid fa-plus"></i></button></div>
                     <button type="button" class="btn-remove" onclick="quitarDelCarrito(${index})"><i class="fa-solid fa-trash"></i></button>
                 </div>
             </div>`;
@@ -392,11 +389,11 @@ async function guardarCotizacion(e) {
     e.preventDefault();
     if (carrito.length === 0) return alert("Agrega productos primero.");
     const btn = document.getElementById('btn-guardar');
-    btn.innerHTML = "Guardando..."; btn.disabled = true;
+    btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Guardando..."; btn.disabled = true;
     const totalCrudo = document.getElementById('gran-total').innerText.replace(/,/g, '');
     const cotizacion = { accion: "guardar_cotizacion", cliente: document.getElementById('c-nombre').value, tienda: document.getElementById('c-tienda').value, telefono: document.getElementById('c-tel').value, lugar: document.getElementById('c-lugar').value, fechaEntrega: document.getElementById('c-fecha-entrega').value, total: totalCrudo, carrito: carrito };
-    try { await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(cotizacion) }); alert("¡Guardado exitosamente!"); location.reload(); } 
-    catch (error) { alert("Error de conexión al guardar."); }
+    try { await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(cotizacion) }); alert("¡Orden guardada exitosamente!"); location.reload(); } 
+    catch (error) { alert("Error de conexión al guardar."); btn.innerHTML = "<i class='fa-solid fa-floppy-disk'></i> Guardar Orden"; btn.disabled = false; }
 }
 
 async function eliminarCotizacion() {
@@ -432,10 +429,10 @@ function renderClientes(clientes) {
         let fecha = formatearFecha(c.fechaEntrega);
         tbody.innerHTML += `
             <tr onclick="abrirDetalle(${index})" style="cursor:pointer; border-bottom: 1px solid #f1f5f9; transition:0.2s;">
-                <td data-label="Tienda / Cliente" style="padding:15px;"><strong>${c.tienda}</strong><br><span style="font-size:0.8rem; color:var(--text-muted);">${c.cliente}</span></td>
-                <td data-label="Contacto" style="padding:15px;"><span style="color:var(--accent); font-weight:600;">${c.telefono}</span><br><span style="font-size:0.8rem;">${c.lugar}</span></td>
-                <td data-label="Entrega" style="padding:15px; font-size:0.9rem;">${fecha}</td>
-                <td data-label="Acción" style="padding:15px; text-align:right;"><button class="btn-secundario" style="padding: 10px; width:40px; height:40px; border-radius:10px;"><i class="fa-solid fa-eye"></i></button></td>
+                <td data-label="Tienda / Cliente" style="padding:15px;"><strong>${c.tienda}</strong><br><span style="font-size:0.85rem; color:var(--text-muted);">${c.cliente}</span></td>
+                <td data-label="Contacto" style="padding:15px;"><span style="color:var(--accent); font-weight:600;">${c.telefono}</span><br><span style="font-size:0.85rem;">${c.lugar}</span></td>
+                <td data-label="Entrega" style="padding:15px; font-size:0.95rem; font-weight:500;">${fecha}</td>
+                <td data-label="Acción" style="padding:15px; text-align:right;"><button class="btn-secundario" style="padding: 10px; width:44px; height:44px; border-radius:12px; font-size:1.1rem;"><i class="fa-solid fa-eye"></i></button></td>
             </tr>`;
     });
 }
@@ -444,16 +441,16 @@ function abrirDetalle(index) {
     indiceCotizacionActiva = index;
     const c = clientesGlobal[index];
     document.getElementById('detalle-info').innerHTML = `
-        <div style="background:#f8fafc; padding:15px; border-radius:12px; border:1px solid #e2e8f0; margin-bottom:15px; display:flex; flex-direction:column; gap:8px;">
-            <div style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-user" style="color:var(--accent); font-size:1.1rem; width:20px; text-align:center;"></i> <strong style="font-size:1.05rem; color:#1e293b;">${c.cliente}</strong></div>
-            <div style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-store" style="color:#64748b; font-size:0.95rem; width:20px; text-align:center;"></i> <span style="font-size:0.95rem; color:#475569;">${c.tienda}</span></div>
-            <div style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-phone" style="color:#64748b; font-size:0.95rem; width:20px; text-align:center;"></i> <span style="font-size:0.95rem; color:#475569;">${c.telefono}</span></div>
-            <div style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-location-dot" style="color:#64748b; font-size:0.95rem; width:20px; text-align:center;"></i> <span style="font-size:0.95rem; color:#475569;">${c.lugar}</span></div>
-            <div style="display:flex; align-items:center; gap:10px; margin-top:5px; padding-top:8px; border-top:1px dashed #cbd5e1;"><i class="fa-solid fa-calendar-day" style="color:#64748b; font-size:0.95rem; width:20px; text-align:center;"></i> <span style="font-size:0.95rem; color:#475569;">Entrega: <strong>${formatearFecha(c.fechaEntrega)}</strong></span></div>
+        <div style="background:#f8fafc; padding:18px; border-radius:16px; border:1px solid #e2e8f0; margin-bottom:15px; display:flex; flex-direction:column; gap:10px;">
+            <div style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-user" style="color:var(--accent); font-size:1.15rem; width:20px; text-align:center;"></i> <strong style="font-size:1.1rem; color:#1e293b;">${c.cliente}</strong></div>
+            <div style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-store" style="color:#64748b; font-size:1rem; width:20px; text-align:center;"></i> <span style="font-size:1rem; color:#475569; font-weight:600;">${c.tienda}</span></div>
+            <div style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-phone" style="color:#64748b; font-size:1rem; width:20px; text-align:center;"></i> <span style="font-size:1rem; color:#475569;">${c.telefono}</span></div>
+            <div style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-location-dot" style="color:#64748b; font-size:1rem; width:20px; text-align:center;"></i> <span style="font-size:1rem; color:#475569;">${c.lugar}</span></div>
+            <div style="display:flex; align-items:center; gap:12px; margin-top:8px; padding-top:12px; border-top:1px dashed #cbd5e1;"><i class="fa-solid fa-calendar-day" style="color:#64748b; font-size:1rem; width:20px; text-align:center;"></i> <span style="font-size:1rem; color:#475569;">Entrega: <strong>${formatearFecha(c.fechaEntrega)}</strong></span></div>
         </div>
-        <div style="background:#eff6ff; border:1px solid #bfdbfe; padding:15px; border-radius:12px; text-align:center;">
-            <span style="display:block; font-size:0.8rem; color:#1d4ed8; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">Total de la Orden</span>
-            <span style="font-size:1.7rem; color:#1e3a8a; font-weight:900;">Lps. ${formatoMoneda(c.total)}</span>
+        <div style="background:#eff6ff; border:1px solid #bfdbfe; padding:20px; border-radius:16px; text-align:center; box-shadow:0 4px 10px rgba(59,130,246,0.05);">
+            <span style="display:block; font-size:0.85rem; color:#1d4ed8; font-weight:800; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Total de la Orden</span>
+            <span style="font-size:1.8rem; color:#1e3a8a; font-weight:900;">Lps. ${formatoMoneda(c.total)}</span>
         </div>`;
     
     let htmlItems = "";
@@ -469,12 +466,12 @@ function abrirDetalle(index) {
                 const subtotalItem = precioAplicado * item.cantidad;
 
                 htmlItems += `
-                <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid #f1f5f9;">
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid #f1f5f9;">
                     <div style="display:flex; align-items:center; gap:15px;">
-                        <div style="background:#eef2ff; color:var(--accent); font-weight:800; padding:6px; border-radius:8px; font-size:0.85rem; min-width:40px; text-align:center;">${item.cantidad}x</div>
-                        <div style="font-size:0.95rem; color:var(--text-dark); font-weight:600; line-height:1.3;">${item.nombre}</div>
+                        <div style="background:#eef2ff; color:var(--accent); font-weight:800; padding:8px; border-radius:10px; font-size:0.9rem; min-width:44px; text-align:center;">${item.cantidad}x</div>
+                        <div style="font-size:1rem; color:var(--text-dark); font-weight:600; line-height:1.3;">${item.nombre}</div>
                     </div>
-                    <div style="font-weight:800; color:#10b981; font-size:0.95rem; white-space:nowrap;">Lps. ${formatoMoneda(subtotalItem)}</div>
+                    <div style="font-weight:800; color:#10b981; font-size:1rem; white-space:nowrap;">Lps. ${formatoMoneda(subtotalItem)}</div>
                 </div>`; 
             });
         } catch(e) {}
@@ -625,9 +622,9 @@ function enviarWhatsApp() {
     let telefono = String(c.telefono).replace(/\D/g, '');
     if (telefono.length === 8) telefono = '504' + telefono;
     else if (!telefono.startsWith('504')) telefono = '504' + telefono;
-    let mensaje = `*¡Hola ${c.cliente}!* 👋\nAquí tienes el resumen de tu pedido de *DISTRIBUCIONES E&G*:\n\n🏢 *Tienda:* ${c.tienda}\n📅 *Fecha de Entrega:* ${formatearFecha(c.fechaEntrega)}\n📍 *Lugar:* ${c.lugar}\n\n*🛒 Detalle del pedido:*\n`;
+    let mensaje = `*¡Hola ${c.cliente}!* 👋\nAquí tienes el resumen de tu pedido confirmado con *DISTRIBUCIONES E&G*:\n\n🏢 *Tienda:* ${c.tienda}\n📅 *Fecha de Entrega:* ${formatearFecha(c.fechaEntrega)}\n📍 *Ubicación:* ${c.lugar}\n\n*🛒 Detalle del pedido:*\n`;
     if (c.carrito) { try { JSON.parse(c.carrito).forEach(item => { mensaje += `▪️ ${item.cantidad}x ${item.nombre}\n`; }); } catch(e) {} }
-    mensaje += `\n💰 *Total a Pagar:* Lps. ${formatoMoneda(c.total)}\n\n¡Gracias por tu preferencia!`;
+    mensaje += `\n💰 *Total a Cancelar:* Lps. ${formatoMoneda(c.total)}\n\n¡Gracias por preferir nuestro servicio en su negocio!`;
     window.open(`https://api.whatsapp.com/send?phone=${telefono}&text=${encodeURIComponent(mensaje)}`, '_blank');
 }
 

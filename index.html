@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DISTRIBUCIONES E&G</title>
-    <link rel="stylesheet" href="style.css?v=120">
+    <link rel="stylesheet" href="style.css?v=121">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
@@ -96,7 +96,7 @@
 
     <!-- ==== PESTAÑA CLIENTES ==== -->
     <div id="view-clientes" class="view-section">
-        <div class="controls-container">
+        <div class="controls-container sticky-clientes">
             <div class="search-box">
                 <i class="fa-solid fa-user-magnifying-glass"></i>
                 <input type="text" id="search-client" placeholder="Buscar por cliente..." onkeyup="filtrarClientes()">
@@ -112,6 +112,9 @@
     </div>
 
     <button id="btn-flotante-carrito" onclick="abrirCarrito()"><i class="fa-solid fa-cart-shopping"></i><span id="contador-carrito">0</span></button>
+
+    <!-- ==== TOAST NOTIFICATION ==== -->
+    <div id="toast" class="toast-oculto"><i class="fa-solid fa-circle-check"></i> <span id="toast-msg">Agregado con éxito</span></div>
 
     <!-- ==== MODAL: CARRITO ==== -->
     <div id="modal-carrito" class="modal-oculto">
@@ -448,6 +451,6 @@
         </div>
     </div>
 
-    <script src="app.js?v=120"></script>
+    <script src="app.js?v=121"></script>
 </body>
 </html>
