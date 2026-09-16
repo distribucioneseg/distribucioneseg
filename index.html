@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>E&G DISTRIBUCIONES</title>
-    <link rel="stylesheet" href="style.css?v=300">
+    <link rel="stylesheet" href="style.css?v=310">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
@@ -75,15 +75,13 @@
     <button id="btn-flotante-carrito" onclick="abrirCarrito()"><i class="fa-solid fa-basket-shopping"></i><span id="contador-carrito">0</span></button>
     <div id="toast" class="toast-oculto"><i class="fa-solid fa-circle-check"></i> <span id="toast-msg">Agregado al carrito</span></div>
 
-    <!-- ==== MODAL: GALERÍA DE FOTOS (DESLIZABLE) ==== -->
+    <!-- ==== MODAL: GALERÍA DE FOTOS ==== -->
     <div id="modal-galeria" class="modal-oculto" style="background: rgba(0,0,0,0.9); backdrop-filter: blur(8px);">
         <div class="modal-contenido" style="background: transparent; box-shadow: none; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
             <button class="btn-cerrar" onclick="cerrarGaleria()" style="position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2); color: white;"><i class="fa-solid fa-xmark"></i></button>
             <h3 id="galeria-titulo" style="color: white; margin-bottom: 20px; text-align: center; padding: 0 20px;">Producto</h3>
-            
             <div id="galeria-contenedor" class="galeria-slider"></div>
-            
-            <p style="color: rgba(255,255,255,0.6); font-size: 0.85rem; margin-top: 20px; text-align:center;"><i class="fa-solid fa-arrows-left-right" style="margin-bottom:5px; font-size:1.5rem; display:block;"></i> Desliza hacia los lados<br>para ver más fotos</p>
+            <p style="color: rgba(255,255,255,0.6); font-size: 0.85rem; margin-top: 20px;"><i class="fa-solid fa-arrows-left-right" style="margin-bottom:5px; font-size:1.5rem; display:block; text-align:center;"></i> Desliza para ver más</p>
         </div>
     </div>
 
@@ -149,11 +147,11 @@
                         <input type="text" id="p-foto5" class="form-control" placeholder="Enlace Foto 5 (Opcional)">
                     </div>
 
+                    <!-- EL CÓDIGO AHORA SE QUEDA EN BLANCO, EL EXCEL LO PONE SOLO -->
                     <div class="form-row">
-                        <div class="form-group" style="flex: 1;"><label>Código / SKU</label><input type="text" id="p-codigo" class="form-control" placeholder="Automático..." required readonly style="background:#f1f5f9;"></div>
                         <div class="form-group" style="flex: 2;">
                             <label>Categoría</label>
-                            <select id="p-categoria" class="form-control" onchange="generarCodigoSKU()" required>
+                            <select id="p-categoria" class="form-control" required>
                                 <option value="">Selecciona Categoría</option>
                                 <optgroup label="🎮 Tecnología y Gamer"><option value="Gamer">Accesorios Gamer</option><option value="Periferico">Periféricos</option><option value="Audio">Audio</option><option value="Cables">Cables</option><option value="Almacenamiento">Almacenamiento</option><option value="Protectores">Protectores</option><option value="Celulares">Celulares</option><option value="Componentes">Componentes</option></optgroup>
                                 <optgroup label="🥩 Carnes y Embutidos"><option value="Pollo">Pollo</option><option value="Res">Res</option><option value="Cerdo">Cerdo</option><option value="Mariscos">Mariscos</option><option value="Embutidos">Embutidos</option></optgroup>
@@ -188,7 +186,15 @@
                         <div class="prov-input-row"><input type="number" id="p-precio5" step="0.01" placeholder="5+ Unidades" style="flex:1;"><input type="number" id="p-precio6" step="0.01" placeholder="Media Doc." style="flex:1;"><input type="number" id="p-precio12" step="0.01" placeholder="Docena" style="flex:1;"></div>
                     </div>
 
-                    <div class="form-group"><label>Inventario (Stock Disponible)</label><input type="number" id="p-stock" class="form-control" placeholder="Cantidad en bodega" required></div>
+                    <!-- NUEVO MENÚ DESPLEGABLE DE DISPONIBILIDAD -->
+                    <div class="form-group">
+                        <label>Estado del Inventario</label>
+                        <select id="p-stock" class="form-control" required style="font-weight: bold;">
+                            <option value="DISPONIBLE" style="color: #10b981;">✅ DISPONIBLE</option>
+                            <option value="NO DISPONIBLE" style="color: #ef4444;">❌ NO DISPONIBLE</option>
+                        </select>
+                    </div>
+
                     <div class="form-group highlight-box"><label>Precio de Venta al Detalle (Lps)</label><input type="number" id="p-precio" step="0.01" class="form-control input-mega" placeholder="Lps. 0.00" required></div>
                     <button type="submit" id="btn-guardar-prod" class="btn-primario"><i class="fa-solid fa-cloud-arrow-up"></i> Guardar en Inventario</button>
                 </form>
@@ -236,7 +242,15 @@
                         <div class="prov-input-row"><input type="number" id="e-precio5" step="0.01" placeholder="5+ Unids" style="flex:1;"><input type="number" id="e-precio6" step="0.01" placeholder="Media Doc." style="flex:1;"><input type="number" id="e-precio12" step="0.01" placeholder="Docena" style="flex:1;"></div>
                     </div>
 
-                    <div class="form-group"><label>Stock Disp.</label><input type="number" id="e-stock" class="form-control" required></div>
+                    <!-- NUEVO MENÚ DESPLEGABLE DE DISPONIBILIDAD -->
+                    <div class="form-group">
+                        <label>Estado del Inventario</label>
+                        <select id="e-stock" class="form-control" required style="font-weight: bold;">
+                            <option value="DISPONIBLE" style="color: #10b981;">✅ DISPONIBLE</option>
+                            <option value="NO DISPONIBLE" style="color: #ef4444;">❌ NO DISPONIBLE</option>
+                        </select>
+                    </div>
+
                     <div class="form-group highlight-box"><label>Precio Venta Detalle (Lps)</label><input type="number" id="e-precio" step="0.01" class="form-control input-mega" placeholder="0.00" required></div>
                     <button type="submit" id="btn-guardar-edicion" class="btn-primario"><i class="fa-solid fa-cloud-arrow-up"></i> Actualizar Producto</button>
                 </form>
@@ -244,6 +258,6 @@
         </div>
     </div>
 
-    <script src="app.js?v=300"></script>
+    <script src="app.js?v=310"></script>
 </body>
 </html>

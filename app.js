@@ -103,7 +103,7 @@ function toggleAdmin() {
 function abrirCarrito() { document.getElementById('modal-carrito').style.display = 'flex'; }
 function cerrarCarrito() { document.getElementById('modal-carrito').style.display = 'none'; }
 function cerrarDetalle() { document.getElementById('modal-detalle').style.display = 'none'; }
-function abrirModalProducto() { document.getElementById('modal-producto').style.display = 'flex'; }
+function abrirModalProducto() { document.getElementById('modal-producto').style.display = 'flex'; document.getElementById('p-codigo').value = "Automático en Excel"; }
 
 function cerrarModalProducto() { 
     document.getElementById('modal-producto').style.display = 'none'; 
@@ -144,22 +144,8 @@ function mostrarSiguienteProveedor(prefix) {
     }
 }
 
-function generarCodigoSKU() {
-    const select = document.getElementById('p-categoria');
-    const catValue = select.value;
-    if(!catValue) { document.getElementById('p-codigo').value = ""; return; }
-    const mapPrefijos = { "Gamer": "TEC", "Periferico": "TEC", "Audio": "TEC", "Cables": "TEC", "Almacenamiento": "TEC", "Protectores": "TEC", "Celulares": "TEC", "Componentes": "TEC", "Pollo": "CAR", "Res": "CAR", "Cerdo": "CAR", "Mariscos": "MAR", "Embutidos": "EMB", "Granos": "ABA", "Aceites": "ABA", "Pastas": "ABA", "Enlatados": "ABA", "Salsas": "ABA", "Especias": "ABA", "Panaderia": "ABA", "Lacteos": "LAC", "Refrescos": "BEB", "Agua": "BEB", "Energizantes": "BEB", "Cervezas": "BEB", "Cafe": "BEB", "Snacks": "SNA", "Dulces": "SNA", "Detergentes": "LIM", "Limpieza": "LIM", "Higiene": "HIG", "Capilar": "HIG", "Dental": "HIG", "Papel": "PAP", "Medicinas": "MED", "Bebes": "BEB2", "Mascotas": "MAS", "Papeleria": "PAP2", "Ferreteria": "FER", "Plasticos": "PLA", "Cosmeticos": "COS" };
-    let prefix = mapPrefijos[catValue] || "E&G";
-    let maxNum = 0;
-    productosGlobal.forEach(p => {
-        if (p.codigo && p.codigo.startsWith(prefix + "-")) {
-            let partes = p.codigo.split("-");
-            if (partes.length === 2) { let num = parseInt(partes[1], 10); if (!isNaN(num) && num > maxNum) maxNum = num; }
-        }
-    });
-    maxNum++;
-    document.getElementById('p-codigo').value = prefix + "-" + String(maxNum).padStart(3, '0');
-}
+// Ya no necesitamos generar el código en JS, el Excel lo hace con la fórmula
+function generarCodigoSKU() {}
 
 function formatearFecha(fechaStr) {
     if(!fechaStr) return "Sin fecha";
@@ -267,10 +253,17 @@ function renderProductos(productos) {
             }
         }
 
-        let stockNum = parseInt(prod.stock) || 0;
-        let stockClass = "stock-out", stockText = "Agotado";
-        if (stockNum > 5) { stockClass = "stock-ok"; stockText = "En Stock"; }
-        else if (stockNum > 0) { stockClass = "stock-low"; stockText = "Quedan " + stockNum; }
+        // --- SISTEMA INTELIGENTE DE STOCK TEXTUAL ---
+        let valorStock = prod.stock ? prod.stock.toString().toUpperCase().trim() : "";
+        let stockClass = "stock-out", stockText = "NO DISPONIBLE";
+
+        if (valorStock === "DISPONIBLE" || parseInt(valorStock) > 0) { 
+            stockClass = "stock-ok"; 
+            stockText = "DISPONIBLE"; 
+        } else if (valorStock === "NO DISPONIBLE" || parseInt(valorStock) === 0) {
+            stockClass = "stock-out"; 
+            stockText = "NO DISP."; 
+        }
 
         grid.innerHTML += `
             <div class="card">
@@ -433,7 +426,7 @@ function abrirModalEditar(codigo) {
     document.getElementById('e-marca').value = prod.marca || "";
     document.getElementById('e-nombre').value = prod.nombre; 
     document.getElementById('e-categoria').value = prod.categoria || "";
-    document.getElementById('e-stock').value = prod.stock || 0;
+    document.getElementById('e-stock').value = prod.stock || "DISPONIBLE";
     
     document.getElementById('e-precio5').value = prod.precio5 || "";
     document.getElementById('e-precio6').value = prod.precio6 || "";
@@ -452,7 +445,6 @@ function abrirModalEditar(codigo) {
     document.getElementById('e-costo').value = parseFloat(prod.costoBajo) || 0;
     document.getElementById('e-precio').value = parseFloat(prod.precioUnitario) || 0;
     
-    // CARGAR LOS 5 ENLACES
     for(let i=1; i<=5; i++) document.getElementById('e-foto'+i).value = "";
     let urls = prod.foto ? prod.foto.toString().split(',').map(u => u.trim()).filter(u => u !== "") : [];
     for(let i=0; i<urls.length && i<5; i++) {
