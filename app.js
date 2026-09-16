@@ -1,4 +1,4 @@
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxAedcQRNztbdF3GDITUrKPOBiPzKUwdhy7LYHzw6PqExWcCnSI_6_Om8mVCaFTzQWncg/exec'; // <-- ¡PEGA LA NUEVA URL AQUÍ!
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwGF0hxDxh3wthKVvaXwyNz9XzetQ_u5r1gE2vUk8GTJx3OJXpOPX2ytrnY-LDzyQxRqw/exec'; // <-- ¡PEGA LA NUEVA URL!
 
 let productosGlobal = [], clientesGlobal = [], carrito = [];
 let indiceCotizacionActiva = null; 
@@ -103,8 +103,8 @@ function toggleAdmin() {
 function abrirCarrito() { document.getElementById('modal-carrito').style.display = 'flex'; }
 function cerrarCarrito() { document.getElementById('modal-carrito').style.display = 'none'; }
 function cerrarDetalle() { document.getElementById('modal-detalle').style.display = 'none'; }
-
 function abrirModalProducto() { document.getElementById('modal-producto').style.display = 'flex'; }
+
 function cerrarModalProducto() { 
     document.getElementById('modal-producto').style.display = 'none'; 
     document.getElementById('form-producto').reset();
@@ -200,7 +200,8 @@ function renderProductos(productos) {
         let imagenFinal = "";
         let isRealPhoto = false;
 
-        if (urls.length > 0 && urls[0].includes('http')) {
+        // Comprobación de cualquier URL de internet que sea un link válido
+        if (urls.length > 0 && urls[0].startsWith('http')) {
             imagenFinal = obtenerUrlImagen(urls[0]); 
             isRealPhoto = true;
         } else {
@@ -393,7 +394,7 @@ async function guardarProductoNuevo(e) {
     const btn = document.getElementById('btn-guardar-prod');
     btn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin'></i> Guardando..."; btn.disabled = true;
     
-    // Recolectar las 5 URLs de texto
+    // Obtener los 5 enlaces y juntarlos con comas
     let f1 = document.getElementById('p-foto1').value.trim();
     let f2 = document.getElementById('p-foto2').value.trim();
     let f3 = document.getElementById('p-foto3').value.trim();
@@ -401,7 +402,7 @@ async function guardarProductoNuevo(e) {
     let f5 = document.getElementById('p-foto5').value.trim();
     let arrFotos = [f1, f2, f3, f4, f5].filter(f => f !== "");
     let fotoUrlCombined = arrFotos.join(',');
-    
+
     const nuevoProd = {
         accion: "agregar_producto", codigo: document.getElementById('p-codigo').value, marca: document.getElementById('p-marca').value,
         nombre: document.getElementById('p-nombre').value, categoria: document.getElementById('p-categoria').value, stock: document.getElementById('p-stock').value,
@@ -453,7 +454,7 @@ function abrirModalEditar(codigo) {
     document.getElementById('e-costo').value = parseFloat(prod.costoBajo) || 0;
     document.getElementById('e-precio').value = parseFloat(prod.precioUnitario) || 0;
     
-    // Cargar enlaces a las 5 casillas
+    // CARGAR LOS 5 ENLACES DE LA IMAGEN
     for(let i=1; i<=5; i++) document.getElementById('e-foto'+i).value = "";
     let urls = prod.foto ? prod.foto.toString().split(',').map(u => u.trim()).filter(u => u !== "") : [];
     for(let i=0; i<urls.length && i<5; i++) {
@@ -467,7 +468,7 @@ async function guardarEdicionProducto(e) {
     e.preventDefault();
     const btn = document.getElementById('btn-guardar-edicion'); btn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin'></i> Actualizando..."; btn.disabled = true;
     
-    // Recolectar las 5 casillas de texto
+    // Obtener los 5 enlaces y juntarlos con comas
     let f1 = document.getElementById('e-foto1').value.trim();
     let f2 = document.getElementById('e-foto2').value.trim();
     let f3 = document.getElementById('e-foto3').value.trim();
@@ -484,7 +485,7 @@ async function guardarEdicionProducto(e) {
         lugar1: document.getElementById('e-lugar1').value, precio1: document.getElementById('e-precio1').value, lugar2: document.getElementById('e-lugar2').value, precio2: document.getElementById('e-precio2').value,
         lugar3: document.getElementById('e-lugar3').value, precio3: document.getElementById('e-precio3').value, lugar4: document.getElementById('e-lugar4').value, precio4: document.getElementById('e-precio4').value,
         lugar5: document.getElementById('e-lugar5').value, precio5: document.getElementById('e-precio5_prov').value, lugar6: document.getElementById('e-lugar6').value, precio6: document.getElementById('e-precio6_prov').value,
-        fotoUrl: fotoUrlCombined 
+        fotoUrl: fotoUrlCombined
     };
     try { 
         const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(prodEditado) }); 
