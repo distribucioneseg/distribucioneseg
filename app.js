@@ -1,4 +1,4 @@
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxBl91xu8xy2TMi4Zby4cIiGKgf1F_838WjtbtixW2QNQ4ABeLGyWIykfdQw_qHcXlT8A/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx1NnQgrU9jzpQxqctD7tIqE1y1POVH6FYiTFe3XdP-Ov2MiqOGW5dyVeXWrh4MiYpgXA/exec';
 
 let productosGlobal = [], clientesGlobal = [], carrito = [];
 let indiceCotizacionActiva = null; 
@@ -28,7 +28,7 @@ window.onload = async () => {
             clientesGlobal = [...(dataCache.clientes || [])].reverse();
             renderProductos(productosGlobal);
             renderClientes(clientesGlobal);
-            mostrarToast("Actualizando datos de la nube...");
+            mostrarToast("Actualizando inventario...");
         } catch (e) { console.log("Caché dañado"); }
     } else {
         document.getElementById('productos-grid').innerHTML = "<div style='text-align:center; width:100%; margin-top:60px; color:var(--text-muted);'><i class='fa-solid fa-circle-notch fa-spin' style='font-size:40px; margin-bottom:15px; color:var(--accent);'></i><h3 style='margin:0; font-weight:700;'>Cargando inventario...</h3></div>";
@@ -42,7 +42,7 @@ window.onload = async () => {
         clientesGlobal = [...(data.clientes || [])].reverse(); 
         renderProductos(productosGlobal);
         renderClientes(clientesGlobal);
-        if (cache) mostrarToast("¡Inventario sincronizado!");
+        if (cache) mostrarToast("¡Sincronizado!");
     } catch (error) {
         if (!cache) document.getElementById('productos-grid').innerHTML = "<div style='text-align:center; width:100%; margin-top:60px; color:var(--danger);'><i class='fa-solid fa-triangle-exclamation' style='font-size:40px; margin-bottom:15px;'></i><h3 style='margin:0; font-weight:700;'>Error de conexión</h3></div>";
         else mostrarToast("Trabajando sin conexión.");
@@ -175,7 +175,7 @@ function renderProductos(productos) {
     productos.forEach((prod) => {
         let precioBase = parseFloat(prod.precioUnitario) || 0;
         
-        // CORRECCIÓN VISUAL: Inyectamos SIEMPRE el div vacío para mantener alineadas las tarjetas.
+        // El DIV vacío de descuentos SIEMPRE se imprime para que el CSS respete el espacio de la cuadrícula
         let tablaDescuentos = `<div class="tabla-descuentos"></div>`;
         if (prod.precio5 || prod.precio6 || prod.precio12) {
             tablaDescuentos = `<div class="tabla-descuentos">
@@ -200,6 +200,7 @@ function renderProductos(productos) {
         let imagenFinal = "";
         let isRealPhoto = false;
 
+        // VERIFICADOR DE FOTOS REALES
         if (urls.length > 0 && urls[0].includes('http')) {
             imagenFinal = urls[0]; 
             isRealPhoto = true;
@@ -224,6 +225,8 @@ function renderProductos(productos) {
                 else if (hasStr("RES", "VACA", "MOLIDA")) imagenFinal = "https://img.icons8.com/color/150/steak-medium.png"; 
                 else if (hasStr("CERDO", "CHULETA")) imagenFinal = "https://img.icons8.com/color/150/pig.png"; 
                 else if (hasStr("PESCADO", "MARISCO")) imagenFinal = "https://img.icons8.com/color/150/fish-food.png"; 
+                // Aseguramos que Chorizo muestre salami
+                else if (hasStr("CHORIZO")) imagenFinal = "https://img.icons8.com/color/150/salami.png";
                 else imagenFinal = "https://img.icons8.com/color/150/salami.png"; 
             }
             else if (hasCat("LIMPIEZA", "HIGIENE", "DETERGENTE", "CAPILAR", "DENTAL", "PAPEL")) {
@@ -282,8 +285,13 @@ function renderProductos(productos) {
                     <div class="info-text">
                         <span class="cat-tag">${prod.categoria || 'Genérico'}</span>
                         <h3 title="${prod.nombre}">${prod.nombre}</h3>
-                        <div class="oferta">Lps. ${formatoMoneda(precioBase)}</div>
-                        ${tablaDescuentos}
+                        
+                        <!-- Caja magnética de precio -->
+                        <div class="price-section">
+                            <div class="oferta">Lps. ${formatoMoneda(precioBase)}</div>
+                            ${tablaDescuentos}
+                        </div>
+
                     </div>
                 </div>
                 <div class="card-actions">
@@ -447,7 +455,7 @@ function comprimirImagen(file) {
 async function guardarProductoNuevo(e) {
     e.preventDefault();
     const btn = document.getElementById('btn-guardar-prod');
-    btn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin'></i> Guardando..."; btn.disabled = true;
+    btn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin'></i> Subiendo..."; btn.disabled = true;
     
     const nuevoProd = {
         accion: "agregar_producto", codigo: document.getElementById('p-codigo').value, marca: document.getElementById('p-marca').value,
