@@ -1,8 +1,10 @@
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxBl91xu8xy2TMi4Zby4cIiGKgf1F_838WjtbtixW2QNQ4ABeLGyWIykfdQw_qHcXlT8A/exec'; // <-- PEGA AQUÍ EL NUEVO ENLACE
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxBl91xu8xy2TMi4Zby4cIiGKgf1F_838WjtbtixW2QNQ4ABeLGyWIykfdQw_qHcXlT8A/exec';
 
 let productosGlobal = [], clientesGlobal = [], carrito = [];
 let indiceCotizacionActiva = null; 
-let imagenesArrayNuevo = [], imagenesArrayEdit = [];
+
+let imagenesArrayNuevo = [];
+let imagenesArrayEdit = [];
 
 function formatoMoneda(valor) {
     let num = parseFloat(valor);
@@ -14,6 +16,7 @@ window.onload = async () => {
     const activeTab = localStorage.getItem('activeTab') || 'tienda';
     switchTab(activeTab);
     localStorage.removeItem('activeTab'); 
+    
     const vistaGuardada = localStorage.getItem('vistaPreferida') || 'grid';
     cambiarVista(vistaGuardada);
 
@@ -25,7 +28,7 @@ window.onload = async () => {
             clientesGlobal = [...(dataCache.clientes || [])].reverse();
             renderProductos(productosGlobal);
             renderClientes(clientesGlobal);
-            mostrarToast("Actualizando datos...");
+            mostrarToast("Actualizando datos de la nube...");
         } catch (e) { console.log("Caché dañado"); }
     } else {
         document.getElementById('productos-grid').innerHTML = "<div style='text-align:center; width:100%; margin-top:60px; color:var(--text-muted);'><i class='fa-solid fa-circle-notch fa-spin' style='font-size:40px; margin-bottom:15px; color:var(--accent);'></i><h3 style='margin:0; font-weight:700;'>Cargando inventario...</h3></div>";
@@ -60,13 +63,16 @@ function cambiarVista(vista) {
     const btnGrid = document.getElementById('btn-grid');
     const btnList = document.getElementById('btn-list');
     if (!btnGrid || !btnList) return;
+
     if (vista === 'list') {
         grid.classList.add('list-view');
-        btnList.classList.add('active'); btnGrid.classList.remove('active');
+        btnList.classList.add('active');
+        btnGrid.classList.remove('active');
         localStorage.setItem('vistaPreferida', 'list');
     } else {
         grid.classList.remove('list-view');
-        btnGrid.classList.add('active'); btnList.classList.remove('active');
+        btnGrid.classList.add('active');
+        btnList.classList.remove('active');
         localStorage.setItem('vistaPreferida', 'grid');
     }
 }
@@ -75,6 +81,7 @@ function switchTab(tab) {
     document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.desktop-tabs button').forEach(el => el.classList.remove('active'));
+    
     document.getElementById(`view-${tab}`).classList.add('active');
     if(document.getElementById(`nav-${tab}`)) document.getElementById(`nav-${tab}`).classList.add('active');
     if(document.getElementById(`tab-${tab}-desk`)) document.getElementById(`tab-${tab}-desk`).classList.add('active');
@@ -82,8 +89,9 @@ function switchTab(tab) {
 
 function toggleAdmin() {
     const pass = prompt("Acceso de Administrador. Ingrese PIN:");
-    if (pass === "199311") document.body.classList.toggle("show-admin");
-    else if (pass !== null) alert("PIN incorrecto.");
+    if (pass === "199311") {
+        document.body.classList.toggle("show-admin");
+    } else if (pass !== null) alert("PIN incorrecto.");
 }
 
 function abrirCarrito() { document.getElementById('modal-carrito').style.display = 'flex'; }
@@ -112,8 +120,12 @@ function abrirGaleria(codigo) {
     const prod = productosGlobal.find(p => p.codigo === codigo);
     if (!prod || !prod.foto) return;
     const urls = prod.foto.toString().split(',');
+    
     let html = '';
-    urls.forEach(url => { if(url.trim() !== "") html += `<img src="${url.trim()}" alt="${prod.nombre}">`; });
+    urls.forEach(url => {
+        if(url.trim() !== "") html += `<img src="${url.trim()}" alt="${prod.nombre}">`;
+    });
+
     document.getElementById('galeria-contenedor').innerHTML = html;
     document.getElementById('galeria-titulo').innerText = prod.nombre;
     document.getElementById('modal-galeria').style.display = 'flex';
@@ -162,7 +174,9 @@ function renderProductos(productos) {
     
     productos.forEach((prod) => {
         let precioBase = parseFloat(prod.precioUnitario) || 0;
-        let tablaDescuentos = "";
+        
+        // CORRECCIÓN VISUAL: Inyectamos SIEMPRE el div vacío para mantener alineadas las tarjetas.
+        let tablaDescuentos = `<div class="tabla-descuentos"></div>`;
         if (prod.precio5 || prod.precio6 || prod.precio12) {
             tablaDescuentos = `<div class="tabla-descuentos">
                 ${prod.precio5 ? `<div class="tag-desc">5+: <b>Lps. ${formatoMoneda(prod.precio5)}</b></div>` : ''}
@@ -328,6 +342,7 @@ function agregarAlCarrito(codigoProd) {
     const item = carrito.find(i => i.codigo === codigoProd);
     if (item) item.cantidad++; else carrito.push({ codigo: prod.codigo, nombre: prod.nombre, prodCompleto: prod, cantidad: 1 });
     actualizarCarrito();
+    
     mostrarToast("Añadido: " + prod.nombre);
     const fab = document.getElementById('btn-flotante-carrito');
     fab.style.transform = 'scale(1.15)';
@@ -432,7 +447,7 @@ function comprimirImagen(file) {
 async function guardarProductoNuevo(e) {
     e.preventDefault();
     const btn = document.getElementById('btn-guardar-prod');
-    btn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin'></i> Subiendo..."; btn.disabled = true;
+    btn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin'></i> Guardando..."; btn.disabled = true;
     
     const nuevoProd = {
         accion: "agregar_producto", codigo: document.getElementById('p-codigo').value, marca: document.getElementById('p-marca').value,
@@ -480,7 +495,7 @@ async function guardarCotizacion(e) {
 }
 
 async function eliminarCotizacion() {
-    const pass = prompt("Acceso de Administrador. Ingrese PIN:");
+    const pass = prompt("Acceso de Administrador. Ingrese PIN para eliminar:");
     if (pass !== "199311") { if (pass !== null) alert("PIN incorrecto."); return; }
     if (!confirm("¿Seguro que deseas eliminar esta orden de forma permanente?")) return;
 
