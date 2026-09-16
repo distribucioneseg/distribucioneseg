@@ -33,7 +33,10 @@ window.onload = async () => {
     if (cache) {
         try {
             const dataCache = JSON.parse(cache);
-            productosGlobal = dataCache.productos || [];
+            productosGlobal = (dataCache.productos || []).map((p, idx) => {
+                p.id_unico = (p.codigo && p.codigo.trim() !== "") ? p.codigo : "TEMP_" + idx;
+                return p;
+            });
             clientesGlobal = [...(dataCache.clientes || [])].reverse();
             renderProductos(productosGlobal);
             renderClientes(clientesGlobal);
@@ -47,7 +50,10 @@ window.onload = async () => {
         const respuesta = await fetch(SCRIPT_URL + "?cacheBust=" + new Date().getTime());
         const data = await respuesta.json();
         localStorage.setItem('eg_data_cache', JSON.stringify(data));
-        productosGlobal = data.productos || [];
+        productosGlobal = (data.productos || []).map((p, idx) => {
+            p.id_unico = (p.codigo && p.codigo.trim() !== "") ? p.codigo : "TEMP_" + idx;
+            return p;
+        });
         clientesGlobal = [...(data.clientes || [])].reverse(); 
         renderProductos(productosGlobal);
         renderClientes(clientesGlobal);
@@ -103,7 +109,11 @@ function toggleAdmin() {
 function abrirCarrito() { document.getElementById('modal-carrito').style.display = 'flex'; }
 function cerrarCarrito() { document.getElementById('modal-carrito').style.display = 'none'; }
 function cerrarDetalle() { document.getElementById('modal-detalle').style.display = 'none'; }
-function abrirModalProducto() { document.getElementById('modal-producto').style.display = 'flex'; document.getElementById('p-codigo').value = "Automático en Excel"; }
+
+function abrirModalProducto() { 
+    document.getElementById('modal-producto').style.display = 'flex'; 
+    document.getElementById('p-codigo').value = "Automático en Excel";
+}
 
 function cerrarModalProducto() { 
     document.getElementById('modal-producto').style.display = 'none'; 
@@ -116,8 +126,8 @@ function cerrarModalEditar() {
     document.getElementById('form-editar-producto').reset(); 
 }
 
-function abrirGaleria(codigo) {
-    const prod = productosGlobal.find(p => p.codigo === codigo);
+function abrirGaleria(idUnico) {
+    const prod = productosGlobal.find(p => p.id_unico === idUnico);
     if (!prod || !prod.foto) return;
     
     const urls = prod.foto.toString().split(',').map(u => u.trim()).filter(u => u !== "");
@@ -144,8 +154,7 @@ function mostrarSiguienteProveedor(prefix) {
     }
 }
 
-// Ya no necesitamos generar el código en JS, el Excel lo hace con la fórmula
-function generarCodigoSKU() {}
+function generarCodigoSKU() {} // Ya no se usa, lo hace el Excel con fórmula
 
 function formatearFecha(fechaStr) {
     if(!fechaStr) return "Sin fecha";
@@ -253,7 +262,6 @@ function renderProductos(productos) {
             }
         }
 
-        // --- SISTEMA INTELIGENTE DE STOCK TEXTUAL ---
         let valorStock = prod.stock ? prod.stock.toString().toUpperCase().trim() : "";
         let stockClass = "stock-out", stockText = "NO DISPONIBLE";
 
@@ -269,7 +277,7 @@ function renderProductos(productos) {
             <div class="card">
                 <div class="stock-tag ${stockClass}">${stockText}</div>
                 <div class="card-inner">
-                    <div class="img-container ${isRealPhoto ? 'clickable' : ''}" ${isRealPhoto ? `onclick="abrirGaleria('${prod.codigo}')"` : ''}>
+                    <div class="img-container ${isRealPhoto ? 'clickable' : ''}" ${isRealPhoto ? `onclick="abrirGaleria('${prod.id_unico}')"` : ''}>
                         <img src="${imagenFinal}" onerror="this.src='https://img.icons8.com/color/150/box--v1.png'">
                         ${isRealPhoto && urls.length > 1 ? `<span class="badge-fotos"><i class="fa-solid fa-images"></i> ${urls.length}</span>` : ''}
                     </div>
@@ -284,7 +292,7 @@ function renderProductos(productos) {
                     </div>
                 </div>
                 <div class="card-actions">
-                    <button class="btn-add" onclick="agregarAlCarrito('${prod.codigo}')">
+                    <button class="btn-add" onclick="agregarAlCarrito('${prod.id_unico}')">
                         <i class="fa-solid fa-plus icon-list"></i>
                         <i class="fa-solid fa-cart-plus icon-grid"></i>
                         <span class="text-grid"> Añadir a la orden</span>
@@ -297,7 +305,7 @@ function renderProductos(productos) {
                         <div class="stat-box profit"><span>Ganancia Normal</span><b>Lps. ${formatoMoneda(gananciaAutomatica)}</b></div>
                     </div>
                     ${proveedoresHTML ? `<div class="prov-list">${proveedoresHTML}</div>` : ''}
-                    <button class="btn-secundario" onclick="abrirModalEditar('${prod.codigo}')"><i class="fa-solid fa-pen-to-square"></i> Editar Producto</button>
+                    <button class="btn-secundario" onclick="abrirModalEditar('${prod.id_unico}')"><i class="fa-solid fa-pen-to-square"></i> Editar Producto</button>
                 </div>
             </div>`;
     });
@@ -334,9 +342,9 @@ function filtrarClientes() {
     renderClientes(filtrados);
 }
 
-function agregarAlCarrito(codigoProd) {
-    const prod = productosGlobal.find(p => p.codigo === codigoProd);
-    const item = carrito.find(i => i.codigo === codigoProd);
+function agregarAlCarrito(idUnico) {
+    const prod = productosGlobal.find(p => p.id_unico === idUnico);
+    const item = carrito.find(i => i.prodCompleto.id_unico === idUnico);
     if (item) item.cantidad++; else carrito.push({ codigo: prod.codigo, nombre: prod.nombre, prodCompleto: prod, cantidad: 1 });
     actualizarCarrito();
     
@@ -419,14 +427,23 @@ async function guardarProductoNuevo(e) {
     }
 }
 
-function abrirModalEditar(codigo) {
-    const prod = productosGlobal.find(p => p.codigo === codigo);
+function abrirModalEditar(idUnico) {
+    const prod = productosGlobal.find(p => p.id_unico === idUnico);
     if(!prod) return;
-    document.getElementById('e-codigo').value = prod.codigo; 
+    
+    // Dejar el código en blanco para la vista, pero guardar el real oculto (o pasarlo internamente)
+    document.getElementById('e-codigo').value = prod.codigo || ""; 
     document.getElementById('e-marca').value = prod.marca || "";
     document.getElementById('e-nombre').value = prod.nombre; 
     document.getElementById('e-categoria').value = prod.categoria || "";
-    document.getElementById('e-stock').value = prod.stock || "DISPONIBLE";
+    
+    // Validamos el estado del stock (DISPONIBLE / NO DISPONIBLE)
+    let valorStock = prod.stock ? prod.stock.toString().toUpperCase().trim() : "";
+    if (valorStock === "DISPONIBLE" || parseInt(valorStock) > 0) {
+        document.getElementById('e-stock').value = "DISPONIBLE";
+    } else {
+        document.getElementById('e-stock').value = "NO DISPONIBLE";
+    }
     
     document.getElementById('e-precio5').value = prod.precio5 || "";
     document.getElementById('e-precio6').value = prod.precio6 || "";
