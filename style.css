@@ -44,16 +44,16 @@ body.show-admin .btn-nuevo-admin { display: flex; }
 .view-section.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* ==== CUADRÍCULA PRODUCTOS (APP STYLE CON ALINEACIÓN PERFECTA) ==== */
+/* ==== CUADRÍCULA PRODUCTOS (ALINEACIÓN PERFECTA) ==== */
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 16px; margin-top: 15px; }
 .grid:not(.list-view) .card { background: var(--card-bg); border-radius: 24px; padding: 16px; text-align: left; box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04); border: 1px solid rgba(226, 232, 240, 0.6); display: flex !important; flex-direction: column; position: relative; overflow: hidden; transition: 0.2s; height: 100%; }
 .grid:not(.list-view) .card:active { transform: scale(0.97); }
 
-.grid:not(.list-view) .card-inner { display: flex; flex-direction: column; flex: 1; }
-.grid:not(.list-view) .info-text { display: flex; flex-direction: column; flex: 1; }
-
-/* Caja que agrupa precio y descuentos empujada siempre al fondo */
+/* Flexbox magnético para alinear todo al fondo */
+.grid:not(.list-view) .card-inner { display: flex; flex-direction: column; flex: 1 1 auto; }
+.grid:not(.list-view) .info-text { display: flex; flex-direction: column; flex: 1 1 auto; }
 .grid:not(.list-view) .price-section { margin-top: auto; display: flex; flex-direction: column; justify-content: flex-end; }
+.grid:not(.list-view) .card-actions { flex: 0 0 auto; margin-top: 15px; width: 100%; }
 
 /* IMÁGENES */
 .img-container { background: #f8fafc; border-radius: 16px; padding: 10px; margin-bottom: 12px; display: flex; justify-content: center; align-items: center; height: 120px; position: relative; }
@@ -68,10 +68,10 @@ body.show-admin .btn-nuevo-admin { display: flex; }
 .grid:not(.list-view) .oferta { color: var(--text-dark); font-weight: 900; font-size: 1.35rem; margin-bottom: 5px; }
 
 /* BOTÓN */
-.grid:not(.list-view) .btn-add { background: #eff6ff; color: var(--accent); border: none; padding: 14px; border-radius: 16px; font-weight: 800; width: 100%; margin-top: 15px; display: flex; justify-content: center; align-items: center; gap: 8px; font-size: 0.95rem; transition: 0.2s; cursor: pointer; }
+.grid:not(.list-view) .btn-add { background: #eff6ff; color: var(--accent); border: none; padding: 14px; border-radius: 16px; font-weight: 800; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; font-size: 0.95rem; transition: 0.2s; cursor: pointer; }
 .grid:not(.list-view) .btn-add:active { background: var(--accent); color: white; }
 
-/* CAJA DE DESCUENTOS FIJA PARA EVITAR SALTOS */
+/* CAJA DE DESCUENTOS FIJA */
 .tabla-descuentos { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; min-height: 24px; align-items: center; }
 .tag-desc { background: #f1f5f9; padding: 4px 8px; border-radius: 8px; font-size: 0.7rem; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 5px; }
 .tag-desc b { color: var(--success); font-size: 0.75rem; }

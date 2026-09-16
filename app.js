@@ -1,4 +1,4 @@
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx1NnQgrU9jzpQxqctD7tIqE1y1POVH6FYiTFe3XdP-Ov2MiqOGW5dyVeXWrh4MiYpgXA/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwHq2RIKw86gnnvaZFJREvhL-zMbKuU7DFcxWxgZAtLHNkq_ep2hkYu2MeLO2x2ctOiJA/exec';
 
 let productosGlobal = [], clientesGlobal = [], carrito = [];
 let indiceCotizacionActiva = null; 
@@ -175,7 +175,6 @@ function renderProductos(productos) {
     productos.forEach((prod) => {
         let precioBase = parseFloat(prod.precioUnitario) || 0;
         
-        // El DIV vacío de descuentos SIEMPRE se imprime para que el CSS respete el espacio de la cuadrícula
         let tablaDescuentos = `<div class="tabla-descuentos"></div>`;
         if (prod.precio5 || prod.precio6 || prod.precio12) {
             tablaDescuentos = `<div class="tabla-descuentos">
@@ -200,7 +199,6 @@ function renderProductos(productos) {
         let imagenFinal = "";
         let isRealPhoto = false;
 
-        // VERIFICADOR DE FOTOS REALES
         if (urls.length > 0 && urls[0].includes('http')) {
             imagenFinal = urls[0]; 
             isRealPhoto = true;
@@ -225,8 +223,7 @@ function renderProductos(productos) {
                 else if (hasStr("RES", "VACA", "MOLIDA")) imagenFinal = "https://img.icons8.com/color/150/steak-medium.png"; 
                 else if (hasStr("CERDO", "CHULETA")) imagenFinal = "https://img.icons8.com/color/150/pig.png"; 
                 else if (hasStr("PESCADO", "MARISCO")) imagenFinal = "https://img.icons8.com/color/150/fish-food.png"; 
-                // Aseguramos que Chorizo muestre salami
-                else if (hasStr("CHORIZO")) imagenFinal = "https://img.icons8.com/color/150/salami.png";
+                else if (hasStr("CHORIZO", "ZAMBRANO")) imagenFinal = "https://img.icons8.com/color/150/salami.png";
                 else imagenFinal = "https://img.icons8.com/color/150/salami.png"; 
             }
             else if (hasCat("LIMPIEZA", "HIGIENE", "DETERGENTE", "CAPILAR", "DENTAL", "PAPEL")) {
@@ -286,12 +283,10 @@ function renderProductos(productos) {
                         <span class="cat-tag">${prod.categoria || 'Genérico'}</span>
                         <h3 title="${prod.nombre}">${prod.nombre}</h3>
                         
-                        <!-- Caja magnética de precio -->
                         <div class="price-section">
                             <div class="oferta">Lps. ${formatoMoneda(precioBase)}</div>
                             ${tablaDescuentos}
                         </div>
-
                     </div>
                 </div>
                 <div class="card-actions">
@@ -392,7 +387,6 @@ function actualizarCarrito() {
     document.getElementById('gran-total').innerText = formatoMoneda(granTotal);
 }
 
-// ==== COMPRESIÓN DE FOTOS ====
 async function procesarImagenes(event, isEdit = false) {
     const files = event.target.files;
     if (!files || files.length === 0) return;
@@ -455,7 +449,7 @@ function comprimirImagen(file) {
 async function guardarProductoNuevo(e) {
     e.preventDefault();
     const btn = document.getElementById('btn-guardar-prod');
-    btn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin'></i> Subiendo..."; btn.disabled = true;
+    btn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin'></i> Guardando..."; btn.disabled = true;
     
     const nuevoProd = {
         accion: "agregar_producto", codigo: document.getElementById('p-codigo').value, marca: document.getElementById('p-marca').value,
