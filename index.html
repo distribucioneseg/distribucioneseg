@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>E&G DISTRIBUCIONES</title>
-    <link rel="stylesheet" href="style.css?v=220">
+    <link rel="stylesheet" href="style.css?v=250">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
@@ -73,10 +73,8 @@
         <button onclick="switchTab('clientes')" class="nav-item" id="nav-clientes"><i class="fa-solid fa-address-book"></i><span>Órdenes</span></button>
     </nav>
 
-    <!-- ==== BOTÓN FLOTANTE CARRITO ==== -->
     <button id="btn-flotante-carrito" onclick="abrirCarrito()"><i class="fa-solid fa-basket-shopping"></i><span id="contador-carrito">0</span></button>
 
-    <!-- ==== TOAST NOTIFICATION ==== -->
     <div id="toast" class="toast-oculto"><i class="fa-solid fa-circle-check"></i> <span id="toast-msg">Agregado al carrito</span></div>
 
     <!-- ==== MODAL: GALERÍA DE FOTOS ==== -->
@@ -140,10 +138,9 @@
             <div class="modal-header"><h2>Registrar Producto</h2><button type="button" class="btn-cerrar" onclick="cerrarModalProducto()"><i class="fa-solid fa-xmark"></i></button></div>
             <div class="modal-body">
                 <form id="form-producto" class="modern-form" onsubmit="guardarProductoNuevo(event)">
-                    <!-- SE QUITÓ capture="environment" PARA ABRIR LA GALERÍA -->
                     <label class="foto-upload-btn">
                         <i class="fa-solid fa-images"></i> Toca para seleccionar fotos
-                        <span style="font-size:0.75rem; color:var(--text-muted); font-weight:normal; margin-top:5px;">Elige de 1 a 5 fotos de tu galería</span>
+                        <span style="font-size:0.75rem; color:var(--text-muted); font-weight:normal; margin-top:5px; line-height: 1.4;"><b>Truco:</b> Mantén presionada una foto en tu galería durante 1 segundo para elegir hasta 5 a la vez.</span>
                         <input type="file" id="p-foto" accept="image/*" multiple onchange="procesarImagenes(event, false)" style="display:none;">
                     </label>
                     <div id="p-foto-preview" class="preview-fotos"></div>
@@ -202,10 +199,9 @@
             <div class="modal-header"><h2>Editar Producto</h2><button type="button" class="btn-cerrar" onclick="cerrarModalEditar()"><i class="fa-solid fa-xmark"></i></button></div>
             <div class="modal-body">
                 <form id="form-editar-producto" class="modern-form" onsubmit="guardarEdicionProducto(event)">
-                    <!-- SE QUITÓ capture="environment" PARA ABRIR LA GALERÍA -->
                     <label class="foto-upload-btn">
                         <i class="fa-solid fa-images"></i> Cambiar Foto(s) (Opcional)
-                        <span style="font-size:0.75rem; color:var(--text-muted); font-weight:normal; margin-top:5px;">Elige de 1 a 5 fotos de tu galería</span>
+                        <span style="font-size:0.75rem; color:var(--text-muted); font-weight:normal; margin-top:5px; line-height: 1.4;"><b>Truco:</b> Mantén presionada una foto en tu galería durante 1 segundo para elegir hasta 5 a la vez.</span>
                         <input type="file" id="e-foto" accept="image/*" multiple onchange="procesarImagenes(event, true)" style="display:none;">
                     </label>
                     <div id="e-foto-preview" class="preview-fotos"></div>
@@ -242,6 +238,6 @@
         </div>
     </div>
 
-    <script src="app.js?v=220"></script>
+    <script src="app.js?v=250"></script>
 </body>
 </html>
