@@ -49,11 +49,11 @@ body.show-admin .btn-nuevo-admin { display: flex; }
 .grid:not(.list-view) .card { background: var(--card-bg); border-radius: 24px; padding: 16px; text-align: left; box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04); border: 1px solid rgba(226, 232, 240, 0.6); display: flex !important; flex-direction: column; position: relative; overflow: hidden; transition: 0.2s; height: 100%; }
 .grid:not(.list-view) .card:active { transform: scale(0.97); }
 
-/* Flexbox magnético para alinear todo al fondo */
-.grid:not(.list-view) .card-inner { display: flex; flex-direction: column; flex: 1 1 auto; }
-.grid:not(.list-view) .info-text { display: flex; flex-direction: column; flex: 1 1 auto; }
+/* Imanes Flexbox para que botones y precios queden en el fondo */
+.grid:not(.list-view) .card-inner { display: flex; flex-direction: column; flex: 1; }
+.grid:not(.list-view) .info-text { display: flex; flex-direction: column; flex: 1; }
 .grid:not(.list-view) .price-section { margin-top: auto; display: flex; flex-direction: column; justify-content: flex-end; }
-.grid:not(.list-view) .card-actions { flex: 0 0 auto; margin-top: 15px; width: 100%; }
+.grid:not(.list-view) .card-actions { margin-top: 15px; width: 100%; }
 
 /* IMÁGENES */
 .img-container { background: #f8fafc; border-radius: 16px; padding: 10px; margin-bottom: 12px; display: flex; justify-content: center; align-items: center; height: 120px; position: relative; }

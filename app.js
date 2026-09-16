@@ -119,11 +119,19 @@ function cerrarModalEditar() {
 function abrirGaleria(codigo) {
     const prod = productosGlobal.find(p => p.codigo === codigo);
     if (!prod || !prod.foto) return;
-    const urls = prod.foto.toString().split(',');
+    const urls = prod.foto.toString().split(',').map(u => u.trim()).filter(u => u !== "");
     
     let html = '';
     urls.forEach(url => {
-        if(url.trim() !== "") html += `<img src="${url.trim()}" alt="${prod.nombre}">`;
+        let finalUrl = url;
+        // CONVERSIÓN DE ENLACES PARA LA GALERÍA
+        if (finalUrl.includes('drive.google.com')) {
+            let fileId = "";
+            if (finalUrl.includes('id=')) fileId = finalUrl.split('id=')[1].split('&')[0];
+            else if (finalUrl.includes('/d/')) fileId = finalUrl.split('/d/')[1].split('/')[0];
+            if (fileId) finalUrl = `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
+        }
+        html += `<img src="${finalUrl}" alt="${prod.nombre}">`;
     });
 
     document.getElementById('galeria-contenedor').innerHTML = html;
@@ -199,9 +207,19 @@ function renderProductos(productos) {
         let imagenFinal = "";
         let isRealPhoto = false;
 
+        // VERIFICADOR DE FOTOS REALES Y CORRECCIÓN DE ENLACES DE DRIVE
         if (urls.length > 0 && urls[0].includes('http')) {
             imagenFinal = urls[0]; 
             isRealPhoto = true;
+            
+            // MAGIA: Convierte cualquier link bloqueado de Drive a miniatura permitida para móvil
+            if (imagenFinal.includes('drive.google.com')) {
+                let fileId = "";
+                if (imagenFinal.includes('id=')) fileId = imagenFinal.split('id=')[1].split('&')[0];
+                else if (imagenFinal.includes('/d/')) fileId = imagenFinal.split('/d/')[1].split('/')[0];
+                
+                if (fileId) imagenFinal = `https://drive.google.com/thumbnail?id=${fileId}&sz=w800`;
+            }
         } else {
             let cat = (prod.categoria || "").toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
             let nom = (prod.nombre || "").toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
