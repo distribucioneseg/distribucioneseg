@@ -1,10 +1,8 @@
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzDIVqE9NnzJn68Ll-iyIT6galdNs5tR7yOklzRTpk-IEb17c0jTdtXGPt5j-UfSjb1Ww/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxBl91xu8xy2TMi4Zby4cIiGKgf1F_838WjtbtixW2QNQ4ABeLGyWIykfdQw_qHcXlT8A/exec'; // <-- PEGA AQUÍ EL NUEVO ENLACE
 
 let productosGlobal = [], clientesGlobal = [], carrito = [];
 let indiceCotizacionActiva = null; 
-
-let imagenesArrayNuevo = [];
-let imagenesArrayEdit = [];
+let imagenesArrayNuevo = [], imagenesArrayEdit = [];
 
 function formatoMoneda(valor) {
     let num = parseFloat(valor);
@@ -16,7 +14,6 @@ window.onload = async () => {
     const activeTab = localStorage.getItem('activeTab') || 'tienda';
     switchTab(activeTab);
     localStorage.removeItem('activeTab'); 
-    
     const vistaGuardada = localStorage.getItem('vistaPreferida') || 'grid';
     cambiarVista(vistaGuardada);
 
@@ -28,14 +25,14 @@ window.onload = async () => {
             clientesGlobal = [...(dataCache.clientes || [])].reverse();
             renderProductos(productosGlobal);
             renderClientes(clientesGlobal);
-            mostrarToast("Actualizando datos de la nube...");
+            mostrarToast("Actualizando datos...");
         } catch (e) { console.log("Caché dañado"); }
     } else {
         document.getElementById('productos-grid').innerHTML = "<div style='text-align:center; width:100%; margin-top:60px; color:var(--text-muted);'><i class='fa-solid fa-circle-notch fa-spin' style='font-size:40px; margin-bottom:15px; color:var(--accent);'></i><h3 style='margin:0; font-weight:700;'>Cargando inventario...</h3></div>";
     }
 
     try {
-        const respuesta = await fetch(SCRIPT_URL);
+        const respuesta = await fetch(SCRIPT_URL + "?cacheBust=" + new Date().getTime());
         const data = await respuesta.json();
         localStorage.setItem('eg_data_cache', JSON.stringify(data));
         productosGlobal = data.productos || [];
@@ -63,16 +60,13 @@ function cambiarVista(vista) {
     const btnGrid = document.getElementById('btn-grid');
     const btnList = document.getElementById('btn-list');
     if (!btnGrid || !btnList) return;
-
     if (vista === 'list') {
         grid.classList.add('list-view');
-        btnList.classList.add('active');
-        btnGrid.classList.remove('active');
+        btnList.classList.add('active'); btnGrid.classList.remove('active');
         localStorage.setItem('vistaPreferida', 'list');
     } else {
         grid.classList.remove('list-view');
-        btnGrid.classList.add('active');
-        btnList.classList.remove('active');
+        btnGrid.classList.add('active'); btnList.classList.remove('active');
         localStorage.setItem('vistaPreferida', 'grid');
     }
 }
@@ -81,7 +75,6 @@ function switchTab(tab) {
     document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.desktop-tabs button').forEach(el => el.classList.remove('active'));
-    
     document.getElementById(`view-${tab}`).classList.add('active');
     if(document.getElementById(`nav-${tab}`)) document.getElementById(`nav-${tab}`).classList.add('active');
     if(document.getElementById(`tab-${tab}-desk`)) document.getElementById(`tab-${tab}-desk`).classList.add('active');
@@ -89,9 +82,8 @@ function switchTab(tab) {
 
 function toggleAdmin() {
     const pass = prompt("Acceso de Administrador. Ingrese PIN:");
-    if (pass === "199311") {
-        document.body.classList.toggle("show-admin");
-    } else if (pass !== null) alert("PIN incorrecto.");
+    if (pass === "199311") document.body.classList.toggle("show-admin");
+    else if (pass !== null) alert("PIN incorrecto.");
 }
 
 function abrirCarrito() { document.getElementById('modal-carrito').style.display = 'flex'; }
@@ -99,7 +91,6 @@ function cerrarCarrito() { document.getElementById('modal-carrito').style.displa
 function cerrarDetalle() { document.getElementById('modal-detalle').style.display = 'none'; }
 function abrirModalProducto() { document.getElementById('modal-producto').style.display = 'flex'; }
 
-// AL CERRAR LOS MODALES, LIMPIAMOS LAS MINIATURAS
 function cerrarModalProducto() { 
     document.getElementById('modal-producto').style.display = 'none'; 
     document.getElementById('form-producto').reset();
@@ -121,12 +112,8 @@ function abrirGaleria(codigo) {
     const prod = productosGlobal.find(p => p.codigo === codigo);
     if (!prod || !prod.foto) return;
     const urls = prod.foto.toString().split(',');
-    
     let html = '';
-    urls.forEach(url => {
-        if(url.trim() !== "") html += `<img src="${url.trim()}" alt="${prod.nombre}">`;
-    });
-
+    urls.forEach(url => { if(url.trim() !== "") html += `<img src="${url.trim()}" alt="${prod.nombre}">`; });
     document.getElementById('galeria-contenedor').innerHTML = html;
     document.getElementById('galeria-titulo').innerText = prod.nombre;
     document.getElementById('modal-galeria').style.display = 'flex';
@@ -199,7 +186,6 @@ function renderProductos(productos) {
         let imagenFinal = "";
         let isRealPhoto = false;
 
-        // SI HAY FOTO, MUESTRA LA FOTO Y NO EL ICONO
         if (urls.length > 0 && urls[0].includes('http')) {
             imagenFinal = urls[0]; 
             isRealPhoto = true;
@@ -342,7 +328,6 @@ function agregarAlCarrito(codigoProd) {
     const item = carrito.find(i => i.codigo === codigoProd);
     if (item) item.cantidad++; else carrito.push({ codigo: prod.codigo, nombre: prod.nombre, prodCompleto: prod, cantidad: 1 });
     actualizarCarrito();
-    
     mostrarToast("Añadido: " + prod.nombre);
     const fab = document.getElementById('btn-flotante-carrito');
     fab.style.transform = 'scale(1.15)';
@@ -384,7 +369,7 @@ function actualizarCarrito() {
     document.getElementById('gran-total').innerText = formatoMoneda(granTotal);
 }
 
-// ==== PROCESO DE MINIATURAS ====
+// ==== COMPRESIÓN DE FOTOS ====
 async function procesarImagenes(event, isEdit = false) {
     const files = event.target.files;
     if (!files || files.length === 0) return;
@@ -399,13 +384,12 @@ async function procesarImagenes(event, isEdit = false) {
     estadoLabel.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Preparando ${files.length} foto(s)...`;
     estadoLabel.style.color = "var(--accent)";
     estadoLabel.style.display = 'block';
-    previewCont.innerHTML = ""; // Limpia miniaturas anteriores
+    previewCont.innerHTML = ""; 
 
     for (let i = 0; i < files.length; i++) {
         let compressed = await comprimirImagen(files[i]);
         tempArray.push(compressed);
         
-        // Muestra la miniatura para que el usuario confirme
         let img = document.createElement("img");
         img.src = "data:image/jpeg;base64," + compressed.base64;
         previewCont.appendChild(img);
@@ -448,7 +432,7 @@ function comprimirImagen(file) {
 async function guardarProductoNuevo(e) {
     e.preventDefault();
     const btn = document.getElementById('btn-guardar-prod');
-    btn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin'></i> Guardando..."; btn.disabled = true;
+    btn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin'></i> Subiendo..."; btn.disabled = true;
     
     const nuevoProd = {
         accion: "agregar_producto", codigo: document.getElementById('p-codigo').value, marca: document.getElementById('p-marca').value,
@@ -463,8 +447,16 @@ async function guardarProductoNuevo(e) {
         lugar6: document.getElementById('p-lugar6').value, precio6: document.getElementById('p-precio6_prov').value,
         imagenes: imagenesArrayNuevo 
     };
-    try { await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(nuevoProd) }); alert("¡Producto registrado!"); location.reload(); } 
-    catch (error) { alert("Error de conexión."); btn.innerHTML = "<i class='fa-solid fa-cloud-arrow-up'></i> Guardar en Inventario"; btn.disabled = false; }
+    try { 
+        const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(nuevoProd) }); 
+        const jsonRes = await res.json();
+        if (jsonRes.status === "Error") throw new Error(jsonRes.message);
+        localStorage.removeItem('eg_data_cache');
+        alert("¡Producto registrado!"); location.reload(); 
+    } catch (error) { 
+        alert("Error: " + error.message); 
+        btn.innerHTML = "<i class='fa-solid fa-cloud-arrow-up'></i> Guardar en Inventario"; btn.disabled = false; 
+    }
 }
 
 async function guardarCotizacion(e) {
@@ -475,16 +467,20 @@ async function guardarCotizacion(e) {
     const totalCrudo = document.getElementById('gran-total').innerText.replace(/,/g, '');
     const cotizacion = { accion: "guardar_cotizacion", cliente: document.getElementById('c-nombre').value, tienda: document.getElementById('c-tienda').value, telefono: document.getElementById('c-tel').value, lugar: document.getElementById('c-lugar').value, fechaEntrega: document.getElementById('c-fecha-entrega').value, total: totalCrudo, carrito: carrito };
     try { 
-        await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(cotizacion) }); 
+        const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(cotizacion) }); 
+        const jsonRes = await res.json();
+        if (jsonRes.status === "Error") throw new Error(jsonRes.message);
         alert("¡Pedido guardado con éxito!"); 
         localStorage.setItem('activeTab', 'clientes'); 
         location.reload(); 
-    } 
-    catch (error) { alert("Ocurrió un error."); btn.innerHTML = "<i class='fa-solid fa-check-double'></i> Confirmar Pedido"; btn.disabled = false; }
+    } catch (error) { 
+        alert("Error: " + error.message); 
+        btn.innerHTML = "<i class='fa-solid fa-check-double'></i> Confirmar Pedido"; btn.disabled = false; 
+    }
 }
 
 async function eliminarCotizacion() {
-    const pass = prompt("Acceso de Administrador. Ingrese PIN para eliminar:");
+    const pass = prompt("Acceso de Administrador. Ingrese PIN:");
     if (pass !== "199311") { if (pass !== null) alert("PIN incorrecto."); return; }
     if (!confirm("¿Seguro que deseas eliminar esta orden de forma permanente?")) return;
 
@@ -493,11 +489,13 @@ async function eliminarCotizacion() {
     btn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin'></i> Eliminando..."; btn.disabled = true;
 
     try {
-        await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ accion: "eliminar_cotizacion", fila: c.fila }) });
+        const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ accion: "eliminar_cotizacion", fila: c.fila }) });
+        const jsonRes = await res.json();
+        if (jsonRes.status === "Error") throw new Error(jsonRes.message);
         alert("Orden eliminada de la base de datos.");
         location.reload();
     } catch (error) {
-        alert("Ocurrió un error.");
+        alert("Error al eliminar: " + error.message);
         btn.innerHTML = "<i class='fa-solid fa-trash-can'></i> Borrar Orden";
         btn.disabled = false;
     }
@@ -734,6 +732,14 @@ async function guardarEdicionProducto(e) {
         lugar5: document.getElementById('e-lugar5').value, precio5: document.getElementById('e-precio5_prov').value, lugar6: document.getElementById('e-lugar6').value, precio6: document.getElementById('e-precio6_prov').value,
         imagenes: imagenesArrayEdit 
     };
-    try { await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(prodEditado) }); alert("¡Actualizado exitosamente!"); location.reload(); } 
-    catch (error) { alert("Error de conexión."); btn.innerHTML = "<i class='fa-solid fa-cloud-arrow-up'></i> Actualizar Producto"; btn.disabled = false; }
+    try { 
+        const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(prodEditado) }); 
+        const jsonRes = await res.json();
+        if (jsonRes.status === "Error") throw new Error(jsonRes.message);
+        localStorage.removeItem('eg_data_cache');
+        alert("¡Actualizado exitosamente!"); location.reload(); 
+    } catch (error) { 
+        alert("Error: " + error.message); 
+        btn.innerHTML = "<i class='fa-solid fa-cloud-arrow-up'></i> Actualizar Producto"; btn.disabled = false; 
+    }
 }
