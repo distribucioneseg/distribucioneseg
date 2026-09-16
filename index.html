@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>DISTRIBUCIONES E&G</title>
-    <link rel="stylesheet" href="style.css?v=210">
+    <title>E&G DISTRIBUCIONES</title>
+    <link rel="stylesheet" href="style.css?v=220">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
@@ -84,9 +84,7 @@
         <div class="modal-contenido" style="background: transparent; box-shadow: none; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
             <button class="btn-cerrar" onclick="cerrarGaleria()" style="position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2); color: white;"><i class="fa-solid fa-xmark"></i></button>
             <h3 id="galeria-titulo" style="color: white; margin-bottom: 20px; text-align: center; padding: 0 20px;">Producto</h3>
-            <div id="galeria-contenedor" class="galeria-slider">
-                <!-- Las fotos se inyectan aquí -->
-            </div>
+            <div id="galeria-contenedor" class="galeria-slider"></div>
             <p style="color: rgba(255,255,255,0.6); font-size: 0.85rem; margin-top: 20px;"><i class="fa-solid fa-arrows-left-right"></i> Desliza para ver más</p>
         </div>
     </div>
@@ -142,12 +140,13 @@
             <div class="modal-header"><h2>Registrar Producto</h2><button type="button" class="btn-cerrar" onclick="cerrarModalProducto()"><i class="fa-solid fa-xmark"></i></button></div>
             <div class="modal-body">
                 <form id="form-producto" class="modern-form" onsubmit="guardarProductoNuevo(event)">
-                    <!-- SE AGREGÓ "multiple" AQUÍ PARA SOPORTAR HASTA 5 FOTOS -->
+                    <!-- SE QUITÓ capture="environment" PARA ABRIR LA GALERÍA -->
                     <label class="foto-upload-btn">
-                        <i class="fa-solid fa-cloud-arrow-up"></i> Toca para subir foto(s) del producto
-                        <span style="font-size:0.75rem; color:var(--text-muted); font-weight:normal; margin-top:5px;">Máximo 5 imágenes por producto</span>
-                        <input type="file" id="p-foto" accept="image/*" multiple capture="environment" onchange="procesarImagenes(event, false)" style="display:none;">
+                        <i class="fa-solid fa-images"></i> Toca para seleccionar fotos
+                        <span style="font-size:0.75rem; color:var(--text-muted); font-weight:normal; margin-top:5px;">Elige de 1 a 5 fotos de tu galería</span>
+                        <input type="file" id="p-foto" accept="image/*" multiple onchange="procesarImagenes(event, false)" style="display:none;">
                     </label>
+                    <div id="p-foto-preview" class="preview-fotos"></div>
                     <p id="foto-estado" class="success-text" style="display:none;"><i class="fa-solid fa-check-circle"></i> Fotos listas</p>
                     
                     <div class="form-row">
@@ -203,8 +202,13 @@
             <div class="modal-header"><h2>Editar Producto</h2><button type="button" class="btn-cerrar" onclick="cerrarModalEditar()"><i class="fa-solid fa-xmark"></i></button></div>
             <div class="modal-body">
                 <form id="form-editar-producto" class="modern-form" onsubmit="guardarEdicionProducto(event)">
-                    <!-- SE AGREGÓ "multiple" AQUÍ TAMBIÉN -->
-                    <label class="foto-upload-btn"><i class="fa-solid fa-camera-rotate"></i> Cambiar Foto(s) (Opcional)<input type="file" id="e-foto" accept="image/*" multiple onchange="procesarImagenes(event, true)" style="display:none;"></label>
+                    <!-- SE QUITÓ capture="environment" PARA ABRIR LA GALERÍA -->
+                    <label class="foto-upload-btn">
+                        <i class="fa-solid fa-images"></i> Cambiar Foto(s) (Opcional)
+                        <span style="font-size:0.75rem; color:var(--text-muted); font-weight:normal; margin-top:5px;">Elige de 1 a 5 fotos de tu galería</span>
+                        <input type="file" id="e-foto" accept="image/*" multiple onchange="procesarImagenes(event, true)" style="display:none;">
+                    </label>
+                    <div id="e-foto-preview" class="preview-fotos"></div>
                     <p id="e-foto-estado" class="success-text" style="display:none;"><i class="fa-solid fa-check-circle"></i> Nuevas fotos listas</p>
                     
                     <div class="form-row">
@@ -238,6 +242,6 @@
         </div>
     </div>
 
-    <script src="app.js?v=210"></script>
+    <script src="app.js?v=220"></script>
 </body>
 </html>

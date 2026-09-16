@@ -227,3 +227,10 @@ body.show-admin .btn-admin-pdf, body.show-admin .btn-eliminar { display: flex !i
     .botones-accion-detalle { flex-direction: row; flex-wrap: wrap; }
     .botones-accion-detalle button { flex: 1; min-width: 45%; }
 }
+
+/* ==== MINIATURAS DE FOTOS ==== */
+.preview-fotos { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
+.preview-fotos img { width: 65px; height: 65px; object-fit: cover; border-radius: 12px; border: 2px solid var(--accent); box-shadow: 0 4px 10px rgba(0,0,0,0.1); animation: popIn 0.3s ease; }
+@keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } 
+
+}
