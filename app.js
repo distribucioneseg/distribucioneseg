@@ -119,12 +119,13 @@ function cerrarModalEditar() {
 function abrirGaleria(codigo) {
     const prod = productosGlobal.find(p => p.codigo === codigo);
     if (!prod || !prod.foto) return;
-    const urls = prod.foto.toString().split(',').map(u => u.trim()).filter(u => u !== "");
     
+    const urls = prod.foto.toString().split(',').map(u => u.trim()).filter(u => u !== "");
     let html = '';
+    
     urls.forEach(url => {
         let finalUrl = url;
-        // CONVERSIÓN DE ENLACES PARA LA GALERÍA
+        // Transformar la URL para la galería si es de Drive
         if (finalUrl.includes('drive.google.com')) {
             let fileId = "";
             if (finalUrl.includes('id=')) fileId = finalUrl.split('id=')[1].split('&')[0];
@@ -138,6 +139,7 @@ function abrirGaleria(codigo) {
     document.getElementById('galeria-titulo').innerText = prod.nombre;
     document.getElementById('modal-galeria').style.display = 'flex';
 }
+
 function cerrarGaleria() { document.getElementById('modal-galeria').style.display = 'none'; }
 
 function mostrarSiguienteProveedor(prefix) {
@@ -203,24 +205,28 @@ function renderProductos(productos) {
         let costoBajo = parseFloat(prod.costoBajo) || 0;
         let gananciaAutomatica = parseFloat(prod.gananciaNormal) || 0;
 
+        // --- LÓGICA DE IMÁGENES CORREGIDA ---
         let urls = prod.foto ? prod.foto.toString().split(',').map(u => u.trim()).filter(u => u !== "") : [];
         let imagenFinal = "";
         let isRealPhoto = false;
 
-        // VERIFICADOR DE FOTOS REALES Y CORRECCIÓN DE ENLACES DE DRIVE
-        if (urls.length > 0 && urls[0].includes('http')) {
+        // Comprobar si hay una URL válida (que no sea el dummyimage)
+        if (urls.length > 0 && urls[0] !== "" && !urls[0].includes('dummyimage')) {
             imagenFinal = urls[0]; 
             isRealPhoto = true;
             
-            // MAGIA: Convierte cualquier link bloqueado de Drive a miniatura permitida para móvil
+            // Si la URL es de Drive, transformarla a miniatura para la tarjeta
             if (imagenFinal.includes('drive.google.com')) {
                 let fileId = "";
                 if (imagenFinal.includes('id=')) fileId = imagenFinal.split('id=')[1].split('&')[0];
                 else if (imagenFinal.includes('/d/')) fileId = imagenFinal.split('/d/')[1].split('/')[0];
                 
-                if (fileId) imagenFinal = `https://drive.google.com/thumbnail?id=${fileId}&sz=w800`;
+                if (fileId) {
+                    imagenFinal = `https://drive.google.com/thumbnail?id=${fileId}&sz=w800`;
+                }
             }
         } else {
+            // Lógica de iconos inteligentes si no hay foto real
             let cat = (prod.categoria || "").toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
             let nom = (prod.nombre || "").toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
             let searchStr = cat + " " + nom;
@@ -405,6 +411,7 @@ function actualizarCarrito() {
     document.getElementById('gran-total').innerText = formatoMoneda(granTotal);
 }
 
+// ==== PROCESO DE IMÁGENES MULTIPLES ====
 async function procesarImagenes(event, isEdit = false) {
     const files = event.target.files;
     if (!files || files.length === 0) return;
