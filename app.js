@@ -200,7 +200,6 @@ function renderProductos(productos) {
         let imagenFinal = "";
         let isRealPhoto = false;
 
-        // Comprobación de cualquier URL de internet que sea un link válido
         if (urls.length > 0 && urls[0].startsWith('http')) {
             imagenFinal = obtenerUrlImagen(urls[0]); 
             isRealPhoto = true;
@@ -394,7 +393,6 @@ async function guardarProductoNuevo(e) {
     const btn = document.getElementById('btn-guardar-prod');
     btn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin'></i> Guardando..."; btn.disabled = true;
     
-    // Obtener los 5 enlaces y juntarlos con comas
     let f1 = document.getElementById('p-foto1').value.trim();
     let f2 = document.getElementById('p-foto2').value.trim();
     let f3 = document.getElementById('p-foto3').value.trim();
@@ -454,7 +452,7 @@ function abrirModalEditar(codigo) {
     document.getElementById('e-costo').value = parseFloat(prod.costoBajo) || 0;
     document.getElementById('e-precio').value = parseFloat(prod.precioUnitario) || 0;
     
-    // CARGAR LOS 5 ENLACES DE LA IMAGEN
+    // CARGAR LOS 5 ENLACES
     for(let i=1; i<=5; i++) document.getElementById('e-foto'+i).value = "";
     let urls = prod.foto ? prod.foto.toString().split(',').map(u => u.trim()).filter(u => u !== "") : [];
     for(let i=0; i<urls.length && i<5; i++) {
@@ -468,7 +466,6 @@ async function guardarEdicionProducto(e) {
     e.preventDefault();
     const btn = document.getElementById('btn-guardar-edicion'); btn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin'></i> Actualizando..."; btn.disabled = true;
     
-    // Obtener los 5 enlaces y juntarlos con comas
     let f1 = document.getElementById('e-foto1').value.trim();
     let f2 = document.getElementById('e-foto2').value.trim();
     let f3 = document.getElementById('e-foto3').value.trim();
