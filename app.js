@@ -1,9 +1,11 @@
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxghNAPfy4LOh2WFlBhu-8S-g9CFxtF_xfu_dtiKpf9LKsYJNrZ6lx6AvBXraqDKkQg2Q/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzDIVqE9NnzJn68Ll-iyIT6galdNs5tR7yOklzRTpk-IEb17c0jTdtXGPt5j-UfSjb1Ww/exec';
 
 let productosGlobal = [], clientesGlobal = [], carrito = [];
 let indiceCotizacionActiva = null; 
-let imgBase64Data = "", imgMimeType = "", imgName = "";
-let imgBase64DataEdit = "", imgMimeTypeEdit = "", imgNameEdit = "";
+
+// Arrays para guardar las imágenes procesadas y listas para enviar
+let imagenesArrayNuevo = [];
+let imagenesArrayEdit = [];
 
 function formatoMoneda(valor) {
     let num = parseFloat(valor);
@@ -12,10 +14,15 @@ function formatoMoneda(valor) {
 }
 
 window.onload = async () => {
+    // ==== SOLUCIÓN DEL BUG DE LA PESTAÑA ====
+    // Lee si guardamos la instrucción de ir a "clientes" después de recargar
+    const activeTab = localStorage.getItem('activeTab') || 'tienda';
+    switchTab(activeTab);
+    localStorage.removeItem('activeTab'); // Limpia la instrucción
+    
     const vistaGuardada = localStorage.getItem('vistaPreferida') || 'grid';
     cambiarVista(vistaGuardada);
 
-    // 1. CARGA INSTANTÁNEA DESDE CACHÉ (Evita la pantalla de carga larga)
     const cache = localStorage.getItem('eg_data_cache');
     if (cache) {
         try {
@@ -24,37 +31,24 @@ window.onload = async () => {
             clientesGlobal = [...(dataCache.clientes || [])].reverse();
             renderProductos(productosGlobal);
             renderClientes(clientesGlobal);
-            mostrarToast("Buscando actualizaciones...");
-        } catch (e) {
-            console.log("Error leyendo caché");
-        }
+            mostrarToast("Actualizando datos de la nube...");
+        } catch (e) { console.log("Caché dañado"); }
     } else {
-        // Solo muestra el icono grande si es la primera vez que se abre la app en la vida
         document.getElementById('productos-grid').innerHTML = "<div style='text-align:center; width:100%; margin-top:60px; color:var(--text-muted);'><i class='fa-solid fa-circle-notch fa-spin' style='font-size:40px; margin-bottom:15px; color:var(--accent);'></i><h3 style='margin:0; font-weight:700;'>Cargando inventario...</h3></div>";
     }
 
-    // 2. SINCRONIZACIÓN EN SEGUNDO PLANO
     try {
         const respuesta = await fetch(SCRIPT_URL);
         const data = await respuesta.json();
-        
-        // Guardar la versión más nueva en el celular
         localStorage.setItem('eg_data_cache', JSON.stringify(data));
-        
         productosGlobal = data.productos || [];
         clientesGlobal = [...(data.clientes || [])].reverse(); 
-        
-        // Actualizar la pantalla silenciosamente
         renderProductos(productosGlobal);
         renderClientes(clientesGlobal);
-        
-        if (cache) mostrarToast("¡Inventario actualizado!");
+        if (cache) mostrarToast("¡Inventario sincronizado!");
     } catch (error) {
-        if (!cache) {
-            document.getElementById('productos-grid').innerHTML = "<div style='text-align:center; width:100%; margin-top:60px; color:var(--danger);'><i class='fa-solid fa-triangle-exclamation' style='font-size:40px; margin-bottom:15px;'></i><h3 style='margin:0; font-weight:700;'>Error de conexión</h3><p>Verifica tu internet o contacta soporte.</p></div>";
-        } else {
-            mostrarToast("Modo sin conexión activado.");
-        }
+        if (!cache) document.getElementById('productos-grid').innerHTML = "<div style='text-align:center; width:100%; margin-top:60px; color:var(--danger);'><i class='fa-solid fa-triangle-exclamation' style='font-size:40px; margin-bottom:15px;'></i><h3 style='margin:0; font-weight:700;'>Error de conexión</h3></div>";
+        else mostrarToast("Trabajando sin conexión.");
     }
 };
 
@@ -100,7 +94,7 @@ function toggleAdmin() {
     const pass = prompt("Acceso de Administrador. Ingrese PIN:");
     if (pass === "199311") {
         document.body.classList.toggle("show-admin");
-    } else if (pass !== null) alert("PIN incorrecto. Acceso denegado.");
+    } else if (pass !== null) alert("PIN incorrecto.");
 }
 
 function abrirCarrito() { document.getElementById('modal-carrito').style.display = 'flex'; }
@@ -111,9 +105,26 @@ function cerrarModalProducto() {
     document.getElementById('modal-producto').style.display = 'none'; 
     document.getElementById('form-producto').reset();
     document.getElementById('foto-estado').style.display = 'none';
-    imgBase64Data = "";
+    imagenesArrayNuevo = [];
     for(let i=3; i<=6; i++) { let row = document.getElementById('p-prov-row'+i); if(row) row.style.display = 'none'; }
 }
+
+function abrirGaleria(codigo) {
+    const prod = productosGlobal.find(p => p.codigo === codigo);
+    if (!prod || !prod.foto) return;
+    const urls = prod.foto.split(',');
+    
+    let html = '';
+    urls.forEach(url => {
+        if(url.trim() !== "") html += `<img src="${url.trim()}" alt="${prod.nombre}">`;
+    });
+
+    document.getElementById('galeria-contenedor').innerHTML = html;
+    document.getElementById('galeria-titulo').innerText = prod.nombre;
+    document.getElementById('modal-galeria').style.display = 'flex';
+}
+function cerrarGaleria() { document.getElementById('modal-galeria').style.display = 'none'; }
+
 
 function mostrarSiguienteProveedor(prefix) {
     for (let i = 3; i <= 6; i++) {
@@ -177,8 +188,16 @@ function renderProductos(productos) {
         let costoBajo = parseFloat(prod.costoBajo) || 0;
         let gananciaAutomatica = parseFloat(prod.gananciaNormal) || 0;
 
-        let imagenFinal = prod.foto;
-        if (!imagenFinal || imagenFinal.trim() === "" || imagenFinal.includes('dummyimage')) {
+        // Lógica de imágenes (Soporta múltiples)
+        let urls = prod.foto ? prod.foto.split(',').map(u => u.trim()).filter(u => u !== "") : [];
+        let imagenFinal = "";
+        let isRealPhoto = false;
+
+        if (urls.length > 0 && !urls[0].includes('dummyimage')) {
+            imagenFinal = urls[0]; // Mostrar la primera imagen de la lista en la tarjeta
+            isRealPhoto = true;
+        } else {
+            // Iconos inteligentes si no hay foto real
             let cat = (prod.categoria || "").toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
             let nom = (prod.nombre || "").toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
             let searchStr = cat + " " + nom;
@@ -250,7 +269,10 @@ function renderProductos(productos) {
             <div class="card">
                 <div class="stock-tag ${stockClass}">${stockText}</div>
                 <div class="card-inner">
-                    <div class="img-container"><img src="${imagenFinal}" onerror="this.src='https://img.icons8.com/color/150/box--v1.png'"></div>
+                    <div class="img-container ${isRealPhoto ? 'clickable' : ''}" ${isRealPhoto ? `onclick="abrirGaleria('${prod.codigo}')"` : ''}>
+                        <img src="${imagenFinal}" onerror="this.src='https://img.icons8.com/color/150/box--v1.png'">
+                        ${isRealPhoto && urls.length > 1 ? `<span class="badge-fotos"><i class="fa-solid fa-camera"></i> ${urls.length}</span>` : ''}
+                    </div>
                     <div class="info-text">
                         <span class="cat-tag">${prod.categoria || 'Genérico'}</span>
                         <h3 title="${prod.nombre}">${prod.nombre}</h3>
@@ -356,19 +378,65 @@ function actualizarCarrito() {
     document.getElementById('gran-total').innerText = formatoMoneda(granTotal);
 }
 
-function procesarImagen(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    imgName = file.name; imgMimeType = file.type;
-    const reader = new FileReader();
-    reader.onload = function(e) { imgBase64Data = e.target.result.split(',')[1]; document.getElementById('foto-estado').style.display = 'block'; };
-    reader.readAsDataURL(file);
+// ==== COMPRESIÓN DE FOTOS EN EL CELULAR ====
+async function procesarImagenes(event, isEdit = false) {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+    if (files.length > 5) { alert("Solo puedes subir un máximo de 5 fotos por producto."); event.target.value = ""; return; }
+    
+    let tempArray = [];
+    const btnGuardar = document.getElementById(isEdit ? 'btn-guardar-edicion' : 'btn-guardar-prod');
+    const estadoLabel = document.getElementById(isEdit ? 'e-foto-estado' : 'foto-estado');
+    
+    btnGuardar.disabled = true;
+    estadoLabel.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Optimizando foto(s)...`;
+    estadoLabel.style.color = "var(--accent)";
+    estadoLabel.style.display = 'block';
+
+    for (let i = 0; i < files.length; i++) {
+        let compressed = await comprimirImagen(files[i]);
+        tempArray.push(compressed);
+    }
+
+    if (isEdit) imagenesArrayEdit = tempArray;
+    else imagenesArrayNuevo = tempArray;
+
+    estadoLabel.innerHTML = `<i class="fa-solid fa-check-circle"></i> ${tempArray.length} foto(s) lista(s) para subir`;
+    estadoLabel.style.color = "var(--success)";
+    btnGuardar.disabled = false;
+}
+
+// Magia HTML5: Reduce la foto a tamaño web/móvil rápido sin perder claridad
+function comprimirImagen(file) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = event => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 800; // Calidad perfecta para celular
+                const MAX_HEIGHT = 800;
+                let width = img.width;
+                let height = img.height;
+                if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } 
+                else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } }
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.85); // Calidad al 85%
+                resolve({ base64: dataUrl.split(',')[1], mimeType: 'image/jpeg', nombreArchivo: file.name.split('.')[0] + '.jpg' });
+            }
+        }
+    });
 }
 
 async function guardarProductoNuevo(e) {
     e.preventDefault();
     const btn = document.getElementById('btn-guardar-prod');
-    btn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin'></i> Registrando..."; btn.disabled = true;
+    btn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin'></i> Subiendo todo..."; btn.disabled = true;
     
     const nuevoProd = {
         accion: "agregar_producto", codigo: document.getElementById('p-codigo').value, marca: document.getElementById('p-marca').value,
@@ -381,7 +449,7 @@ async function guardarProductoNuevo(e) {
         lugar4: document.getElementById('p-lugar4').value, precio4: document.getElementById('p-precio4').value,
         lugar5: document.getElementById('p-lugar5').value, precio5: document.getElementById('p-precio5_prov').value,
         lugar6: document.getElementById('p-lugar6').value, precio6: document.getElementById('p-precio6_prov').value,
-        imagenBase64: imgBase64Data, mimeType: imgMimeType, nombreArchivo: imgName
+        imagenes: imagenesArrayNuevo // Aquí viajan las 5 fotos comprimidas
     };
     try { await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(nuevoProd) }); alert("¡Producto registrado en el inventario!"); location.reload(); } 
     catch (error) { alert("Ocurrió un error."); btn.innerHTML = "<i class='fa-solid fa-cloud-arrow-up'></i> Guardar en Inventario"; btn.disabled = false; }
@@ -394,7 +462,12 @@ async function guardarCotizacion(e) {
     btn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin'></i> Guardando Pedido..."; btn.disabled = true;
     const totalCrudo = document.getElementById('gran-total').innerText.replace(/,/g, '');
     const cotizacion = { accion: "guardar_cotizacion", cliente: document.getElementById('c-nombre').value, tienda: document.getElementById('c-tienda').value, telefono: document.getElementById('c-tel').value, lugar: document.getElementById('c-lugar').value, fechaEntrega: document.getElementById('c-fecha-entrega').value, total: totalCrudo, carrito: carrito };
-    try { await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(cotizacion) }); alert("¡Pedido guardado con éxito!"); location.reload(); } 
+    try { 
+        await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(cotizacion) }); 
+        alert("¡Pedido guardado con éxito!"); 
+        localStorage.setItem('activeTab', 'clientes'); // Le decimos a la app que cargue la pestaña de Clientes/Órdenes al reiniciar
+        location.reload(); 
+    } 
     catch (error) { alert("Ocurrió un error."); btn.innerHTML = "<i class='fa-solid fa-check-double'></i> Confirmar Pedido"; btn.disabled = false; }
 }
 
@@ -640,19 +713,7 @@ function cerrarModalEditar() {
     document.getElementById('modal-editar-producto').style.display = 'none'; 
     document.getElementById('form-editar-producto').reset(); 
     document.getElementById('e-foto-estado').style.display = 'none'; 
-    imgBase64DataEdit = ""; 
-}
-
-function procesarImagenEdicion(event) { 
-    const file = event.target.files[0]; 
-    if (!file) return; 
-    imgNameEdit = file.name; imgMimeTypeEdit = file.type; 
-    const reader = new FileReader(); 
-    reader.onload = function(e) { 
-        imgBase64DataEdit = e.target.result.split(',')[1]; 
-        document.getElementById('e-foto-estado').style.display = 'block'; 
-    }; 
-    reader.readAsDataURL(file); 
+    imagenesArrayEdit = []; 
 }
 
 async function guardarEdicionProducto(e) {
@@ -666,7 +727,7 @@ async function guardarEdicionProducto(e) {
         lugar1: document.getElementById('e-lugar1').value, precio1: document.getElementById('e-precio1').value, lugar2: document.getElementById('e-lugar2').value, precio2: document.getElementById('e-precio2').value,
         lugar3: document.getElementById('e-lugar3').value, precio3: document.getElementById('e-precio3').value, lugar4: document.getElementById('e-lugar4').value, precio4: document.getElementById('e-precio4').value,
         lugar5: document.getElementById('e-lugar5').value, precio5: document.getElementById('e-precio5_prov').value, lugar6: document.getElementById('e-lugar6').value, precio6: document.getElementById('e-precio6_prov').value,
-        imagenBase64: imgBase64DataEdit, mimeType: imgMimeTypeEdit, nombreArchivo: imgNameEdit 
+        imagenes: imagenesArrayEdit // Envía las nuevas fotos si hay, si no va vacío
     };
     try { await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(prodEditado) }); alert("¡Actualizado exitosamente!"); location.reload(); } 
     catch (error) { alert("Error de conexión."); btn.innerHTML = "<i class='fa-solid fa-cloud-arrow-up'></i> Actualizar Producto"; btn.disabled = false; }

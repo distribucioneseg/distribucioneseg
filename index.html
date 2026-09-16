@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>DISTRIBUCIONES E&G</title>
-    <link rel="stylesheet" href="style.css?v=200">
+    <link rel="stylesheet" href="style.css?v=210">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
@@ -30,24 +30,12 @@
             <div class="filter-actions">
                 <select id="cat-filter" class="styled-select" onchange="filtrarProductos()">
                     <option value="Todas">Todas las Categorías</option>
-                    <optgroup label="🎮 Tecnología y Gamer">
-                        <option value="Gamer">Accesorios Gamer</option><option value="Periferico">Periféricos (Mouse/Teclado)</option><option value="Audio">Audio y Audífonos</option><option value="Cables">Cables y Cargadores</option><option value="Almacenamiento">Almacenamiento (USB/MicroSD)</option><option value="Protectores">Fundas y Protectores</option><option value="Celulares">Celulares y Tablets</option><option value="Componentes">Componentes PC</option>
-                    </optgroup>
-                    <optgroup label="🥩 Carnes y Embutidos">
-                        <option value="Pollo">Carnes - Pollo</option><option value="Res">Carnes - Res</option><option value="Cerdo">Carnes - Cerdo</option><option value="Mariscos">Pescados y Mariscos</option><option value="Embutidos">Embutidos y Salchichas</option>
-                    </optgroup>
-                    <optgroup label="🛒 Abarrotes y Despensa">
-                        <option value="Granos">Granos y Cereales</option><option value="Aceites">Aceites y Mantecas</option><option value="Pastas">Pastas y Sopas</option><option value="Enlatados">Enlatados y Conservas</option><option value="Salsas">Salsas y Condimentos</option><option value="Especias">Azúcar, Sal y Especias</option><option value="Lacteos">Lácteos y Huevos</option><option value="Panaderia">Panadería y Repostería</option>
-                    </optgroup>
-                    <optgroup label="🥤 Bebidas y Snacks">
-                        <option value="Refrescos">Refrescos y Jugos</option><option value="Agua">Agua Purificada</option><option value="Energizantes">Bebidas Energizantes</option><option value="Cervezas">Cervezas y Licores</option><option value="Snacks">Snacks y Churros</option><option value="Dulces">Dulces y Chocolates</option><option value="Cafe">Café y Té</option>
-                    </optgroup>
-                    <optgroup label="🧼 Higiene y Limpieza">
-                        <option value="Detergentes">Detergentes y Suavizantes</option><option value="Limpieza">Limpieza del Hogar</option><option value="Higiene">Higiene Corporal</option><option value="Capilar">Cuidado Capilar</option><option value="Dental">Cuidado Dental</option><option value="Papel">Papel y Desechables</option>
-                    </optgroup>
-                    <optgroup label="📦 Variedades y Otros">
-                        <option value="Medicinas">Medicinas (OTC)</option><option value="Bebes">Cuidado del Bebé</option><option value="Mascotas">Mascotas</option><option value="Papeleria">Librería y Papelería</option><option value="Ferreteria">Ferretería Básica</option><option value="Plasticos">Hogar y Plásticos</option><option value="Cosmeticos">Cosméticos y Belleza</option>
-                    </optgroup>
+                    <optgroup label="🎮 Tecnología y Gamer"><option value="Gamer">Accesorios Gamer</option><option value="Periferico">Periféricos</option><option value="Audio">Audio</option><option value="Cables">Cables</option><option value="Almacenamiento">Almacenamiento</option><option value="Protectores">Protectores</option><option value="Celulares">Celulares</option><option value="Componentes">Componentes</option></optgroup>
+                    <optgroup label="🥩 Carnes y Embutidos"><option value="Pollo">Pollo</option><option value="Res">Res</option><option value="Cerdo">Cerdo</option><option value="Mariscos">Mariscos</option><option value="Embutidos">Embutidos</option></optgroup>
+                    <optgroup label="🛒 Abarrotes y Despensa"><option value="Granos">Granos</option><option value="Aceites">Aceites</option><option value="Pastas">Pastas</option><option value="Enlatados">Enlatados</option><option value="Salsas">Salsas</option><option value="Especias">Especias</option><option value="Lacteos">Lácteos</option><option value="Panaderia">Panadería</option></optgroup>
+                    <optgroup label="🥤 Bebidas y Snacks"><option value="Refrescos">Refrescos</option><option value="Agua">Agua</option><option value="Energizantes">Energizantes</option><option value="Cervezas">Cervezas</option><option value="Snacks">Snacks</option><option value="Dulces">Dulces</option><option value="Cafe">Café</option></optgroup>
+                    <optgroup label="🧼 Higiene y Limpieza"><option value="Detergentes">Detergentes</option><option value="Limpieza">Limpieza</option><option value="Higiene">Higiene</option><option value="Capilar">Capilar</option><option value="Dental">Dental</option><option value="Papel">Papel</option></optgroup>
+                    <optgroup label="📦 Variedades y Otros"><option value="Medicinas">Medicinas (OTC)</option><option value="Bebes">Cuidado del Bebé</option><option value="Mascotas">Mascotas</option><option value="Papeleria">Papelería</option><option value="Ferreteria">Ferretería</option><option value="Plasticos">Plásticos</option><option value="Cosmeticos">Cosméticos</option></optgroup>
                 </select>
                 
                 <div class="view-toggle">
@@ -79,7 +67,7 @@
         </div>
     </div>
 
-    <!-- ==== NAVEGACIÓN INFERIOR (APP MÓVIL) ==== -->
+    <!-- ==== NAVEGACIÓN INFERIOR ==== -->
     <nav class="bottom-nav">
         <button onclick="switchTab('tienda')" class="nav-item active" id="nav-tienda"><i class="fa-solid fa-shop"></i><span>Tienda</span></button>
         <button onclick="switchTab('clientes')" class="nav-item" id="nav-clientes"><i class="fa-solid fa-address-book"></i><span>Órdenes</span></button>
@@ -90,6 +78,18 @@
 
     <!-- ==== TOAST NOTIFICATION ==== -->
     <div id="toast" class="toast-oculto"><i class="fa-solid fa-circle-check"></i> <span id="toast-msg">Agregado al carrito</span></div>
+
+    <!-- ==== MODAL: GALERÍA DE FOTOS ==== -->
+    <div id="modal-galeria" class="modal-oculto" style="background: rgba(0,0,0,0.9); backdrop-filter: blur(8px);">
+        <div class="modal-contenido" style="background: transparent; box-shadow: none; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <button class="btn-cerrar" onclick="cerrarGaleria()" style="position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2); color: white;"><i class="fa-solid fa-xmark"></i></button>
+            <h3 id="galeria-titulo" style="color: white; margin-bottom: 20px; text-align: center; padding: 0 20px;">Producto</h3>
+            <div id="galeria-contenedor" class="galeria-slider">
+                <!-- Las fotos se inyectan aquí -->
+            </div>
+            <p style="color: rgba(255,255,255,0.6); font-size: 0.85rem; margin-top: 20px;"><i class="fa-solid fa-arrows-left-right"></i> Desliza para ver más</p>
+        </div>
+    </div>
 
     <!-- ==== MODAL: CARRITO ==== -->
     <div id="modal-carrito" class="modal-oculto">
@@ -107,7 +107,7 @@
                 <form id="form-cotizacion" class="modern-form" onsubmit="guardarCotizacion(event)">
                     <h3>Información del Cliente</h3>
                     <div class="form-group"><input type="text" id="c-nombre" class="form-control" placeholder="Nombre Completo" required></div>
-                    <div class="form-group"><input type="text" id="c-tienda" class="form-control" placeholder="Nombre de la Tienda (Pulpería, etc.)" required></div>
+                    <div class="form-group"><input type="text" id="c-tienda" class="form-control" placeholder="Nombre de la Tienda" required></div>
                     <div class="form-group"><input type="tel" id="c-tel" class="form-control" placeholder="Teléfono" required></div>
                     <div class="form-group"><input type="text" id="c-lugar" class="form-control" placeholder="Dirección Exacta" required></div>
                     <div class="form-group"><label>Fecha programada de entrega:</label><input type="date" id="c-fecha-entrega" class="form-control" required></div>
@@ -125,29 +125,30 @@
                 <div id="detalle-info"></div>
                 <h3 class="section-title">Productos en la orden</h3>
                 <div id="detalle-items"></div>
-                
                 <div class="botones-accion-detalle">
                     <button onclick="editarCotizacion()" class="btn-line"><i class="fa-solid fa-pen-to-square"></i> Modificar Pedido</button>
                     <button onclick="generarFactura()" class="btn-primario"><i class="fa-solid fa-receipt"></i> Generar Ticket (Cliente)</button>
                     <button onclick="enviarWhatsApp()" class="btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Enviar Recibo a WhatsApp</button>
-                    <button onclick="generarFacturaAdmin()" class="btn-admin-pdf"><i class="fa-solid fa-chart-pie"></i> Ver Rentabilidad (Admin)</button>
+                    <button onclick="generarFacturaAdmin()" class="btn-admin-pdf"><i class="fa-solid fa-chart-pie"></i> Ver Rentabilidad</button>
                     <button onclick="eliminarCotizacion()" class="btn-eliminar"><i class="fa-solid fa-trash-can"></i> Borrar Orden</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ==== MODALES DE PRODUCTOS (NUEVO Y EDITAR) ==== -->
+    <!-- ==== MODAL: AGREGAR PRODUCTO NUEVO ==== -->
     <div id="modal-producto" class="modal-oculto">
         <div class="modal-contenido">
             <div class="modal-header"><h2>Registrar Producto</h2><button type="button" class="btn-cerrar" onclick="cerrarModalProducto()"><i class="fa-solid fa-xmark"></i></button></div>
             <div class="modal-body">
                 <form id="form-producto" class="modern-form" onsubmit="guardarProductoNuevo(event)">
+                    <!-- SE AGREGÓ "multiple" AQUÍ PARA SOPORTAR HASTA 5 FOTOS -->
                     <label class="foto-upload-btn">
-                        <i class="fa-solid fa-cloud-arrow-up"></i> Toca para subir foto del producto
-                        <input type="file" id="p-foto" accept="image/*" capture="environment" onchange="procesarImagen(event)" style="display:none;">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Toca para subir foto(s) del producto
+                        <span style="font-size:0.75rem; color:var(--text-muted); font-weight:normal; margin-top:5px;">Máximo 5 imágenes por producto</span>
+                        <input type="file" id="p-foto" accept="image/*" multiple capture="environment" onchange="procesarImagenes(event, false)" style="display:none;">
                     </label>
-                    <p id="foto-estado" class="success-text" style="display:none;"><i class="fa-solid fa-check-circle"></i> Imagen cargada</p>
+                    <p id="foto-estado" class="success-text" style="display:none;"><i class="fa-solid fa-check-circle"></i> Fotos listas</p>
                     
                     <div class="form-row">
                         <div class="form-group" style="flex: 1;"><label>Código / SKU</label><input type="text" id="p-codigo" class="form-control" placeholder="Automático..." required readonly style="background:#f1f5f9;"></div>
@@ -155,12 +156,12 @@
                             <label>Categoría</label>
                             <select id="p-categoria" class="form-control" onchange="generarCodigoSKU()" required>
                                 <option value="">Selecciona Categoría</option>
-                                <optgroup label="🎮 Tecnología y Gamer"><option value="Gamer">Accesorios Gamer</option><option value="Periferico">Periféricos (Mouse/Teclado)</option><option value="Audio">Audio y Audífonos</option><option value="Cables">Cables y Cargadores</option><option value="Almacenamiento">Almacenamiento (USB/MicroSD)</option><option value="Protectores">Fundas y Protectores</option><option value="Celulares">Celulares y Tablets</option><option value="Componentes">Componentes PC</option></optgroup>
-                                <optgroup label="🥩 Carnes y Embutidos"><option value="Pollo">Carnes - Pollo</option><option value="Res">Carnes - Res</option><option value="Cerdo">Carnes - Cerdo</option><option value="Mariscos">Pescados y Mariscos</option><option value="Embutidos">Embutidos y Salchichas</option></optgroup>
-                                <optgroup label="🛒 Abarrotes y Despensa"><option value="Granos">Granos y Cereales</option><option value="Aceites">Aceites y Mantecas</option><option value="Pastas">Pastas y Sopas</option><option value="Enlatados">Enlatados y Conservas</option><option value="Salsas">Salsas y Condimentos</option><option value="Especias">Azúcar, Sal y Especias</option><option value="Lacteos">Lácteos y Huevos</option><option value="Panaderia">Panadería y Repostería</option></optgroup>
-                                <optgroup label="🥤 Bebidas y Snacks"><option value="Refrescos">Refrescos y Jugos</option><option value="Agua">Agua Purificada</option><option value="Energizantes">Bebidas Energizantes</option><option value="Cervezas">Cervezas y Licores</option><option value="Snacks">Snacks y Churros</option><option value="Dulces">Dulces y Chocolates</option><option value="Cafe">Café y Té</option></optgroup>
-                                <optgroup label="🧼 Higiene y Limpieza"><option value="Detergentes">Detergentes y Suavizantes</option><option value="Limpieza">Limpieza del Hogar</option><option value="Higiene">Higiene Corporal</option><option value="Capilar">Cuidado Capilar</option><option value="Dental">Cuidado Dental</option><option value="Papel">Papel y Desechables</option></optgroup>
-                                <optgroup label="📦 Variedades y Otros"><option value="Medicinas">Medicinas (OTC)</option><option value="Bebes">Cuidado del Bebé</option><option value="Mascotas">Mascotas</option><option value="Papeleria">Librería y Papelería</option><option value="Ferreteria">Ferretería Básica</option><option value="Plasticos">Hogar y Plásticos</option><option value="Cosmeticos">Cosméticos y Belleza</option></optgroup>
+                                <optgroup label="🎮 Tecnología y Gamer"><option value="Gamer">Accesorios Gamer</option><option value="Periferico">Periféricos</option><option value="Audio">Audio</option><option value="Cables">Cables</option><option value="Almacenamiento">Almacenamiento</option><option value="Protectores">Protectores</option><option value="Celulares">Celulares</option><option value="Componentes">Componentes</option></optgroup>
+                                <optgroup label="🥩 Carnes y Embutidos"><option value="Pollo">Pollo</option><option value="Res">Res</option><option value="Cerdo">Cerdo</option><option value="Mariscos">Mariscos</option><option value="Embutidos">Embutidos</option></optgroup>
+                                <optgroup label="🛒 Abarrotes y Despensa"><option value="Granos">Granos</option><option value="Aceites">Aceites</option><option value="Pastas">Pastas</option><option value="Enlatados">Enlatados</option><option value="Salsas">Salsas</option><option value="Especias">Especias</option><option value="Lacteos">Lácteos</option><option value="Panaderia">Panadería</option></optgroup>
+                                <optgroup label="🥤 Bebidas y Snacks"><option value="Refrescos">Refrescos</option><option value="Agua">Agua</option><option value="Energizantes">Energizantes</option><option value="Cervezas">Cervezas</option><option value="Snacks">Snacks</option><option value="Dulces">Dulces</option><option value="Cafe">Café</option></optgroup>
+                                <optgroup label="🧼 Higiene y Limpieza"><option value="Detergentes">Detergentes</option><option value="Limpieza">Limpieza</option><option value="Higiene">Higiene</option><option value="Capilar">Capilar</option><option value="Dental">Dental</option><option value="Papel">Papel</option></optgroup>
+                                <optgroup label="📦 Variedades y Otros"><option value="Medicinas">Medicinas (OTC)</option><option value="Bebes">Cuidado del Bebé</option><option value="Mascotas">Mascotas</option><option value="Papeleria">Papelería</option><option value="Ferreteria">Ferretería</option><option value="Plasticos">Plásticos</option><option value="Cosmeticos">Cosméticos</option></optgroup>
                             </select>
                         </div>
                     </div>
@@ -172,53 +173,39 @@
 
                     <div class="seccion-proveedores card-section">
                         <h4><i class="fa-solid fa-truck-fast"></i> Costos y Proveedores</h4>
-                        <p class="help-text">El sistema escogerá automáticamente el precio más bajo para calcular tus ganancias.</p>
-                        <div id="p-prov-row1" class="prov-input-row"><input type="text" id="p-lugar1" placeholder="Nombre Proveedor 1" style="flex:2;"><input type="number" id="p-precio1" step="0.01" placeholder="Costo Lps." style="flex:1;"></div>
-                        <div id="p-prov-row2" class="prov-input-row"><input type="text" id="p-lugar2" placeholder="Nombre Proveedor 2" style="flex:2;"><input type="number" id="p-precio2" step="0.01" placeholder="Costo Lps." style="flex:1;"></div>
-                        <div id="p-prov-row3" class="prov-input-row" style="display: none;"><input type="text" id="p-lugar3" placeholder="Nombre Proveedor 3" style="flex:2;"><input type="number" id="p-precio3" step="0.01" placeholder="Costo Lps." style="flex:1;"></div>
-                        <div id="p-prov-row4" class="prov-input-row" style="display: none;"><input type="text" id="p-lugar4" placeholder="Nombre Proveedor 4" style="flex:2;"><input type="number" id="p-precio4" step="0.01" placeholder="Costo Lps." style="flex:1;"></div>
-                        <div id="p-prov-row5" class="prov-input-row" style="display: none;"><input type="text" id="p-lugar5" placeholder="Nombre Proveedor 5" style="flex:2;"><input type="number" id="p-precio5_prov" step="0.01" placeholder="Costo Lps." style="flex:1;"></div>
-                        <div id="p-prov-row6" class="prov-input-row" style="display: none;"><input type="text" id="p-lugar6" placeholder="Nombre Proveedor 6" style="flex:2;"><input type="number" id="p-precio6_prov" step="0.01" placeholder="Costo Lps." style="flex:1;"></div>
+                        <div id="p-prov-row1" class="prov-input-row"><input type="text" id="p-lugar1" placeholder="Proveedor 1" style="flex:2;"><input type="number" id="p-precio1" step="0.01" placeholder="Costo Lps." style="flex:1;"></div>
+                        <div id="p-prov-row2" class="prov-input-row"><input type="text" id="p-lugar2" placeholder="Proveedor 2" style="flex:2;"><input type="number" id="p-precio2" step="0.01" placeholder="Costo Lps." style="flex:1;"></div>
+                        <div id="p-prov-row3" class="prov-input-row" style="display: none;"><input type="text" id="p-lugar3" placeholder="Proveedor 3" style="flex:2;"><input type="number" id="p-precio3" step="0.01" placeholder="Costo Lps." style="flex:1;"></div>
+                        <div id="p-prov-row4" class="prov-input-row" style="display: none;"><input type="text" id="p-lugar4" placeholder="Proveedor 4" style="flex:2;"><input type="number" id="p-precio4" step="0.01" placeholder="Costo Lps." style="flex:1;"></div>
+                        <div id="p-prov-row5" class="prov-input-row" style="display: none;"><input type="text" id="p-lugar5" placeholder="Proveedor 5" style="flex:2;"><input type="number" id="p-precio5_prov" step="0.01" placeholder="Costo Lps." style="flex:1;"></div>
+                        <div id="p-prov-row6" class="prov-input-row" style="display: none;"><input type="text" id="p-lugar6" placeholder="Proveedor 6" style="flex:2;"><input type="number" id="p-precio6_prov" step="0.01" placeholder="Costo Lps." style="flex:1;"></div>
                         <button type="button" id="p-btn-add-prov" class="btn-text" onclick="mostrarSiguienteProveedor('p')"><i class="fa-solid fa-plus"></i> Añadir otro proveedor</button>
                         
-                        <div class="form-group" style="margin-top: 15px; border-top: 1px dashed #cbd5e1; padding-top: 15px;">
-                            <label style="color: #64748b;">¿No tienes proveedores fijos? Ingresa un Costo Manual:</label>
-                            <input type="number" id="p-costo" step="0.01" class="form-control" placeholder="Lps. 0.00" style="background:#f1f5f9;">
-                        </div>
+                        <div class="form-group" style="margin-top: 15px; border-top: 1px dashed #cbd5e1; padding-top: 15px;"><label>Costo Manual (Si no usas proveedores):</label><input type="number" id="p-costo" step="0.01" class="form-control" placeholder="Lps. 0.00" style="background:#f1f5f9;"></div>
                     </div>
 
                     <div class="seccion-proveedores card-section" style="background:#f0fdf4; border-color:#bbf7d0;">
                         <h4 style="color:#047857;"><i class="fa-solid fa-tags"></i> Precios de Venta Mayoreo</h4>
-                        <div class="prov-input-row">
-                            <input type="number" id="p-precio5" step="0.01" placeholder="5+ Unidades" style="flex:1;">
-                            <input type="number" id="p-precio6" step="0.01" placeholder="Media Doc." style="flex:1;">
-                            <input type="number" id="p-precio12" step="0.01" placeholder="Docena" style="flex:1;">
-                        </div>
+                        <div class="prov-input-row"><input type="number" id="p-precio5" step="0.01" placeholder="5+ Unidades" style="flex:1;"><input type="number" id="p-precio6" step="0.01" placeholder="Media Doc." style="flex:1;"><input type="number" id="p-precio12" step="0.01" placeholder="Docena" style="flex:1;"></div>
                     </div>
 
-                    <div class="form-group">
-                        <label>Inventario (Stock Disponible)</label>
-                        <input type="number" id="p-stock" class="form-control" placeholder="Cantidad en bodega" required>
-                    </div>
-                    
-                    <div class="form-group highlight-box">
-                        <label>Precio de Venta al Detalle (Lps)</label>
-                        <input type="number" id="p-precio" step="0.01" class="form-control input-mega" placeholder="Lps. 0.00" required>
-                    </div>
+                    <div class="form-group"><label>Inventario (Stock Disponible)</label><input type="number" id="p-stock" class="form-control" placeholder="Cantidad en bodega" required></div>
+                    <div class="form-group highlight-box"><label>Precio de Venta al Detalle (Lps)</label><input type="number" id="p-precio" step="0.01" class="form-control input-mega" placeholder="Lps. 0.00" required></div>
                     <button type="submit" id="btn-guardar-prod" class="btn-primario"><i class="fa-solid fa-cloud-arrow-up"></i> Guardar en Inventario</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- El MODAL DE EDITAR es idéntico estructuralmente al de agregar, para mantener el mismo diseño -->
+    <!-- ==== MODAL: EDITAR PRODUCTO EXISTENTE ==== -->
     <div id="modal-editar-producto" class="modal-oculto">
         <div class="modal-contenido">
             <div class="modal-header"><h2>Editar Producto</h2><button type="button" class="btn-cerrar" onclick="cerrarModalEditar()"><i class="fa-solid fa-xmark"></i></button></div>
             <div class="modal-body">
                 <form id="form-editar-producto" class="modern-form" onsubmit="guardarEdicionProducto(event)">
-                    <label class="foto-upload-btn"><i class="fa-solid fa-camera-rotate"></i> Cambiar Foto (Opcional)<input type="file" id="e-foto" accept="image/*" onchange="procesarImagenEdicion(event)" style="display:none;"></label>
-                    <p id="e-foto-estado" class="success-text" style="display:none;"><i class="fa-solid fa-check-circle"></i> Nueva foto lista</p>
+                    <!-- SE AGREGÓ "multiple" AQUÍ TAMBIÉN -->
+                    <label class="foto-upload-btn"><i class="fa-solid fa-camera-rotate"></i> Cambiar Foto(s) (Opcional)<input type="file" id="e-foto" accept="image/*" multiple onchange="procesarImagenes(event, true)" style="display:none;"></label>
+                    <p id="e-foto-estado" class="success-text" style="display:none;"><i class="fa-solid fa-check-circle"></i> Nuevas fotos listas</p>
                     
                     <div class="form-row">
                         <div class="form-group" style="flex: 1;"><label>Código / SKU</label><input type="text" id="e-codigo" class="form-control" readonly style="background:#f1f5f9;"></div>
@@ -251,6 +238,6 @@
         </div>
     </div>
 
-    <script src="app.js?v=200"></script>
+    <script src="app.js?v=210"></script>
 </body>
 </html>
